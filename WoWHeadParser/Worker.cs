@@ -9,6 +9,8 @@ using System.Windows.Forms;
 
 namespace WoWHeadParser
 {
+    public delegate void DownloaderProgressHandler(object sender, uint val);
+
     public class Worker
     {
         protected Parser _parser;
@@ -17,7 +19,9 @@ namespace WoWHeadParser
         protected object _locale;
         protected uint _threadCount;
         protected Queue<string> _pages;
-        protected ProgressBar _bar;
+        protected uint _progress;
+
+        public event DownloaderProgressHandler OnProgressChanged;
 
         public Queue<string> Pages
         {
@@ -35,15 +39,15 @@ namespace WoWHeadParser
             get { return _parser; }
         }
 
-        public Worker(Parser parser, uint rangeStart, uint rangeEnd, object locale, uint threadCount, ProgressBar bar)
+        public Worker(Parser parser, uint rangeStart, uint rangeEnd, object locale, uint threadCount, uint progress)
         {
             _parser = parser;
             _rangeStart = rangeStart;
             _rangeEnd = rangeEnd;
             _locale = locale;
             _threadCount = threadCount;
-            _bar = bar;
             _pages = new Queue<string>();
+            _progress = progress;
         }
 
         public void Start()
@@ -53,10 +57,16 @@ namespace WoWHeadParser
             {
                 uint start = _rangeStart + (petThread * i);
                 uint end = _rangeStart + (petThread * (i + 1));
-                Core core = new Core(start, end - 1, this, _bar);
+                Core core = new Core(start, end - 1, this);
                 Thread thread = new Thread(core.Start);
                 thread.Start();
             }
+        }
+
+        public void Progress()
+        {
+            ++_progress;
+            OnProgressChanged(this, _progress);
         }
     }
 }

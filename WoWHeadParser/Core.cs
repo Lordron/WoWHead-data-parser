@@ -14,15 +14,13 @@ namespace WoWHeadParser
         protected uint _rangeStart;
         protected uint _rangeEnd;
         protected WebClient _client;
-        protected ProgressBar _bar;
 
-        public Core(uint rangeStart, uint rangeEnd, Worker worker, ProgressBar bar)
+        public Core(uint rangeStart, uint rangeEnd, Worker worker)
         {
             _threadLock = new object();
             _worker = worker;
             _rangeStart = rangeStart;
             _rangeEnd = rangeEnd;
-            _bar = bar;
             _client = new WebClient { Encoding = Encoding.UTF8 };
             _client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(DownloadStringDataCompleted);
         }
@@ -58,7 +56,7 @@ namespace WoWHeadParser
                     _worker.Pages.Enqueue(e.Result);
                 }
             }
-            ++_bar.Value;
+            _worker.Progress();
         }
     }
 }

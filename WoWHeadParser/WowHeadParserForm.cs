@@ -54,7 +54,8 @@ namespace WoWHeadParser
             progressBar.Value = (int) start;
             progressBar.Minimum = (int)start;
             progressBar.Maximum = (int)end;
-            Worker worker = new Worker(parser, start, end, localeBox.SelectedItem, count, progressBar);
+            Worker worker = new Worker(parser, start, end, localeBox.SelectedItem, count, start);
+            worker.OnProgressChanged += new DownloaderProgressHandler(WorkerProgressChanged);
             worker.Start();
         }
 
@@ -67,6 +68,11 @@ namespace WoWHeadParser
             }
 
             startButton.Enabled = true;
+        }
+
+        public void WorkerProgressChanged(object sender, uint val)
+        {
+            progressBar.Value = (int)val;
         }
     }
 }
