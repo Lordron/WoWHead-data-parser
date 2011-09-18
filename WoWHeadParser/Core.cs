@@ -20,10 +20,6 @@ namespace WoWHeadParser
             {
                 return "wowhead.com/npc=";
             }
-            set
-            {
-                Adress = value;
-            }
         }
     }
 }

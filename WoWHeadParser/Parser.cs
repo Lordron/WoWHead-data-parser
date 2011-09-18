@@ -5,6 +5,6 @@ namespace WoWHeadParser
     {
         public abstract string Parse(List<string> datas);
 
-        public abstract string Adress { get; set; }
+        public abstract string Adress { get; }
     }
 }

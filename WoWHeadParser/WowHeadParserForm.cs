@@ -58,16 +58,20 @@ namespace WoWHeadParser
                 throw new NotImplementedException(@"Starting value can not be bigger than endind value!");
 
             if (start == end)
-                throw new NotImplementedException(@"Starting value can not be equal ending value");
+                throw new NotImplementedException(@"Starting value can not be equal ending value!");
 
             if (start == 1 && end == 1)
-                throw new NotImplementedException(@"Starting and ending value can not be equal 1");
+                throw new NotImplementedException(@"Starting and ending value can not be equal '1'!");
 
             progressBar.Maximum = end;
             progressBar.Minimum = 0;
             progressBar.Value = 0;
+            startButton.Enabled = false;
 
             Parser parser = (Parser)Activator.CreateInstance(_type[parserBox.SelectedIndex]);
+
+            if (parser == null)
+                throw new NotImplementedException(@"Parser object is NULL!");
 
             string baseAddress = string.Format("http://{0}{1}", localeBox.SelectedItem, parser.Adress);
 
@@ -76,6 +80,9 @@ namespace WoWHeadParser
                 Task task = Download(string.Format("{0}{1}", baseAddress, i), string.Format("{0}.txt", i));
                 task.Wait();
             }
+
+            parser.Parse(_datas);
+            startButton.Enabled = true;
         }
 
         public async Task Download(string address, string file)
