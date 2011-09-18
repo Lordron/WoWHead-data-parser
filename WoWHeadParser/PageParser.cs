@@ -8,9 +8,9 @@ namespace WoWHeadParser
 {
     internal class PageParser : Parser
     {
-        public override string Parse(List<string> datas)
+        public override string Parse(Queue<string> pages)
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("NOT IMPLEMENTED");
         }
 
         public override string Adress

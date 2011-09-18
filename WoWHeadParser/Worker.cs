@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace WoWHeadParser
 {
-    public delegate void DownloaderProgressHandler(object sender, uint val);
+    public delegate void DownloaderProgressHandler(Worker worker, uint val);
 
     public class Worker
     {

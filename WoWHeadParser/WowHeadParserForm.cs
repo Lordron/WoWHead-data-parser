@@ -70,9 +70,15 @@ namespace WoWHeadParser
             startButton.Enabled = true;
         }
 
-        public void WorkerProgressChanged(object sender, uint val)
+        public void WorkerProgressChanged(Worker worker, uint val)
         {
-            progressBar.Value = (int)val;
+            int value = (int)val;
+            progressBar.Value = value;
+            if (value == progressBar.Maximum)
+            {
+                if (worker.Pages.Count > 0)
+                    worker.Parser.Parse(worker.Pages);
+            }
         }
     }
 }
