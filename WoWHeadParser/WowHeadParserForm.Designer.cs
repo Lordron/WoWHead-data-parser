@@ -35,7 +35,7 @@
             this.rangeEnd = new System.Windows.Forms.NumericUpDown();
             this.rangeEndLabel = new System.Windows.Forms.Label();
             this.rangeStartLabel = new System.Windows.Forms.Label();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
             this.startButton = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.rangeStart)).BeginInit();
@@ -145,12 +145,12 @@
             this.rangeStartLabel.TabIndex = 12;
             this.rangeStartLabel.Text = "Range start:";
             // 
-            // progressBar1
+            // progressBar
             // 
-            this.progressBar1.Location = new System.Drawing.Point(6, 187);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(300, 23);
-            this.progressBar1.TabIndex = 5;
+            this.progressBar.Location = new System.Drawing.Point(6, 187);
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(300, 23);
+            this.progressBar.TabIndex = 5;
             // 
             // startButton
             // 
@@ -169,7 +169,7 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.ClientSize = new System.Drawing.Size(313, 222);
             this.Controls.Add(this.startButton);
-            this.Controls.Add(this.progressBar1);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.groupBox1);
             this.Name = "WoWHeadParserForm";
             this.Text = "WowHead Parser";
@@ -190,7 +190,7 @@
         private System.Windows.Forms.NumericUpDown rangeEnd;
         private System.Windows.Forms.Label rangeEndLabel;
         private System.Windows.Forms.NumericUpDown rangeStart;
-        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Button startButton;
 
 

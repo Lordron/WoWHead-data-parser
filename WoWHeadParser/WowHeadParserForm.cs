@@ -36,22 +36,42 @@ namespace WoWHeadParser
             }
             if (count == 0)
                 startButton.Enabled = false;
+
+            _client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(DownloadStringCompletedAction);
+        }
+
+        void DownloadStringCompletedAction(object sender, DownloadStringCompletedEventArgs e)
+        {
+            _datas.Add(e.Result);
+            ++progressBar.Value;
         }
 
         public void StartButtonClick(object sender, EventArgs e)
         {
             if (parserBox.SelectedIndex == -1)
-                throw new NotImplementedException("You should select something first!");
+                throw new NotImplementedException(@"You should select something first!");
 
-            progressBar1.Maximum = (int)rangeEnd.Value;
-            progressBar1.Minimum = 0;
-            progressBar1.Value = 0;
+            int start = (int)rangeStart.Value;
+            int end = (int)rangeEnd.Value;
+
+            if (start > end)
+                throw new NotImplementedException(@"Starting value can not be bigger than endind value!");
+
+            if (start == end)
+                throw new NotImplementedException(@"Starting value can not be equal ending value");
+
+            if (start == 1 && end == 1)
+                throw new NotImplementedException(@"Starting and ending value can not be equal 1");
+
+            progressBar.Maximum = end;
+            progressBar.Minimum = 0;
+            progressBar.Value = 0;
 
             Parser parser = (Parser)Activator.CreateInstance(_type[parserBox.SelectedIndex]);
 
             string baseAddress = string.Format("http://{0}{1}", localeBox.SelectedItem, parser.Adress);
 
-            for (decimal i = rangeStart.Value; i < rangeEnd.Value; ++i)
+            for (int i = start; i < end; ++i)
             {
                 Task task = Download(string.Format("{0}{1}", baseAddress, i), string.Format("{0}.txt", i));
                 task.Wait();
@@ -60,11 +80,7 @@ namespace WoWHeadParser
 
         public async Task Download(string address, string file)
         {
-            using (StreamWriter writer = new StreamWriter(file))
-            {
-                string page = await _client.DownloadStringTaskAsync(address);
-                _datas.Add(page);
-            }
+            await _client.DownloadStringTaskAsync(address);
         }
     }
 }
