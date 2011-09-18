@@ -35,19 +35,46 @@
             this.parserBox = new System.Windows.Forms.ComboBox();
             this.localeBox = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.threadCount = new System.Windows.Forms.NumericUpDown();
             this.rangeStart = new System.Windows.Forms.NumericUpDown();
             this.rangeEnd = new System.Windows.Forms.NumericUpDown();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.startButton = new System.Windows.Forms.Button();
-            this.threadCount = new System.Windows.Forms.NumericUpDown();
             rangeEndLabel = new System.Windows.Forms.Label();
             rangeStartLabel = new System.Windows.Forms.Label();
             threadCountLabel = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.threadCount)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rangeStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rangeEnd)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.threadCount)).BeginInit();
             this.SuspendLayout();
+            // 
+            // rangeEndLabel
+            // 
+            rangeEndLabel.AutoSize = true;
+            rangeEndLabel.Location = new System.Drawing.Point(103, 80);
+            rangeEndLabel.Name = "rangeEndLabel";
+            rangeEndLabel.Size = new System.Drawing.Size(29, 13);
+            rangeEndLabel.TabIndex = 13;
+            rangeEndLabel.Text = "End:";
+            // 
+            // rangeStartLabel
+            // 
+            rangeStartLabel.AutoSize = true;
+            rangeStartLabel.Location = new System.Drawing.Point(6, 80);
+            rangeStartLabel.Name = "rangeStartLabel";
+            rangeStartLabel.Size = new System.Drawing.Size(32, 13);
+            rangeStartLabel.TabIndex = 12;
+            rangeStartLabel.Text = "Start:";
+            // 
+            // threadCountLabel
+            // 
+            threadCountLabel.AutoSize = true;
+            threadCountLabel.Location = new System.Drawing.Point(198, 80);
+            threadCountLabel.Name = "threadCountLabel";
+            threadCountLabel.Size = new System.Drawing.Size(71, 13);
+            threadCountLabel.TabIndex = 14;
+            threadCountLabel.Text = "Thread count";
             // 
             // parserBox
             // 
@@ -89,6 +116,24 @@
             this.groupBox1.TabIndex = 4;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Settings";
+            // 
+            // threadCount
+            // 
+            this.threadCount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.threadCount.Location = new System.Drawing.Point(275, 78);
+            this.threadCount.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.threadCount.Name = "threadCount";
+            this.threadCount.Size = new System.Drawing.Size(54, 20);
+            this.threadCount.TabIndex = 15;
+            this.threadCount.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // rangeStart
             // 
@@ -136,29 +181,12 @@
             0,
             0});
             // 
-            // rangeEndLabel
-            // 
-            rangeEndLabel.AutoSize = true;
-            rangeEndLabel.Location = new System.Drawing.Point(103, 80);
-            rangeEndLabel.Name = "rangeEndLabel";
-            rangeEndLabel.Size = new System.Drawing.Size(29, 13);
-            rangeEndLabel.TabIndex = 13;
-            rangeEndLabel.Text = "End:";
-            // 
-            // rangeStartLabel
-            // 
-            rangeStartLabel.AutoSize = true;
-            rangeStartLabel.Location = new System.Drawing.Point(6, 80);
-            rangeStartLabel.Name = "rangeStartLabel";
-            rangeStartLabel.Size = new System.Drawing.Size(32, 13);
-            rangeStartLabel.TabIndex = 12;
-            rangeStartLabel.Text = "Start:";
-            // 
             // progressBar
             // 
             this.progressBar.Location = new System.Drawing.Point(6, 187);
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(300, 23);
+            this.progressBar.Size = new System.Drawing.Size(354, 23);
+            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar.TabIndex = 5;
             // 
             // startButton
@@ -170,33 +198,6 @@
             this.startButton.Text = "Start";
             this.startButton.UseVisualStyleBackColor = true;
             this.startButton.Click += new System.EventHandler(this.StartButtonClick);
-            // 
-            // threadCountLabel
-            // 
-            threadCountLabel.AutoSize = true;
-            threadCountLabel.Location = new System.Drawing.Point(198, 80);
-            threadCountLabel.Name = "threadCountLabel";
-            threadCountLabel.Size = new System.Drawing.Size(71, 13);
-            threadCountLabel.TabIndex = 14;
-            threadCountLabel.Text = "Thread count";
-            // 
-            // threadCount
-            // 
-            this.threadCount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.threadCount.Location = new System.Drawing.Point(275, 78);
-            this.threadCount.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.threadCount.Name = "threadCount";
-            this.threadCount.Size = new System.Drawing.Size(54, 20);
-            this.threadCount.TabIndex = 15;
-            this.threadCount.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
             // 
             // WoWHeadParserForm
             // 
@@ -212,9 +213,9 @@
             this.Text = "WowHead Parser";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.threadCount)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.rangeStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.rangeEnd)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.threadCount)).EndInit();
             this.ResumeLayout(false);
 
         }

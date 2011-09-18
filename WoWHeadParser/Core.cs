@@ -31,7 +31,6 @@ namespace WoWHeadParser
             for (uint i = _rangeStart; i < _rangeEnd; ++i)
             {
                 string address = string.Format("{0}{1}", baseAddress, i);
-                MessageBox.Show(address);
                 try
                 {
                     Task task = Download(address);
@@ -57,8 +56,7 @@ namespace WoWHeadParser
                     _worker.Pages.Enqueue(e.Result);
                 }
             }
-            Worker w = null;
-            w.Start();
+            ++_worker.ProgressBar.Value;
         }
     }
 }

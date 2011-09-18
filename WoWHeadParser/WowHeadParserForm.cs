@@ -55,7 +55,11 @@ namespace WoWHeadParser
             if (parser == null)
                 throw new NotImplementedException(@"Parser object is NULL!");
 
-            Worker worker = new Worker(parser, start, end, localeBox.SelectedItem, count);
+            progressBar.Value = (int) start;
+            progressBar.Minimum = (int)start;
+            progressBar.Maximum = (int)end;
+
+            Worker worker = new Worker(parser, start, end, localeBox.SelectedItem, count, progressBar);
             worker.Start();
         }
     }

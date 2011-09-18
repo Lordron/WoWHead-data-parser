@@ -5,6 +5,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace WoWHeadParser
 {
@@ -16,6 +17,7 @@ namespace WoWHeadParser
         protected object _locale;
         protected uint _threadCount;
         protected Queue<string> _pages;
+        protected ProgressBar _bar;
 
         public Queue<string> Pages
         {
@@ -33,13 +35,19 @@ namespace WoWHeadParser
             get { return _parser; }
         }
 
-        public Worker(Parser parser, uint rangeStart, uint rangeEnd, object locale, uint threadCount)
+        public ProgressBar ProgressBar
+        {
+            get { return _bar; }
+        }
+
+        public Worker(Parser parser, uint rangeStart, uint rangeEnd, object locale, uint threadCount, ProgressBar bar)
         {
             _parser = parser;
             _rangeStart = rangeStart;
             _rangeEnd = rangeEnd;
             _locale = locale;
             _threadCount = threadCount;
+            _bar = bar;
             _pages = new Queue<string>();
         }
 
