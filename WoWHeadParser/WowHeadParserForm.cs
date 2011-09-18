@@ -19,18 +19,14 @@ namespace WoWHeadParser
 
         public void Initial()
         {
-            uint count = 0;
             Type[] Types = Assembly.GetExecutingAssembly().GetTypes();
             foreach (Type type in Types)
             {
                 if (type.IsSubclassOf(typeof(Parser)))
                 {
                     parserBox.Items.Add(type);
-                    ++count;
                 }
             }
-            if (count == 0)
-                startButton.Enabled = false;
         }
 
         public void StartButtonClick(object sender, EventArgs e)
@@ -58,9 +54,19 @@ namespace WoWHeadParser
             progressBar.Value = (int) start;
             progressBar.Minimum = (int)start;
             progressBar.Maximum = (int)end;
-
             Worker worker = new Worker(parser, start, end, localeBox.SelectedItem, count, progressBar);
             worker.Start();
+        }
+
+        public void ParserIndexChanged(object sender, EventArgs e)
+        {
+            if (parserBox.SelectedItem == null)
+            {
+                startButton.Enabled = false;
+                return;
+            }
+
+            startButton.Enabled = true;
         }
     }
 }

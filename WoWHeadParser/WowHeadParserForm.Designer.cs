@@ -84,6 +84,7 @@
             this.parserBox.Name = "parserBox";
             this.parserBox.Size = new System.Drawing.Size(227, 21);
             this.parserBox.TabIndex = 1;
+            this.parserBox.SelectedIndexChanged += new System.EventHandler(this.ParserIndexChanged);
             // 
             // localeBox
             // 
@@ -183,7 +184,7 @@
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(6, 187);
+            this.progressBar.Location = new System.Drawing.Point(12, 166);
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(354, 23);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -197,6 +198,7 @@
             this.startButton.TabIndex = 6;
             this.startButton.Text = "Start";
             this.startButton.UseVisualStyleBackColor = true;
+            this.startButton.Enabled = false;
             this.startButton.Click += new System.EventHandler(this.StartButtonClick);
             // 
             // WoWHeadParserForm
@@ -204,7 +206,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.ClientSize = new System.Drawing.Size(372, 222);
+            this.ClientSize = new System.Drawing.Size(372, 197);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.groupBox1);
