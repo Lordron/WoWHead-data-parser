@@ -42,7 +42,10 @@ namespace WoWHeadParser
 
         void DownloadStringCompletedAction(object sender, DownloadStringCompletedEventArgs e)
         {
-            _datas.Add(e.Result);
+            if (e.Error == null)
+            {
+                _datas.Add(e.Result);
+            }
             ++progressBar.Value;
         }
 
