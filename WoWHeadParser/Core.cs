@@ -1,25 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace WoWHeadParser
 {
-    public class Core : Parser
+    public class Core
     {
-        public Core()
+        protected Worker _worker;
+        protected object _threadLock;
+        protected uint _rangeStart;
+        protected uint _rangeEnd;
+        protected WebClient _client;
+
+        public Core(uint rangeStart, uint rangeEnd, Worker worker)
         {
+            _threadLock = new object();
+            _worker = worker;
+            _rangeStart = rangeStart;
+            _rangeEnd = rangeEnd;
+            _client = new WebClient { Encoding = Encoding.UTF8 };
+            _client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(DownloadStringDataCompleted);
         }
 
-        public override string Parse(List<string> datas)
+        public void Start()
         {
-            throw new NotImplementedException();
-        }
-
-        public override string Adress
-        {
-            get
+            string baseAddress = string.Format("http://{0}{1}", _worker.Locale, _worker.Parser.Adress);
+            for (uint i = _rangeStart; i < _rangeEnd; ++i)
             {
-                return "wowhead.com/npc=";
+                string address = string.Format("{0}{1}", baseAddress, i);
+                MessageBox.Show(address);
+                try
+                {
+                    Task task = Download(address);
+                    task.Wait();
+                }
+                catch
+                {
+                }
             }
+        }
+
+        public async Task Download(string address)
+        {
+            await _client.DownloadStringTaskAsync(address);
+        }
+
+        void DownloadStringDataCompleted(object sender, DownloadStringCompletedEventArgs e)
+        {
+            if (e.Error == null)
+            {
+                lock (_threadLock)
+                {
+                    _worker.Pages.Enqueue(e.Result);
+                }
+            }
+            Worker w = null;
+            w.Start();
         }
     }
 }

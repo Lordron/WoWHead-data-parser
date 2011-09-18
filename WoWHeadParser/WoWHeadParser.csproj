@@ -72,7 +72,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core.cs" />
+    <Compile Include="PageParser.cs" />
     <Compile Include="Parser.cs" />
+    <Compile Include="Worker.cs" />
     <Compile Include="WowHeadParserForm.cs">
       <SubType>Form</SubType>
     </Compile>
