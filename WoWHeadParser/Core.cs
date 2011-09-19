@@ -27,8 +27,8 @@ namespace WoWHeadParser
 
         public void Start()
         {
-            string baseAddress = string.Format("http://{0}{1}", _worker.Locale, _worker.Parser.Adress);
-            for (uint i = _rangeStart; i < _rangeEnd; ++i)
+            string baseAddress = string.Format("http://{0}{1}", _worker.Locale, _worker.Address);
+            for (uint i = _rangeStart; i <= _rangeEnd; ++i)
             {
                 string address = string.Format("{0}{1}", baseAddress, i);
                 try

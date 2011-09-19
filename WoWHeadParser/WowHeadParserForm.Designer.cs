@@ -40,6 +40,7 @@
             this.rangeEnd = new System.Windows.Forms.NumericUpDown();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.startButton = new System.Windows.Forms.Button();
+            this.progressLabel = new System.Windows.Forms.Label();
             rangeEndLabel = new System.Windows.Forms.Label();
             rangeStartLabel = new System.Windows.Forms.Label();
             threadCountLabel = new System.Windows.Forms.Label();
@@ -192,14 +193,23 @@
             // 
             // startButton
             // 
+            this.startButton.Enabled = false;
             this.startButton.Location = new System.Drawing.Point(12, 137);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(75, 23);
             this.startButton.TabIndex = 6;
             this.startButton.Text = "Start";
             this.startButton.UseVisualStyleBackColor = true;
-            this.startButton.Enabled = false;
             this.startButton.Click += new System.EventHandler(this.StartButtonClick);
+            // 
+            // progressLabel
+            // 
+            this.progressLabel.AutoSize = true;
+            this.progressLabel.Location = new System.Drawing.Point(317, 147);
+            this.progressLabel.Name = "progressLabel";
+            this.progressLabel.Size = new System.Drawing.Size(43, 13);
+            this.progressLabel.TabIndex = 7;
+            this.progressLabel.Text = "<none>";
             // 
             // WoWHeadParserForm
             // 
@@ -207,6 +217,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.ClientSize = new System.Drawing.Size(372, 197);
+            this.Controls.Add(this.progressLabel);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.groupBox1);
@@ -219,6 +230,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.rangeStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.rangeEnd)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -232,6 +244,7 @@
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.NumericUpDown threadCount;
+        private System.Windows.Forms.Label progressLabel;
 
 
     }

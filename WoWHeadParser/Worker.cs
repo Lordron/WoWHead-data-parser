@@ -9,17 +9,17 @@ using System.Windows.Forms;
 
 namespace WoWHeadParser
 {
-    public delegate void DownloaderProgressHandler(Worker worker, uint val);
+    public delegate void DownloaderProgressHandler(Worker worker, int val);
 
     public class Worker
     {
-        protected Parser _parser;
         protected uint _rangeStart;
         protected uint _rangeEnd;
         protected object _locale;
         protected uint _threadCount;
         protected Queue<string> _pages;
-        protected uint _progress;
+        protected int _progress;
+        protected string _address;
 
         public event DownloaderProgressHandler OnProgressChanged;
 
@@ -34,25 +34,30 @@ namespace WoWHeadParser
             get { return _locale; }
         }
 
-        public Parser Parser
+        public string Address
         {
-            get { return _parser; }
+            get { return _address; }
         }
 
-        public Worker(Parser parser, uint rangeStart, uint rangeEnd, object locale, uint threadCount, uint progress)
+        public Worker(uint rangeStart, uint rangeEnd, object locale, string address, uint threadCount)
         {
-            _parser = parser;
+            _address = address;
             _rangeStart = rangeStart;
             _rangeEnd = rangeEnd;
             _locale = locale;
             _threadCount = threadCount;
             _pages = new Queue<string>();
-            _progress = progress;
+            _progress = (int)rangeStart;
         }
 
         public void Start()
         {
             uint petThread = (_rangeEnd - (_rangeStart - 1)) / _threadCount;
+            //start = 1000, end = 5000, threadCount = 25
+            //perThread = (5000 - 1000) / 25 = 160
+            //1000 -> 1160 ( 1000 - 1159)
+            //1160 -> 1320  (1160 - 1319)
+            //1320 -> 1480 (1320 - 1479
             for (uint i = 0; i < _threadCount; ++i)
             {
                 uint start = _rangeStart + (petThread * i);

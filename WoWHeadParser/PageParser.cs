@@ -13,7 +13,7 @@ namespace WoWHeadParser
             throw new NotImplementedException("NOT IMPLEMENTED");
         }
 
-        public override string Adress
+        public override string Address
         {
             get
             {

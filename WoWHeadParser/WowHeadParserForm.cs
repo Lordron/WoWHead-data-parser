@@ -11,6 +11,8 @@ namespace WoWHeadParser
 {
     public partial class WoWHeadParserForm : Form
     {
+        protected Parser _parser = null;
+
         public WoWHeadParserForm()
         {
             InitializeComponent();
@@ -47,14 +49,14 @@ namespace WoWHeadParser
             if (start == 1 && end == 1)
                 throw new NotImplementedException(@"Starting and ending value can not be equal '1'!");
 
-            Parser parser = (Parser)Activator.CreateInstance((Type)parserBox.SelectedItem);
-            if (parser == null)
+            _parser = (Parser)Activator.CreateInstance((Type)parserBox.SelectedItem);
+            if (_parser == null)
                 throw new NotImplementedException(@"Parser object is NULL!");
 
             progressBar.Value = (int) start;
             progressBar.Minimum = (int)start;
             progressBar.Maximum = (int)end;
-            Worker worker = new Worker(parser, start, end, localeBox.SelectedItem, count, start);
+            Worker worker = new Worker(start, end, localeBox.SelectedItem, _parser.Address, count);
             worker.OnProgressChanged += new DownloaderProgressHandler(WorkerProgressChanged);
             worker.Start();
         }
@@ -70,15 +72,15 @@ namespace WoWHeadParser
             startButton.Enabled = true;
         }
 
-        public void WorkerProgressChanged(Worker worker, uint val)
+        public void WorkerProgressChanged(Worker worker, int val)
         {
-            int value = (int)val;
-            progressBar.Value = value;
-            if (value == progressBar.Maximum)
+            progressLabel.Text = val.ToString();
+            progressBar.Value = val;
+            /*if (val == progressBar.Maximum)
             {
                 if (worker.Pages.Count > 0)
-                    worker.Parser.Parse(worker.Pages);
-            }
+                    _parser.Parse(worker.Pages);
+            }*/
         }
     }
 }

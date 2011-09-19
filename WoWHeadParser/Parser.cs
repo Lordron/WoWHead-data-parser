@@ -5,6 +5,6 @@ namespace WoWHeadParser
     {
         public abstract string Parse(Queue<string> pages);
 
-        public abstract string Adress { get; }
+        public abstract string Address { get; }
     }
 }
