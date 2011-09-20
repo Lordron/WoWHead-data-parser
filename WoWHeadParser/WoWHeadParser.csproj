@@ -71,7 +71,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Block.cs" />
     <Compile Include="Core.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="PageParser.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Worker.cs" />

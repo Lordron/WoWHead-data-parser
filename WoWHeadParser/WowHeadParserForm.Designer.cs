@@ -41,6 +41,7 @@
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.startButton = new System.Windows.Forms.Button();
             this.progressLabel = new System.Windows.Forms.Label();
+            this.saveDialog = new System.Windows.Forms.SaveFileDialog();
             rangeEndLabel = new System.Windows.Forms.Label();
             rangeStartLabel = new System.Windows.Forms.Label();
             threadCountLabel = new System.Windows.Forms.Label();
@@ -186,6 +187,7 @@
             // progressBar
             // 
             this.progressBar.Location = new System.Drawing.Point(12, 166);
+            this.progressBar.Maximum = 500000;
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(354, 23);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -210,6 +212,10 @@
             this.progressLabel.Size = new System.Drawing.Size(43, 13);
             this.progressLabel.TabIndex = 7;
             this.progressLabel.Text = "<none>";
+            // 
+            // saveDialog
+            // 
+            this.saveDialog.Filter = "Structured Query Language (.sql)| *.sql|All Files|*.*";
             // 
             // WoWHeadParserForm
             // 
@@ -245,6 +251,7 @@
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.NumericUpDown threadCount;
         private System.Windows.Forms.Label progressLabel;
+        private System.Windows.Forms.SaveFileDialog saveDialog;
 
 
     }

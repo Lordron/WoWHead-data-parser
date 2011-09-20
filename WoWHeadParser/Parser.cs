@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-namespace WoWHeadParser
+﻿namespace WoWHeadParser
 {
     public abstract class Parser
     {
-        public abstract string Parse(Queue<string> pages);
+        public abstract string Parse(string page, uint entry);
 
         public abstract string Address { get; }
     }

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Text;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace WoWHeadParser
 {
@@ -14,6 +11,7 @@ namespace WoWHeadParser
         protected uint _rangeStart;
         protected uint _rangeEnd;
         protected WebClient _client;
+        protected uint _entry;
 
         public Core(uint rangeStart, uint rangeEnd, Worker worker)
         {
@@ -28,9 +26,9 @@ namespace WoWHeadParser
         public void Start()
         {
             string baseAddress = string.Format("http://{0}{1}", _worker.Locale, _worker.Address);
-            for (uint i = _rangeStart; i <= _rangeEnd; ++i)
+            for (_entry = _rangeStart; _entry <= _rangeEnd; ++_entry)
             {
-                string address = string.Format("{0}{1}", baseAddress, i);
+                string address = string.Format("{0}{1}", baseAddress, _entry);
                 try
                 {
                     Task task = Download(address);
@@ -53,7 +51,8 @@ namespace WoWHeadParser
             {
                 lock (_threadLock)
                 {
-                    _worker.Pages.Enqueue(e.Result);
+                    Block block = new Block(e.Result, _entry);
+                    _worker.Pages.Enqueue(block);
                 }
             }
             _worker.Progress();

@@ -12,6 +12,7 @@ namespace WoWHeadParser
     public partial class WoWHeadParserForm : Form
     {
         protected Parser _parser = null;
+        public delegate void DownloaderProgressHandler(Worker worker);
 
         public WoWHeadParserForm()
         {
@@ -53,6 +54,8 @@ namespace WoWHeadParser
             if (_parser == null)
                 throw new NotImplementedException(@"Parser object is NULL!");
 
+            startButton.Enabled = false;
+
             progressBar.Value = (int) start;
             progressBar.Minimum = (int)start;
             progressBar.Maximum = (int)end;
@@ -72,15 +75,27 @@ namespace WoWHeadParser
             startButton.Enabled = true;
         }
 
-        public void WorkerProgressChanged(Worker worker, int val)
+        public void WorkerProgressChanged(Worker worker)
         {
-            progressLabel.Text = val.ToString();
-            progressBar.Value = val;
-            /*if (val == progressBar.Maximum)
+            ++progressBar.Value;
+            progressLabel.Text = progressBar.Value.ToString();
+            if (progressBar.Value == progressBar.Maximum)
             {
-                if (worker.Pages.Count > 0)
-                    _parser.Parse(worker.Pages);
-            }*/
+                progressBar.Visible = false;
+                progressLabel.Visible = false;
+
+                if (saveDialog.ShowDialog(this) != DialogResult.OK)
+                    return;
+
+                using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile()))
+                {
+                    foreach(Block block in worker.Pages)
+                    {
+                        stream.Write(_parser.Parse(block.Page, block.Entry));
+                    }
+                }
+                return;
+            }
         }
     }
 }
