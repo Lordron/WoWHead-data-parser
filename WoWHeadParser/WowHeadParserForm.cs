@@ -58,7 +58,7 @@ namespace WoWHeadParser
 
             progressBar.Value = (int) start;
             progressBar.Minimum = (int)start;
-            progressBar.Maximum = (int)end;
+            progressBar.Maximum = (int)end + 1;
             Worker worker = new Worker(start, end, localeBox.SelectedItem, _parser.Address, count);
             worker.OnProgressChanged += new DownloaderProgressHandler(WorkerProgressChanged);
             worker.Start();
@@ -77,12 +77,17 @@ namespace WoWHeadParser
 
         public void WorkerProgressChanged(Worker worker)
         {
-            ++progressBar.Value;
-            progressLabel.Text = progressBar.Value.ToString();
+            if (progressBar.InvokeRequired)
+                progressBar.BeginInvoke(new Action<int>((i) => ++progressBar.Value), 0);
+
+            if (progressLabel.InvokeRequired)
+                progressLabel.BeginInvoke(new Action<string>((s) => progressLabel.Text = s), progressBar.Value.ToString());
             if (progressBar.Value == progressBar.Maximum)
             {
-                progressBar.Visible = false;
-                progressLabel.Visible = false;
+                if (progressBar.InvokeRequired)
+                    progressBar.Invoke(new Action<bool>((b) => progressBar.Visible = b), true);
+                if (progressLabel.InvokeRequired)
+                    progressLabel.Invoke(new Action<bool>((b) => progressLabel.Visible = b), true);
 
                 if (saveDialog.ShowDialog(this) != DialogResult.OK)
                     return;
@@ -94,7 +99,6 @@ namespace WoWHeadParser
                         stream.Write(_parser.Parse(block.Page, block.Entry));
                     }
                 }
-                return;
             }
         }
     }

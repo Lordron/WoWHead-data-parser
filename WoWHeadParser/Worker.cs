@@ -49,7 +49,7 @@ namespace WoWHeadParser
                 {
                     uint start = _rangeStart + (petThread * i);
                     uint end = _rangeStart + (petThread * (i + 1));
-                    Core core = new Core(start, end - 1, this);
+                    Core core = new Core(start, end, this);
                     Thread thread = new Thread(core.Start);
                     thread.Start();
                 }
