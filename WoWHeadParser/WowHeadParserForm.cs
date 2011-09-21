@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Reflection;
@@ -34,20 +35,21 @@ namespace WoWHeadParser
 
         public void StartButtonClick(object sender, EventArgs e)
         {
-            uint start = (uint)rangeStart.Value;
-            uint end = (uint)rangeEnd.Value;
-            uint count = (uint)threadCount.Value;
+            int startValue = (int)rangeStart.Value;
+            int endValue = (int)rangeEnd.Value;
+            int threadsCount = (int)threadCount.Value;
+            string locale = (string)localeBox.SelectedItem;
 
             if (parserBox.SelectedItem == null)
                 throw new NotImplementedException(@"You should select something first!");
 
-            if (start > end)
+            if (startValue > endValue)
                 throw new NotImplementedException(@"Starting value can not be bigger than endind value!");
 
-            if (start == end)
+            if (startValue == endValue)
                 throw new NotImplementedException(@"Starting value can not be equal ending value!");
 
-            if (start == 1 && end == 1)
+            if (startValue == 1 && endValue == 1)
                 throw new NotImplementedException(@"Starting and ending value can not be equal '1'!");
 
             _parser = (Parser)Activator.CreateInstance((Type)parserBox.SelectedItem);
@@ -55,12 +57,10 @@ namespace WoWHeadParser
                 throw new NotImplementedException(@"Parser object is NULL!");
 
             startButton.Enabled = false;
-
-            progressBar.Value = (int) start;
-            progressBar.Minimum = (int)start;
-            progressBar.Maximum = (int)end + 1;
-            Worker worker = new Worker(start, end, localeBox.SelectedItem, _parser.Address, count);
-            worker.OnProgressChanged += new DownloaderProgressHandler(WorkerProgressChanged);
+            progressBar.Value = startValue;
+            progressBar.Minimum = startValue;
+            progressBar.Maximum = endValue + 1;
+            Worker worker = new Worker(startValue, endValue, threadsCount, locale, _parser.Address, backgroundWorker);
             worker.Start();
         }
 
@@ -75,30 +75,26 @@ namespace WoWHeadParser
             startButton.Enabled = true;
         }
 
-        public void WorkerProgressChanged(Worker worker)
+        private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            if (progressBar.InvokeRequired)
-                progressBar.BeginInvoke(new Action<int>((i) => ++progressBar.Value), 0);
+            progressBar.Value += e.ProgressPercentage;
+        }
 
-            if (progressLabel.InvokeRequired)
-                progressLabel.BeginInvoke(new Action<string>((s) => progressLabel.Text = s), progressBar.Value.ToString());
-            if (progressBar.Value == progressBar.Maximum)
+        void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            progressBar.Visible = true;
+            progressLabel.Visible = true;
+            startButton.Enabled = true;
+
+            if (saveDialog.ShowDialog(this) != DialogResult.OK)
+                return;
+
+            using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile()))
             {
-                if (progressBar.InvokeRequired)
-                    progressBar.Invoke(new Action<bool>((b) => progressBar.Visible = b), true);
-                if (progressLabel.InvokeRequired)
-                    progressLabel.Invoke(new Action<bool>((b) => progressLabel.Visible = b), true);
-
-                if (saveDialog.ShowDialog(this) != DialogResult.OK)
-                    return;
-
-                using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile()))
-                {
-                    foreach(Block block in worker.Pages)
-                    {
-                        stream.Write(_parser.Parse(block.Page, block.Entry));
-                    }
-                }
+                //foreach (Block block in background.Pages)
+                //{
+                //    stream.Write(_parser.Parse(block.Page, block.Entry));
+                //}
             }
         }
     }

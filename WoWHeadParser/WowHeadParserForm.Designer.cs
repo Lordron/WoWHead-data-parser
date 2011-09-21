@@ -1,4 +1,5 @@
-﻿namespace WoWHeadParser
+﻿using System.ComponentModel;
+namespace WoWHeadParser
 {
     partial class WoWHeadParserForm
     {
@@ -42,6 +43,7 @@
             this.startButton = new System.Windows.Forms.Button();
             this.progressLabel = new System.Windows.Forms.Label();
             this.saveDialog = new System.Windows.Forms.SaveFileDialog();
+            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             rangeEndLabel = new System.Windows.Forms.Label();
             rangeStartLabel = new System.Windows.Forms.Label();
             threadCountLabel = new System.Windows.Forms.Label();
@@ -217,6 +219,12 @@
             // 
             this.saveDialog.Filter = "Structured Query Language (.sql)| *.sql|All Files|*.*";
             // 
+            // backgroundWorker
+            // 
+            this.backgroundWorker.WorkerReportsProgress = true;
+            this.backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(backgroundWorker_ProgressChanged);
+            this.backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker_RunWorkerCompleted);
+            // 
             // WoWHeadParserForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -252,6 +260,7 @@
         private System.Windows.Forms.NumericUpDown threadCount;
         private System.Windows.Forms.Label progressLabel;
         private System.Windows.Forms.SaveFileDialog saveDialog;
+        private System.ComponentModel.BackgroundWorker backgroundWorker;
 
 
     }

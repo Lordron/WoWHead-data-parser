@@ -1,26 +1,29 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading;
 
 namespace WoWHeadParser
 {
     public class Worker
     {
-        protected uint _rangeStart;
-        protected uint _rangeEnd;
-        protected object _locale;
-        protected uint _threadCount;
-        protected Queue<Block> _pages;
+        protected int _rangeStart;
+        protected int _rangeEnd;
+        protected int _threadCount;
+        protected string _locale;
         protected string _address;
+        protected Queue<Block> _pages;
+        protected BackgroundWorker _background;
 
-        public event WoWHeadParser.WoWHeadParserForm.DownloaderProgressHandler OnProgressChanged;
-
+        public BackgroundWorker Background
+        {
+            get { return _background; }
+        }
         public Queue<Block> Pages
         {
             get { return _pages; }
-            set { _pages = value; }
         }
 
-        public object Locale
+        public string Locale
         {
             get { return _locale; }
         }
@@ -30,8 +33,10 @@ namespace WoWHeadParser
             get { return _address; }
         }
 
-        public Worker(uint rangeStart, uint rangeEnd, object locale, string address, uint threadCount)
+        public Worker(int rangeStart, int rangeEnd, int threadCount, string locale, string address, BackgroundWorker background)
         {
+            _background = background;
+            _background.DoWork += new DoWorkEventHandler(DoWorkDownload);
             _address = address;
             _rangeStart = rangeStart;
             _rangeEnd = rangeEnd;
@@ -44,27 +49,26 @@ namespace WoWHeadParser
         {
             if (_threadCount > 1)
             {
-                uint petThread = (_rangeEnd - _rangeStart) / _threadCount;
+                int petThread = (_rangeEnd - _rangeStart) / _threadCount;
                 for (uint i = 0; i < _threadCount; ++i)
                 {
-                    uint start = _rangeStart + (petThread * i);
-                    uint end = _rangeStart + (petThread * (i + 1));
+                    int start = (int)(_rangeStart + (petThread * i));
+                    int end = (int)(_rangeStart + (petThread * (i + 1)));
                     Core core = new Core(start, end, this);
-                    Thread thread = new Thread(core.Start);
-                    thread.Start();
+                    _background.RunWorkerAsync(core);
                 }
             }
             else
             {
                 Core core = new Core(_rangeStart, _rangeEnd, this);
-                Thread thread = new Thread(core.Start);
-                thread.Start();
+                _background.RunWorkerAsync(core);
             }
         }
 
-        public void Progress()
+        void DoWorkDownload(object sender, DoWorkEventArgs e)
         {
-            OnProgressChanged(this);
+            Core core = (Core)e.Argument;
+            core.Start();
         }
     }
 }

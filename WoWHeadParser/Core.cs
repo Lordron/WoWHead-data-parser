@@ -7,13 +7,13 @@ namespace WoWHeadParser
     public class Core
     {
         protected Worker _worker;
-        protected object _threadLock;
-        protected uint _rangeStart;
-        protected uint _rangeEnd;
         protected WebClient _client;
-        protected uint _entry;
+        protected object _threadLock;
+        protected int _rangeStart;
+        protected int _rangeEnd;
+        protected int _entry;
 
-        public Core(uint rangeStart, uint rangeEnd, Worker worker)
+        public Core(int rangeStart, int rangeEnd, Worker worker)
         {
             _threadLock = new object();
             _worker = worker;
@@ -25,7 +25,7 @@ namespace WoWHeadParser
 
         public void Start()
         {
-            string baseAddress = string.Format("http://{0}{1}", _worker.Locale, _worker.Address);
+            string baseAddress = string.Format("http://{0}{1}", (string.IsNullOrEmpty(_worker.Locale) ? "www." : _worker.Locale), _worker.Address);
             for (_entry = _rangeStart; _entry <= _rangeEnd; ++_entry)
             {
                 string address = string.Format("{0}{1}", baseAddress, _entry);
@@ -51,11 +51,11 @@ namespace WoWHeadParser
             {
                 lock (_threadLock)
                 {
-                    Block block = new Block(e.Result, _entry);
+                    Block block = new Block(e.Result, (uint)_entry);
                     _worker.Pages.Enqueue(block);
                 }
             }
-            _worker.Progress();
+            _worker.Background.ReportProgress(1);
         }
     }
 }
