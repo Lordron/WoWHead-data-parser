@@ -13,7 +13,6 @@ namespace WoWHeadParser
     public partial class WoWHeadParserForm : Form
     {
         protected Parser _parser = null;
-        public delegate void DownloaderProgressHandler(Worker worker);
 
         public WoWHeadParserForm()
         {
@@ -37,20 +36,23 @@ namespace WoWHeadParser
         {
             int startValue = (int)rangeStart.Value;
             int endValue = (int)rangeEnd.Value;
-            int threadsCount = (int)threadCount.Value;
+            int threadCount = (int)threadCountBox.Value;
             string locale = (string)localeBox.SelectedItem;
 
             if (parserBox.SelectedItem == null)
                 throw new NotImplementedException(@"You should select something first!");
 
             if (startValue > endValue)
-                throw new NotImplementedException(@"Starting value can not be bigger than endind value!");
+                throw new NotImplementedException(@"Starting value can not be bigger than ending value!");
 
             if (startValue == endValue)
                 throw new NotImplementedException(@"Starting value can not be equal ending value!");
 
             if (startValue == 1 && endValue == 1)
                 throw new NotImplementedException(@"Starting and ending value can not be equal '1'!");
+
+            if (threadCount > endValue)
+                throw new NotImplementedException(@"Thread count value can not be bigger than ending value!");
 
             _parser = (Parser)Activator.CreateInstance((Type)parserBox.SelectedItem);
             if (_parser == null)
@@ -60,7 +62,9 @@ namespace WoWHeadParser
             progressBar.Value = startValue;
             progressBar.Minimum = startValue;
             progressBar.Maximum = endValue + 1;
-            Worker worker = new Worker(startValue, endValue, threadsCount, locale, _parser.Address, backgroundWorker);
+
+            string address = string.Format("http://{0}{1}", (string.IsNullOrEmpty(locale) ? "www." : locale), _parser.Address);
+            Worker worker = new Worker(startValue, endValue, threadCount, address, backgroundWorker);
             worker.Start();
         }
 
@@ -77,7 +81,8 @@ namespace WoWHeadParser
 
         private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            progressBar.Value += e.ProgressPercentage;
+            if (progressBar.InvokeRequired)
+                progressBar.BeginInvoke(new Action<int>((i) => progressBar.Value += i), e.ProgressPercentage);
         }
 
         void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)

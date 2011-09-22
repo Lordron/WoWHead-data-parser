@@ -36,7 +36,7 @@ namespace WoWHeadParser
             this.parserBox = new System.Windows.Forms.ComboBox();
             this.localeBox = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.threadCount = new System.Windows.Forms.NumericUpDown();
+            this.threadCountBox = new System.Windows.Forms.NumericUpDown();
             this.rangeStart = new System.Windows.Forms.NumericUpDown();
             this.rangeEnd = new System.Windows.Forms.NumericUpDown();
             this.progressBar = new System.Windows.Forms.ProgressBar();
@@ -48,7 +48,7 @@ namespace WoWHeadParser
             rangeStartLabel = new System.Windows.Forms.Label();
             threadCountLabel = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.threadCount)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.threadCountBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rangeStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rangeEnd)).BeginInit();
             this.SuspendLayout();
@@ -107,7 +107,7 @@ namespace WoWHeadParser
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.threadCount);
+            this.groupBox1.Controls.Add(this.threadCountBox);
             this.groupBox1.Controls.Add(threadCountLabel);
             this.groupBox1.Controls.Add(this.rangeStart);
             this.groupBox1.Controls.Add(this.rangeEnd);
@@ -122,19 +122,19 @@ namespace WoWHeadParser
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Settings";
             // 
-            // threadCount
+            // threadCountBox
             // 
-            this.threadCount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.threadCount.Location = new System.Drawing.Point(275, 78);
-            this.threadCount.Minimum = new decimal(new int[] {
+            this.threadCountBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.threadCountBox.Location = new System.Drawing.Point(275, 78);
+            this.threadCountBox.Minimum = new decimal(new int[] {
             1,
             0,
             0,
             0});
-            this.threadCount.Name = "threadCount";
-            this.threadCount.Size = new System.Drawing.Size(54, 20);
-            this.threadCount.TabIndex = 15;
-            this.threadCount.Value = new decimal(new int[] {
+            this.threadCountBox.Name = "threadCount";
+            this.threadCountBox.Size = new System.Drawing.Size(54, 20);
+            this.threadCountBox.TabIndex = 15;
+            this.threadCountBox.Value = new decimal(new int[] {
             1,
             0,
             0,
@@ -240,7 +240,7 @@ namespace WoWHeadParser
             this.Text = "WowHead Parser";
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.threadCount)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.threadCountBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.rangeStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.rangeEnd)).EndInit();
             this.ResumeLayout(false);
@@ -257,7 +257,7 @@ namespace WoWHeadParser
         private System.Windows.Forms.NumericUpDown rangeStart;
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Button startButton;
-        private System.Windows.Forms.NumericUpDown threadCount;
+        private System.Windows.Forms.NumericUpDown threadCountBox;
         private System.Windows.Forms.Label progressLabel;
         private System.Windows.Forms.SaveFileDialog saveDialog;
         private System.ComponentModel.BackgroundWorker backgroundWorker;

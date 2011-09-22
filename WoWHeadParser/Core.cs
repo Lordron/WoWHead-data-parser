@@ -25,10 +25,9 @@ namespace WoWHeadParser
 
         public void Start()
         {
-            string baseAddress = string.Format("http://{0}{1}", (string.IsNullOrEmpty(_worker.Locale) ? "www." : _worker.Locale), _worker.Address);
             for (_entry = _rangeStart; _entry <= _rangeEnd; ++_entry)
             {
-                string address = string.Format("{0}{1}", baseAddress, _entry);
+                string address = string.Format("{0}{1}", _worker.Address, _entry);
                 try
                 {
                     Task task = Download(address);

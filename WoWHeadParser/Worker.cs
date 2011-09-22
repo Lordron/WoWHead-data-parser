@@ -9,7 +9,6 @@ namespace WoWHeadParser
         protected int _rangeStart;
         protected int _rangeEnd;
         protected int _threadCount;
-        protected string _locale;
         protected string _address;
         protected Queue<Block> _pages;
         protected BackgroundWorker _background;
@@ -23,24 +22,18 @@ namespace WoWHeadParser
             get { return _pages; }
         }
 
-        public string Locale
-        {
-            get { return _locale; }
-        }
-
         public string Address
         {
             get { return _address; }
         }
 
-        public Worker(int rangeStart, int rangeEnd, int threadCount, string locale, string address, BackgroundWorker background)
+        public Worker(int rangeStart, int rangeEnd, int threadCount, string address, BackgroundWorker background)
         {
             _background = background;
             _background.DoWork += new DoWorkEventHandler(DoWorkDownload);
             _address = address;
             _rangeStart = rangeStart;
             _rangeEnd = rangeEnd;
-            _locale = locale;
             _threadCount = threadCount;
             _pages = new Queue<Block>();
         }
@@ -55,7 +48,8 @@ namespace WoWHeadParser
                     int start = (int)(_rangeStart + (petThread * i));
                     int end = (int)(_rangeStart + (petThread * (i + 1)));
                     Core core = new Core(start, end, this);
-                    _background.RunWorkerAsync(core);
+                    Thread thread = new Thread(core.Start);
+                    thread.Start();
                 }
             }
             else
