@@ -41,9 +41,10 @@ namespace WoWHeadParser
             this.rangeEnd = new System.Windows.Forms.NumericUpDown();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.startButton = new System.Windows.Forms.Button();
-            this.progressLabel = new System.Windows.Forms.Label();
+            this.stateLabel = new System.Windows.Forms.Label();
             this.saveDialog = new System.Windows.Forms.SaveFileDialog();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.stopButton = new System.Windows.Forms.Button();
             rangeEndLabel = new System.Windows.Forms.Label();
             rangeStartLabel = new System.Windows.Forms.Label();
             threadCountLabel = new System.Windows.Forms.Label();
@@ -131,7 +132,7 @@ namespace WoWHeadParser
             0,
             0,
             0});
-            this.threadCountBox.Name = "threadCount";
+            this.threadCountBox.Name = "threadCountBox";
             this.threadCountBox.Size = new System.Drawing.Size(54, 20);
             this.threadCountBox.TabIndex = 15;
             this.threadCountBox.Value = new decimal(new int[] {
@@ -206,14 +207,14 @@ namespace WoWHeadParser
             this.startButton.UseVisualStyleBackColor = true;
             this.startButton.Click += new System.EventHandler(this.StartButtonClick);
             // 
-            // progressLabel
+            // stateLabel
             // 
-            this.progressLabel.AutoSize = true;
-            this.progressLabel.Location = new System.Drawing.Point(317, 147);
-            this.progressLabel.Name = "progressLabel";
-            this.progressLabel.Size = new System.Drawing.Size(43, 13);
-            this.progressLabel.TabIndex = 7;
-            this.progressLabel.Text = "<none>";
+            this.stateLabel.AutoSize = true;
+            this.stateLabel.Location = new System.Drawing.Point(249, 142);
+            this.stateLabel.Name = "stateLabel";
+            this.stateLabel.Size = new System.Drawing.Size(43, 13);
+            this.stateLabel.TabIndex = 7;
+            this.stateLabel.Text = "<none>";
             // 
             // saveDialog
             // 
@@ -222,8 +223,20 @@ namespace WoWHeadParser
             // backgroundWorker
             // 
             this.backgroundWorker.WorkerReportsProgress = true;
-            this.backgroundWorker.ProgressChanged += new ProgressChangedEventHandler(backgroundWorker_ProgressChanged);
-            this.backgroundWorker.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker_RunWorkerCompleted);
+            this.backgroundWorker.WorkerSupportsCancellation = true;
+            this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker_ProgressChanged);
+            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
+            // 
+            // stopButton
+            // 
+            this.stopButton.Enabled = false;
+            this.stopButton.Location = new System.Drawing.Point(112, 137);
+            this.stopButton.Name = "stopButton";
+            this.stopButton.Size = new System.Drawing.Size(75, 23);
+            this.stopButton.TabIndex = 8;
+            this.stopButton.Text = "Stop";
+            this.stopButton.UseVisualStyleBackColor = true;
+            this.stopButton.Click += new System.EventHandler(this.StopButtonClick);
             // 
             // WoWHeadParserForm
             // 
@@ -231,7 +244,8 @@ namespace WoWHeadParser
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.ClientSize = new System.Drawing.Size(372, 197);
-            this.Controls.Add(this.progressLabel);
+            this.Controls.Add(this.stopButton);
+            this.Controls.Add(this.stateLabel);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.groupBox1);
@@ -258,9 +272,10 @@ namespace WoWHeadParser
         private System.Windows.Forms.ProgressBar progressBar;
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.NumericUpDown threadCountBox;
-        private System.Windows.Forms.Label progressLabel;
+        private System.Windows.Forms.Label stateLabel;
         private System.Windows.Forms.SaveFileDialog saveDialog;
         private System.ComponentModel.BackgroundWorker backgroundWorker;
+        private System.Windows.Forms.Button stopButton;
 
 
     }

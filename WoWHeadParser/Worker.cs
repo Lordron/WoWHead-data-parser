@@ -12,6 +12,7 @@ namespace WoWHeadParser
         protected string _address;
         protected Queue<Block> _pages;
         protected BackgroundWorker _background;
+        protected List<Thread> _threads;
 
         public BackgroundWorker Background
         {
@@ -27,6 +28,11 @@ namespace WoWHeadParser
             get { return _address; }
         }
 
+        public List<Thread> Threads
+        {
+            get { return _threads; }
+        }
+
         public Worker(int rangeStart, int rangeEnd, int threadCount, string address, BackgroundWorker background)
         {
             _background = background;
@@ -36,6 +42,7 @@ namespace WoWHeadParser
             _rangeEnd = rangeEnd;
             _threadCount = threadCount;
             _pages = new Queue<Block>();
+            _threads = new List<Thread>();
         }
 
         public void Start()
@@ -49,6 +56,7 @@ namespace WoWHeadParser
                     int end = (int)(_rangeStart + (petThread * (i + 1)));
                     Core core = new Core(start, end, this);
                     Thread thread = new Thread(core.Start);
+                    _threads.Add(thread);
                     thread.Start();
                 }
             }
