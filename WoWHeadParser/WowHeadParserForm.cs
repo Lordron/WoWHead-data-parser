@@ -13,7 +13,7 @@ namespace WoWHeadParser
     public partial class WoWHeadParserForm : Form
     {
         protected Parser _parser = null;
-
+        protected Worker _worker = null;
         public WoWHeadParserForm()
         {
             InitializeComponent();
@@ -61,11 +61,11 @@ namespace WoWHeadParser
             startButton.Enabled = false;
             progressBar.Value = startValue;
             progressBar.Minimum = startValue;
-            progressBar.Maximum = endValue + 1;
+            progressBar.Maximum = endValue + threadCount;
 
             string address = string.Format("http://{0}{1}", (string.IsNullOrEmpty(locale) ? "www." : locale), _parser.Address);
-            Worker worker = new Worker(startValue, endValue, threadCount, address, backgroundWorker);
-            worker.Start();
+            _worker = new Worker(startValue, endValue, threadCount, address, backgroundWorker);
+            _worker.Start();
         }
 
         public void ParserIndexChanged(object sender, EventArgs e)
@@ -87,6 +87,9 @@ namespace WoWHeadParser
 
         void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            if (_worker == null)
+                throw new NotImplementedException(@"Worker object is NULL!");
+
             progressBar.Visible = true;
             progressLabel.Visible = true;
             startButton.Enabled = true;
@@ -96,10 +99,10 @@ namespace WoWHeadParser
 
             using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile()))
             {
-                //foreach (Block block in background.Pages)
-                //{
-                //    stream.Write(_parser.Parse(block.Page, block.Entry));
-                //}
+                foreach (Block block in _worker.Pages)
+                {
+                    stream.Write(_parser.Parse(block.Page, block.Entry));
+                }
             }
         }
     }
