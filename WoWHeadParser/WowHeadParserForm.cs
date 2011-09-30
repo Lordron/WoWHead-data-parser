@@ -67,6 +67,7 @@ namespace WoWHeadParser
             progressBar.Minimum = startValue;
             progressBar.Maximum = endValue + 1;
             stateLabel.Text = "Downloading...";
+
             string address = string.Format("http://{0}{1}", (string.IsNullOrEmpty(locale) ? "www." : locale), _parser.Address);
             _worker = new Worker(startValue, endValue, _threadCount, address, backgroundWorker);
             _worker.Start();
@@ -106,8 +107,10 @@ namespace WoWHeadParser
             startButton.Enabled = true;
             stopButton.Enabled = false;
             stateLabel.Text = "Parsing...";
+
             if (saveDialog.ShowDialog(this) != DialogResult.OK)
                 return;
+
             using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile()))
             {
                 foreach (Block block in _worker.Pages)
@@ -115,6 +118,7 @@ namespace WoWHeadParser
                     stream.Write(_parser.Parse(block.Page, block.Entry));
                 }
             }
+
             stateLabel.Text = "Complete!";
         }
 
