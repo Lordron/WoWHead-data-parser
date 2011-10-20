@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Net;
+using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace WoWHeadParser
 {
@@ -8,24 +12,20 @@ namespace WoWHeadParser
     {
         protected int _rangeStart;
         protected int _rangeEnd;
-        protected int _threadCount;
+        protected int _entry;
+        protected object _threadLock;
         protected string _address;
         protected Queue<Block> _pages;
         protected BackgroundWorker _background;
         protected List<Thread> _threads;
+        protected Semaphore _semaphore;
+        protected WebClient _client;
 
-        public BackgroundWorker Background
-        {
-            get { return _background; }
-        }
+        protected const int PercentProgress = 1;
+
         public Queue<Block> Pages
         {
             get { return _pages; }
-        }
-
-        public string Address
-        {
-            get { return _address; }
         }
 
         public List<Thread> Threads
@@ -35,42 +35,59 @@ namespace WoWHeadParser
 
         public Worker(int rangeStart, int rangeEnd, int threadCount, string address, BackgroundWorker background)
         {
-            _background = background;
-            _background.DoWork += new DoWorkEventHandler(DoWorkDownload);
-            _address = address;
             _rangeStart = rangeStart;
             _rangeEnd = rangeEnd;
-            _threadCount = threadCount;
+
+            _background = background;
+            _background.DoWork += new DoWorkEventHandler(DoWorkDownload);
+            _threadLock = new object();
+            _address = address;
             _pages = new Queue<Block>();
             _threads = new List<Thread>();
+            _semaphore = new Semaphore(threadCount, threadCount);
+            _client = new WebClient { Encoding = Encoding.UTF8 };
+            _client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(DownloadStringDataCompleted);
         }
 
         public void Start()
         {
-            if (_threadCount > 1)
-            {
-                int petThread = (_rangeEnd - _rangeStart) / _threadCount;
-                for (uint i = 0; i < _threadCount; ++i)
-                {
-                    int start = (int)(_rangeStart + (petThread * i));
-                    int end = (int)(_rangeStart + (petThread * (i + 1)));
-                    Core core = new Core(start, end, this);
-                    Thread thread = new Thread(core.Start);
-                    _threads.Add(thread);
-                    thread.Start();
-                }
-            }
-            else
-            {
-                Core core = new Core(_rangeStart, _rangeEnd, this);
-                _background.RunWorkerAsync(core);
-            }
+            _background.RunWorkerAsync();
         }
 
         void DoWorkDownload(object sender, DoWorkEventArgs e)
         {
-            Core core = (Core)e.Argument;
-            core.Start();
+            for (_entry = _rangeStart; _entry < _rangeEnd; ++_entry)
+            {
+                _semaphore.WaitOne();
+                Thread thread = new Thread(DownloadStart);
+                _threads.Add(thread);
+                thread.Start();
+            }
+        }
+
+        public void DownloadStart()
+        {
+            try
+            {
+                _client.DownloadStringAsync(new Uri(string.Format("{0}{1}", _address, _entry)));
+            }
+            catch { }
+        }
+
+        void DownloadStringDataCompleted(object sender, DownloadStringCompletedEventArgs e)
+        {
+            if (e.Error == null)
+            {
+                lock (_threadLock)
+                {
+                    Block block = new Block(e.Result, (uint)_entry);
+                    _pages.Enqueue(block);
+                }
+            }
+            if (_background.IsBusy)
+                _background.ReportProgress(PercentProgress);
+
+            _semaphore.Release();
         }
     }
 }

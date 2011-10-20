@@ -3,13 +3,23 @@ namespace WoWHeadParser
 {
     public struct Block
     {
-        public string Page;
-        public uint Entry;
+        private string _page;
+        private uint _entry;
+
+        public string Page
+        {
+            get { return _page; }
+        }
+
+        public uint Entry
+        {
+            get { return _entry; }
+        }
 
         public Block(string page, uint entry)
         {
-            Page = page;
-            Entry = entry;
+            _page = page;
+            _entry = entry;
         }
     }
 }

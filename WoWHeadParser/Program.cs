@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
+[assembly: CLSCompliant(true)]
 namespace WoWHeadParser
 {
     static class Program
