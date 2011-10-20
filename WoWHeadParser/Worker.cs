@@ -4,24 +4,23 @@ using System.ComponentModel;
 using System.Net;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace WoWHeadParser
 {
-    public class Worker
+    public class Worker : IDisposable
     {
-        protected int _rangeStart;
-        protected int _rangeEnd;
-        protected int _entry;
-        protected object _threadLock;
-        protected string _address;
-        protected Queue<Block> _pages;
-        protected BackgroundWorker _background;
-        protected List<Thread> _threads;
-        protected Semaphore _semaphore;
-        protected WebClient _client;
+        private int _rangeStart;
+        private int _rangeEnd;
+        private int _entry;
+        private object _threadLock;
+        private string _address;
+        private Queue<Block> _pages;
+        private BackgroundWorker _background;
+        private List<Thread> _threads;
+        private Semaphore _semaphore;
+        private WebClient _client;
 
-        protected const int PercentProgress = 1;
+        private const int PercentProgress = 1;
 
         public Queue<Block> Pages
         {
@@ -37,7 +36,6 @@ namespace WoWHeadParser
         {
             _rangeStart = rangeStart;
             _rangeEnd = rangeEnd;
-
             _background = background;
             _background.DoWork += new DoWorkEventHandler(DoWorkDownload);
             _threadLock = new object();
@@ -46,7 +44,7 @@ namespace WoWHeadParser
             _threads = new List<Thread>();
             _semaphore = new Semaphore(threadCount, threadCount);
             _client = new WebClient { Encoding = Encoding.UTF8 };
-            _client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(DownloadStringDataCompleted);
+            _client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(DownloadStringAsyncCompleted);
         }
 
         public void Start()
@@ -59,13 +57,13 @@ namespace WoWHeadParser
             for (_entry = _rangeStart; _entry < _rangeEnd; ++_entry)
             {
                 _semaphore.WaitOne();
-                Thread thread = new Thread(DownloadStart);
+                Thread thread = new Thread(Download);
                 _threads.Add(thread);
                 thread.Start();
             }
         }
 
-        public void DownloadStart()
+        public void Download()
         {
             try
             {
@@ -74,7 +72,7 @@ namespace WoWHeadParser
             catch { }
         }
 
-        void DownloadStringDataCompleted(object sender, DownloadStringCompletedEventArgs e)
+        void DownloadStringAsyncCompleted(object sender, DownloadStringCompletedEventArgs e)
         {
             if (e.Error == null)
             {
@@ -84,10 +82,28 @@ namespace WoWHeadParser
                     _pages.Enqueue(block);
                 }
             }
+
             if (_background.IsBusy)
                 _background.ReportProgress(PercentProgress);
 
             _semaphore.Release();
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_semaphore != null)
+                    _semaphore.Dispose();
+                if (_client != null)
+                    _client.Dispose();
+            }
         }
     }
 }

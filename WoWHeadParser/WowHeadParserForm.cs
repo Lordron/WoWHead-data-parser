@@ -13,8 +13,8 @@ namespace WoWHeadParser
 {
     public partial class WoWHeadParserForm : Form
     {
-        protected Parser _parser = null;
-        protected Worker _worker = null;
+        private Parser _parser = null;
+        private Worker _worker = null;
 
         public WoWHeadParserForm()
         {

@@ -21,5 +21,30 @@ namespace WoWHeadParser
             _page = page;
             _entry = entry;
         }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return _entry.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return _page;
+        }
+
+        public static bool operator ==(Block block1, Block block2)
+        {
+            return block1._entry == block2._entry;
+        }
+
+        public static bool operator !=(Block block1, Block block2)
+        {
+            return block1._entry != block2._entry;
+        }
     }
 }
