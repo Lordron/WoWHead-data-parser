@@ -6,18 +6,18 @@ namespace WoWHeadParser
 {
     internal class PageParser : Parser
     {
-        public override string Parse(string page, uint entry)
+        public override string Parse(Block block)
         {
             StringBuilder content = new StringBuilder();
             Regex reg = new Regex(@"new Book\({ parent: '.+', pages: \['(?<test>.+)'\]}\)", RegexOptions.Multiline);
-            MatchCollection matches = reg.Matches(page);
+            MatchCollection matches = reg.Matches(block.page);
 
             foreach (Match match in matches)
             {
                 GroupCollection groups = match.Groups;
                 string typeStr = groups["test"].Value ?? string.Empty;
                 string[] pages = typeStr.Split(new[] { @"','" }, StringSplitOptions.RemoveEmptyEntries);
-                content.AppendFormat("SET @ENTRY := SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0};", entry).AppendLine();
+                content.AppendFormat("SET @ENTRY := SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0};", block.entry).AppendLine();
                 content.AppendLine(@"INSERT IGNORE INTO `page_text` (`entry`, `text`, `next_page`) VALUES");
                 for (int i = 0; i < pages.Length; ++i)
                 {
