@@ -105,7 +105,8 @@ namespace WoWHeadParser
                 {
                     foreach (Block block in _worker.Pages)
                     {
-                        stream.Write(_parser.Parse(block.Page, block.Entry));
+                        string content = _parser.Parse(block);
+                        stream.Write(content);
                     }
                 }
             }
