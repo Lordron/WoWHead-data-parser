@@ -18,12 +18,12 @@ namespace WoWHeadParser
                 string typeStr = groups["test"].Value ?? string.Empty;
                 string[] pages = typeStr.Split(new[] { @"','" }, StringSplitOptions.RemoveEmptyEntries);
                 content.AppendFormat("SET @ENTRY := SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0};", entry).AppendLine();
-                content.AppendLine(@"INSERT IGNORE INTO `page_text` VALUES");
+                content.AppendLine(@"INSERT IGNORE INTO `page_text` (`entry`, `text`, `next_page`) VALUES");
                 for (int i = 0; i < pages.Length; ++i)
                 {
                     content.AppendFormat(@"({0}, '{1}', {2}){3}",
-                        i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i), pages[i].HTMLEscapeSumbols(),
-                        i < pages.Length - 1 ? string.Format("@ENTRY + {0}", i + 1) : "0", (i < pages.Length - 1 ? "," : ";")).AppendLine();
+                        (i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i)), pages[i].HTMLEscapeSumbols(),
+                        (i < pages.Length - 1) ? string.Format("@ENTRY + {0}", i + 1) : "0", (i < pages.Length - 1 ? "," : ";")).AppendLine();
                 }
             }
 
