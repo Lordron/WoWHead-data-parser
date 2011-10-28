@@ -120,7 +120,7 @@ namespace WoWHeadParser
             this.settingsBox.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) 
             | AnchorStyles.Left) 
             | AnchorStyles.Right)));
-            this.settingsBox.AutoSizeMode = AutoSizeMode.GrowAndShrink;
+            this.settingsBox.AutoSizeMode = AutoSizeMode.GrowOnly;
             this.settingsBox.Controls.Add(this.threadCountBox);
             this.settingsBox.Controls.Add(threadCountLabel);
             this.settingsBox.Controls.Add(this.rangeStart);
@@ -159,7 +159,7 @@ namespace WoWHeadParser
             0,
             0});
             // 
-            // rangeStart
+            // start
             // 
             this.rangeStart.BackColor = Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.rangeStart.Location = new Point(44, 78);
@@ -182,7 +182,7 @@ namespace WoWHeadParser
             0,
             0});
             // 
-            // rangeEnd
+            // end
             // 
             this.rangeEnd.BackColor = Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.rangeEnd.Location = new Point(138, 78);
