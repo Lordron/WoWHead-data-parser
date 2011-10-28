@@ -116,7 +116,7 @@ namespace WoWHeadParser
 
         private void StopButtonClick(object sender, EventArgs e)
         {
-            _worker.Semaphore.Dispose();
+            _worker.Stop();
             startButton.Enabled = true;
             stopButton.Enabled = false;
             progressLabel.Text = "Abort...";

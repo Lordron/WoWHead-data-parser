@@ -120,7 +120,6 @@ namespace WoWHeadParser
             this.settingsBox.Anchor = ((AnchorStyles)((((AnchorStyles.Top | AnchorStyles.Bottom) 
             | AnchorStyles.Left) 
             | AnchorStyles.Right)));
-            this.settingsBox.AutoSizeMode = AutoSizeMode.GrowOnly;
             this.settingsBox.Controls.Add(this.threadCountBox);
             this.settingsBox.Controls.Add(threadCountLabel);
             this.settingsBox.Controls.Add(this.rangeStart);
@@ -270,9 +269,8 @@ namespace WoWHeadParser
             // 
             // WoWHeadParserForm
             // 
-            this.FormBorderStyle = FormBorderStyle.FixedToolWindow;
             this.AutoScaleDimensions = new SizeF(6F, 13F);
-            this.AutoScaleMode = AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.ClientSize = new Size(372, 197);
             this.Controls.Add(this.stopButton);
@@ -280,6 +278,7 @@ namespace WoWHeadParser
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.settingsBox);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((Icon)(resources.GetObject("$this.Icon")));
             this.Name = "WoWHeadParserForm";
             this.Text = "WowHead Parser";

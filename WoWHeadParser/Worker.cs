@@ -55,9 +55,12 @@ namespace WoWHeadParser
         {
             for (_entry = _start; _entry < _end; ++_entry)
             {
-                _semaphore.WaitOne();
-                Thread thread = new Thread(DownloadPage);
-                thread.Start();
+                if (_semaphore != null)
+                {
+                    _semaphore.WaitOne();
+                    Thread thread = new Thread(DownloadPage);
+                    thread.Start();
+                }
             }
         }
 
@@ -84,7 +87,25 @@ namespace WoWHeadParser
             if (_background.IsBusy)
                 _background.ReportProgress(PercentProgress);
 
-            _semaphore.Release();
+            if (_semaphore != null)
+                _semaphore.Release();
+        }
+
+        public void Stop()
+        {
+            _background.CancelAsync();
+            StopSemaphore();
+        }
+
+        private void StopSemaphore()
+        {
+            if (_semaphore != null)
+            {
+                _background.CancelAsync();
+                _semaphore.Close();
+                _semaphore.Dispose();
+                _semaphore = null;
+            }
         }
 
         public void Dispose()
@@ -97,8 +118,10 @@ namespace WoWHeadParser
         {
             if (disposing)
             {
+                if (_background.IsBusy)
+                    _background.CancelAsync();
                 if (_semaphore != null)
-                    _semaphore.Dispose();
+                    StopSemaphore();
                 if (_client != null)
                     _client.Dispose();
             }
