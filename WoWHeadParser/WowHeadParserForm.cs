@@ -36,37 +36,56 @@ namespace WoWHeadParser
 
         public void StartButtonClick(object sender, EventArgs e)
         {
-            int startValue = (int)rangeStart.Value;
-            int endValue = (int)rangeEnd.Value;
-            int _threadCount = (int)threadCountBox.Value;
+            bool single = (tabControl1.SelectedIndex == 0);
             string locale = (string)localeBox.SelectedItem;
 
             if (parserBox.SelectedItem == null)
                 throw new NotImplementedException(@"You should select something first!");
 
-            if (startValue > endValue)
-                throw new NotImplementedException(@"Starting value can not be bigger than ending value!");
-
-            if (startValue == endValue)
-                throw new NotImplementedException(@"Starting value can not be equal ending value!");
-
-            if (startValue == 1 && endValue == 1)
-                throw new NotImplementedException(@"Starting and ending values can not be equal '1'!");
-
             _parser = (Parser)Activator.CreateInstance((Type)parserBox.SelectedItem);
             if (_parser == null)
                 throw new NotImplementedException(@"Parser object is NULL!");
 
-            startButton.Enabled = false;
-            stopButton.Enabled = true;
-            progressBar.Value = startValue;
-            progressBar.Minimum = startValue;
-            progressBar.Maximum = endValue;
-            progressLabel.Text = "Downloading...";
-
             string address = string.Format("http://{0}{1}", (string.IsNullOrEmpty(locale) ? "www." : locale), _parser.Address);
-            _worker = new Worker(startValue, endValue, _threadCount, address, backgroundWorker);
-            _worker.Start();
+
+            if (!single)
+            {
+                int startValue = (int)rangeStart.Value;
+                int endValue = (int)rangeEnd.Value;
+                int _threadCount = (int)threadCountBox.Value;
+
+                if (startValue > endValue)
+                    throw new NotImplementedException(@"Starting value can not be bigger than ending value!");
+
+                if (startValue == endValue)
+                    throw new NotImplementedException(@"Starting value can not be equal ending value!");
+
+                if (startValue == 1 && endValue == 1)
+                    throw new NotImplementedException(@"Starting and ending values can not be equal '1'!");
+
+                startButton.Enabled = false;
+                stopButton.Enabled = true;
+                progressBar.Visible = true;
+                progressBar.Value = startValue;
+                progressBar.Minimum = startValue;
+                progressBar.Maximum = endValue;
+                progressLabel.Text = "Downloading...";
+
+                _worker = new Worker(startValue, endValue, _threadCount, address, backgroundWorker);
+            }
+            else
+            {
+                int value = (int)valueBox.Value;
+                if (value < 1)
+                    throw new NotImplementedException(@"Value can not be smaller than '1'!");
+
+                progressLabel.Text = "Downloading...";
+
+                _worker = new Worker(value, address, backgroundWorker);
+            }
+
+            if (_worker != null)
+                _worker.Start();
         }
 
         public void ParserIndexChanged(object sender, EventArgs e)

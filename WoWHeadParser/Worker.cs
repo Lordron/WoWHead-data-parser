@@ -9,6 +9,7 @@ namespace WoWHeadParser
 {
     public class Worker : IDisposable
     {
+        private bool _single;
         private int _start;
         private int _end;
         private int _entry;
@@ -33,6 +34,7 @@ namespace WoWHeadParser
 
         public Worker(int start, int end, int threadCount, string address, BackgroundWorker background)
         {
+            _single = false;
             _end = end;
             _start = start;
             _address = address;
@@ -40,6 +42,19 @@ namespace WoWHeadParser
             _threadLock = new object();
             _pages = new Queue<Block>();
             _semaphore = new Semaphore(threadCount, threadCount);
+            _client = new WebClient { Encoding = Encoding.UTF8 };
+            _background.DoWork += new DoWorkEventHandler(DownloadInitial);
+            _client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(DownloadPageAsyncCompleted);
+        }
+
+        public Worker(int value, string address, BackgroundWorker background)
+        {
+            _single = true;
+            _entry = value;
+            _address = address;
+            _background = background;
+            _threadLock = new object();
+            _pages = new Queue<Block>();
             _client = new WebClient { Encoding = Encoding.UTF8 };
             _background.DoWork += new DoWorkEventHandler(DownloadInitial);
             _client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(DownloadPageAsyncCompleted);
@@ -53,15 +68,20 @@ namespace WoWHeadParser
 
         void DownloadInitial(object sender, DoWorkEventArgs e)
         {
-            for (_entry = _start; _entry < _end; ++_entry)
+            if (!_single)
             {
-                if (_semaphore != null)
+                for (_entry = _start; _entry < _end; ++_entry)
                 {
-                    _semaphore.WaitOne();
-                    Thread thread = new Thread(DownloadPage);
-                    thread.Start();
+                    if (_semaphore != null)
+                    {
+                        _semaphore.WaitOne();
+                        Thread thread = new Thread(DownloadPage);
+                        thread.Start();
+                    }
                 }
             }
+            else
+                DownloadPage();
         }
 
         public void DownloadPage()
