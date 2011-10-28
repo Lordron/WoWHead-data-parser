@@ -101,7 +101,6 @@ namespace WoWHeadParser
         {
             if (_semaphore != null)
             {
-                _background.CancelAsync();
                 _semaphore.Close();
                 _semaphore.Dispose();
                 _semaphore = null;
