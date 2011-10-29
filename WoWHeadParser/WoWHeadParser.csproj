@@ -84,6 +84,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="PageParser.cs" />
     <Compile Include="Parser.cs" />
+    <Compile Include="ParsingType.cs" />
     <Compile Include="WebRequest.cs" />
     <Compile Include="Worker.cs" />
     <Compile Include="WowHeadParserForm.cs">
@@ -107,6 +108,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="EntryList\page.welf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

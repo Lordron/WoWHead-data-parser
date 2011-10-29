@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 
 namespace WoWHeadParser
@@ -10,6 +12,7 @@ namespace WoWHeadParser
     {
         private Parser _parser = null;
         private Worker _worker = null;
+        private List<uint> _entries;
 
         public WoWHeadParserForm()
         {
@@ -31,6 +34,8 @@ namespace WoWHeadParser
 
         public void StartButtonClick(object sender, EventArgs e)
         {
+            ParsingType type = (ParsingType)tabControl1.SelectedIndex;
+
             bool single = (tabControl1.SelectedIndex == 0);
             string locale = (string)localeBox.SelectedItem;
 
@@ -43,36 +48,58 @@ namespace WoWHeadParser
 
             string address = string.Format("http://{0}{1}", (string.IsNullOrEmpty(locale) ? "www." : locale), _parser.Address);
 
-            if (!single)
+            switch (type)
             {
-                int startValue = (int)rangeStart.Value;
-                int endValue = (int)rangeEnd.Value;
+                case ParsingType.PARSING_TYPE_SINGLE:
+                    {
+                        int value = (int)valueBox.Value;
+                        if (value < 1)
+                            throw new NotImplementedException(@"Value can not be smaller than '1'!");
 
-                if (startValue > endValue)
-                    throw new NotImplementedException(@"Starting value can not be bigger than ending value!");
+                        _worker = new Worker(value, address, backgroundWorker);
+                        break;
+                    }
+                case ParsingType.PARSING_TYPE_LIST:
+                    {
+                        if (_entries.Count == -1)
+                            throw new NotImplementedException("Entries list is empty!");
 
-                if (startValue == endValue)
-                    throw new NotImplementedException(@"Starting value can not be equal ending value!");
+                        startButton.Enabled = false;
+                        stopButton.Enabled = true;
+                        progressBar.Visible = true;
+                        progressBar.Value = 1;
+                        progressBar.Minimum = 1;
+                        progressBar.Maximum = _entries.Count;
 
-                if (startValue == 1 && endValue == 1)
-                    throw new NotImplementedException(@"Starting and ending values can not be equal '1'!");
+                        _worker = new Worker(_entries, address, backgroundWorker);
+                        break;
+                    }
+                case ParsingType.PARSING_TYPE_MULTIPLE:
+                    {
+                        int startValue = (int)rangeStart.Value;
+                        int endValue = (int)rangeEnd.Value;
 
-                startButton.Enabled = false;
-                stopButton.Enabled = true;
-                progressBar.Visible = true;
-                progressBar.Value = startValue;
-                progressBar.Minimum = startValue;
-                progressBar.Maximum = endValue;
+                        if (startValue > endValue)
+                            throw new NotImplementedException(@"Starting value can not be bigger than ending value!");
 
-                _worker = new Worker(startValue, endValue, address, backgroundWorker);
-            }
-            else
-            {
-                int value = (int)valueBox.Value;
-                if (value < 1)
-                    throw new NotImplementedException(@"Value can not be smaller than '1'!");
+                        if (startValue == endValue)
+                            throw new NotImplementedException(@"Starting value can not be equal ending value!");
 
-                _worker = new Worker(value, address, backgroundWorker);
+                        if (startValue == 1 && endValue == 1)
+                            throw new NotImplementedException(@"Starting and ending values can not be equal '1'!");
+
+                        startButton.Enabled = false;
+                        stopButton.Enabled = true;
+                        progressBar.Visible = true;
+                        progressBar.Value = startValue;
+                        progressBar.Minimum = startValue;
+                        progressBar.Maximum = endValue;
+
+                        _worker = new Worker(startValue, endValue, address, backgroundWorker);
+                        break;
+                    }
+                default:
+                    throw new NotImplementedException(string.Format("Unsupported type: {0}", type));
             }
 
             progressLabel.Text = "Downloading...";
@@ -132,6 +159,31 @@ namespace WoWHeadParser
             startButton.Enabled = true;
             stopButton.Enabled = false;
             progressLabel.Text = "Abort...";
+        }
+
+        private void openEntryListDataButton_Click(object sender, EventArgs e)
+        {
+            _entries = new List<uint>();
+
+            if (openDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                using (StreamReader reader = new StreamReader(openDialog.FileName))
+                {
+                    string str = reader.ReadToEnd();
+                    string[] values = str.Split(',');
+                    foreach (string value in values)
+                    {
+                        uint val;
+                        if (uint.TryParse(value, out val))
+                        {
+                            if (!_entries.Contains(val))
+                                _entries.Add(val);
+                        }
+                    }
+
+                    entryCountLabel.Text = string.Format("Entry count: {0}", _entries.Count);
+                }
+            }
         }
     }
 }

@@ -8,7 +8,7 @@ namespace WoWHeadParser
 {
     public class Worker : IDisposable
     {
-        private bool _single;
+        private ParsingType _type;
         private int _start;
         private int _end;
         private int _entry;
@@ -17,6 +17,7 @@ namespace WoWHeadParser
         private Queue<Block> _pages;
         private BackgroundWorker _background;
         private List<Requests> _requests;
+        private List<uint> _entries;
 
         private const int PercentProgress = 1;
 
@@ -27,7 +28,7 @@ namespace WoWHeadParser
 
         public Worker(int start, int end, string address, BackgroundWorker background)
         {
-            _single = false;
+            _type = ParsingType.PARSING_TYPE_MULTIPLE;
             _end = end;
             _start = start;
             _address = address;
@@ -40,8 +41,20 @@ namespace WoWHeadParser
 
         public Worker(int value, string address, BackgroundWorker background)
         {
-            _single = true;
+            _type = ParsingType.PARSING_TYPE_SINGLE;
             _entry = value;
+            _address = address;
+            _background = background;
+            _threadLock = new object();
+            _pages = new Queue<Block>();
+            _background.DoWork += new DoWorkEventHandler(DownloadInitial);
+            _requests = new List<Requests>();
+        }
+
+        public Worker(List<uint> entries, string address, BackgroundWorker background)
+        {
+            _type = ParsingType.PARSING_TYPE_LIST;
+            _entries = entries;
             _address = address;
             _background = background;
             _threadLock = new object();
@@ -58,21 +71,38 @@ namespace WoWHeadParser
 
         void DownloadInitial(object sender, DoWorkEventArgs e)
         {
-            if (!_single)
+            switch (_type)
             {
-                for (_entry = _start; _entry < _end; ++_entry)
-                {
-                    Requests request = new Requests(string.Format("{0}{1}", _address, _entry), _entry);
-                    _requests.Add(request);
-                    request.Request.BeginGetResponse(new AsyncCallback(RespCallback), request);
+                case ParsingType.PARSING_TYPE_SINGLE:
+                    {
+                        Requests request = new Requests(new Uri(string.Format("{0}{1}", _address, _entry)), _entry);
+                        request.Request.BeginGetResponse(new AsyncCallback(RespCallback), request);
+                        break;
+                    }
+                case ParsingType.PARSING_TYPE_MULTIPLE:
+                    {
+                        for (_entry = _start; _entry < _end; ++_entry)
+                        {
+                            Requests request = new Requests(new Uri(string.Format("{0}{1}", _address, _entry)), _entry);
+                            _requests.Add(request);
+                            request.Request.BeginGetResponse(new AsyncCallback(RespCallback), request);
 
-                    Thread.Sleep(500);
-                }
-            }
-            else
-            {
-                Requests request = new Requests(string.Format("{0}{1}", _address, _entry), _entry);
-                request.Request.BeginGetResponse(new AsyncCallback(RespCallback), request);
+                            Thread.Sleep(500);
+                        }
+                        break;
+                    }
+                case ParsingType.PARSING_TYPE_LIST:
+                    {
+                        foreach (uint entry in _entries)
+                        {
+                            Requests request = new Requests(new Uri(string.Format("{0}{1}", _address, entry)), (int)entry);
+                            _requests.Add(request);
+                            request.Request.BeginGetResponse(new AsyncCallback(RespCallback), request);
+
+                            Thread.Sleep(500);
+                        }
+                        break;
+                    }
             }
         }
 
