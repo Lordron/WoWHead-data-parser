@@ -25,7 +25,7 @@ namespace WoWHeadParser
             get { return _pages; }
         }
 
-        public Worker(int start, int end, int threadCount, string address, BackgroundWorker background)
+        public Worker(int start, int end, string address, BackgroundWorker background)
         {
             _single = false;
             _end = end;

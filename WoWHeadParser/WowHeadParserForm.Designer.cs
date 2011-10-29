@@ -33,7 +33,6 @@ namespace WoWHeadParser
         private void InitializeComponent()
         {
             System.Windows.Forms.Label rangeEndLabel;
-            System.Windows.Forms.Label threadCountLabel;
             System.Windows.Forms.Label rangeStartLabel;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WoWHeadParserForm));
             this.parserBox = new System.Windows.Forms.ComboBox();
@@ -46,7 +45,6 @@ namespace WoWHeadParser
             this.valueLabel = new System.Windows.Forms.Label();
             this.multipleTab = new System.Windows.Forms.TabPage();
             this.multipleBox = new System.Windows.Forms.GroupBox();
-            this.threadCountBox = new System.Windows.Forms.NumericUpDown();
             this.rangeStart = new System.Windows.Forms.NumericUpDown();
             this.rangeEnd = new System.Windows.Forms.NumericUpDown();
             this.progressBar = new System.Windows.Forms.ProgressBar();
@@ -56,7 +54,6 @@ namespace WoWHeadParser
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.stopButton = new System.Windows.Forms.Button();
             rangeEndLabel = new System.Windows.Forms.Label();
-            threadCountLabel = new System.Windows.Forms.Label();
             rangeStartLabel = new System.Windows.Forms.Label();
             this.settingsBox.SuspendLayout();
             this.tabControl1.SuspendLayout();
@@ -65,7 +62,6 @@ namespace WoWHeadParser
             ((System.ComponentModel.ISupportInitialize)(this.valueBox)).BeginInit();
             this.multipleTab.SuspendLayout();
             this.multipleBox.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.threadCountBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rangeStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rangeEnd)).BeginInit();
             this.SuspendLayout();
@@ -73,20 +69,11 @@ namespace WoWHeadParser
             // rangeEndLabel
             // 
             rangeEndLabel.AutoSize = true;
-            rangeEndLabel.Location = new System.Drawing.Point(102, 26);
+            rangeEndLabel.Location = new System.Drawing.Point(135, 26);
             rangeEndLabel.Name = "rangeEndLabel";
             rangeEndLabel.Size = new System.Drawing.Size(29, 13);
             rangeEndLabel.TabIndex = 13;
             rangeEndLabel.Text = "End:";
-            // 
-            // threadCountLabel
-            // 
-            threadCountLabel.AutoSize = true;
-            threadCountLabel.Location = new System.Drawing.Point(195, 26);
-            threadCountLabel.Name = "threadCountLabel";
-            threadCountLabel.Size = new System.Drawing.Size(71, 13);
-            threadCountLabel.TabIndex = 14;
-            threadCountLabel.Text = "Thread count";
             // 
             // rangeStartLabel
             // 
@@ -226,9 +213,7 @@ namespace WoWHeadParser
             // 
             // multipleBox
             // 
-            this.multipleBox.Controls.Add(this.threadCountBox);
             this.multipleBox.Controls.Add(rangeStartLabel);
-            this.multipleBox.Controls.Add(threadCountLabel);
             this.multipleBox.Controls.Add(this.rangeStart);
             this.multipleBox.Controls.Add(rangeEndLabel);
             this.multipleBox.Controls.Add(this.rangeEnd);
@@ -239,33 +224,10 @@ namespace WoWHeadParser
             this.multipleBox.TabStop = false;
             this.multipleBox.Text = "Settings";
             // 
-            // threadCountBox
-            // 
-            this.threadCountBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.threadCountBox.Location = new System.Drawing.Point(272, 19);
-            this.threadCountBox.Maximum = new decimal(new int[] {
-            100000,
-            0,
-            0,
-            0});
-            this.threadCountBox.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            this.threadCountBox.Name = "threadCountBox";
-            this.threadCountBox.Size = new System.Drawing.Size(54, 20);
-            this.threadCountBox.TabIndex = 15;
-            this.threadCountBox.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-            // 
             // rangeStart
             // 
             this.rangeStart.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.rangeStart.Location = new System.Drawing.Point(43, 19);
+            this.rangeStart.Location = new System.Drawing.Point(44, 19);
             this.rangeStart.Maximum = new decimal(new int[] {
             500000,
             0,
@@ -288,7 +250,7 @@ namespace WoWHeadParser
             // rangeEnd
             // 
             this.rangeEnd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.rangeEnd.Location = new System.Drawing.Point(137, 19);
+            this.rangeEnd.Location = new System.Drawing.Point(170, 19);
             this.rangeEnd.Maximum = new decimal(new int[] {
             500000,
             0,
@@ -384,7 +346,6 @@ namespace WoWHeadParser
             this.multipleTab.ResumeLayout(false);
             this.multipleBox.ResumeLayout(false);
             this.multipleBox.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.threadCountBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.rangeStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.rangeEnd)).EndInit();
             this.ResumeLayout(false);
@@ -407,7 +368,6 @@ namespace WoWHeadParser
         private TabPage singleTab;
         private TabPage multipleTab;
         private GroupBox multipleBox;
-        private NumericUpDown threadCountBox;
         private NumericUpDown rangeStart;
         private NumericUpDown rangeEnd;
         private GroupBox singleBox;

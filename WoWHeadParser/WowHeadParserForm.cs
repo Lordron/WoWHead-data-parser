@@ -47,7 +47,6 @@ namespace WoWHeadParser
             {
                 int startValue = (int)rangeStart.Value;
                 int endValue = (int)rangeEnd.Value;
-                int threadCount = (int)threadCountBox.Value;
 
                 if (startValue > endValue)
                     throw new NotImplementedException(@"Starting value can not be bigger than ending value!");
@@ -63,9 +62,9 @@ namespace WoWHeadParser
                 progressBar.Visible = true;
                 progressBar.Value = startValue;
                 progressBar.Minimum = startValue;
-                progressBar.Maximum = (endValue - threadCount);
+                progressBar.Maximum = endValue;
 
-                _worker = new Worker(startValue, endValue, threadCount, address, backgroundWorker);
+                _worker = new Worker(startValue, endValue, address, backgroundWorker);
             }
             else
             {
