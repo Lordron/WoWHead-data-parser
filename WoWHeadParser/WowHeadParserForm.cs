@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
-using System.Text;
 using System.Windows.Forms;
 
 namespace WoWHeadParser
@@ -12,7 +11,7 @@ namespace WoWHeadParser
     {
         private Parser _parser = null;
         private Worker _worker = null;
-        private List<uint> _entries;
+        private List<uint> _entries = null;
 
         public WoWHeadParserForm()
         {
@@ -35,31 +34,26 @@ namespace WoWHeadParser
         public void StartButtonClick(object sender, EventArgs e)
         {
             ParsingType type = (ParsingType)tabControl1.SelectedIndex;
-
-            bool single = (tabControl1.SelectedIndex == 0);
             string locale = (string)localeBox.SelectedItem;
-
-            if (parserBox.SelectedItem == null)
-                throw new NotImplementedException(@"You should select something first!");
 
             _parser = (Parser)Activator.CreateInstance((Type)parserBox.SelectedItem);
             if (_parser == null)
-                throw new NotImplementedException(@"Parser object is NULL!");
+                throw new ArgumentNullException("Parser");
 
             string address = string.Format("http://{0}{1}", (string.IsNullOrEmpty(locale) ? "www." : locale), _parser.Address);
 
             switch (type)
             {
-                case ParsingType.PARSING_TYPE_SINGLE:
+                case ParsingType.TypeSingle:
                     {
                         int value = (int)valueBox.Value;
                         if (value < 1)
-                            throw new NotImplementedException(@"Value can not be smaller than '1'!");
+                            throw new ArgumentOutOfRangeException(@"Value", @"Value can not be smaller than '1'!");
 
                         _worker = new Worker(value, address, backgroundWorker);
                         break;
                     }
-                case ParsingType.PARSING_TYPE_LIST:
+                case ParsingType.TypeList:
                     {
                         if (_entries.Count == -1)
                             throw new NotImplementedException("Entries list is empty!");
@@ -74,19 +68,16 @@ namespace WoWHeadParser
                         _worker = new Worker(_entries, address, backgroundWorker);
                         break;
                     }
-                case ParsingType.PARSING_TYPE_MULTIPLE:
+                case ParsingType.TypeMultiple:
                     {
                         int startValue = (int)rangeStart.Value;
                         int endValue = (int)rangeEnd.Value;
 
                         if (startValue > endValue)
-                            throw new NotImplementedException(@"Starting value can not be bigger than ending value!");
+                            throw new ArgumentOutOfRangeException(@"StartValue", @"Starting value can not be bigger than ending value!");
 
                         if (startValue == endValue)
                             throw new NotImplementedException(@"Starting value can not be equal ending value!");
-
-                        if (startValue == 1 && endValue == 1)
-                            throw new NotImplementedException(@"Starting and ending values can not be equal '1'!");
 
                         startButton.Enabled = false;
                         stopButton.Enabled = true;
@@ -103,8 +94,10 @@ namespace WoWHeadParser
             }
 
             progressLabel.Text = "Downloading...";
-            if (_worker != null)
-                _worker.Start();
+            if (_worker == null)
+                throw new ArgumentNullException("Worker");
+
+            _worker.Start();
         }
 
         public void ParserIndexChanged(object sender, EventArgs e)
@@ -112,7 +105,7 @@ namespace WoWHeadParser
             if (parserBox.SelectedItem == null)
             {
                 startButton.Enabled = false;
-                stopButton.Enabled = true;
+                stopButton.Enabled = false;
                 return;
             }
 
@@ -131,7 +124,7 @@ namespace WoWHeadParser
         void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (_worker == null)
-                throw new NotImplementedException(@"Worker object is NULL!");
+                throw new ArgumentNullException("Worker");
 
             startButton.Enabled = true;
             stopButton.Enabled = false;

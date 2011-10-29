@@ -28,7 +28,7 @@ namespace WoWHeadParser
 
         public Worker(int start, int end, string address, BackgroundWorker background)
         {
-            _type = ParsingType.PARSING_TYPE_MULTIPLE;
+            _type = ParsingType.TypeMultiple;
             _end = end;
             _start = start;
             _address = address;
@@ -41,7 +41,7 @@ namespace WoWHeadParser
 
         public Worker(int value, string address, BackgroundWorker background)
         {
-            _type = ParsingType.PARSING_TYPE_SINGLE;
+            _type = ParsingType.TypeSingle;
             _entry = value;
             _address = address;
             _background = background;
@@ -53,7 +53,7 @@ namespace WoWHeadParser
 
         public Worker(List<uint> entries, string address, BackgroundWorker background)
         {
-            _type = ParsingType.PARSING_TYPE_LIST;
+            _type = ParsingType.TypeList;
             _entries = entries;
             _address = address;
             _background = background;
@@ -73,13 +73,13 @@ namespace WoWHeadParser
         {
             switch (_type)
             {
-                case ParsingType.PARSING_TYPE_SINGLE:
+                case ParsingType.TypeSingle:
                     {
                         Requests request = new Requests(new Uri(string.Format("{0}{1}", _address, _entry)), _entry);
                         request.Request.BeginGetResponse(new AsyncCallback(RespCallback), request);
                         break;
                     }
-                case ParsingType.PARSING_TYPE_MULTIPLE:
+                case ParsingType.TypeMultiple:
                     {
                         for (_entry = _start; _entry < _end; ++_entry)
                         {
@@ -91,7 +91,7 @@ namespace WoWHeadParser
                         }
                         break;
                     }
-                case ParsingType.PARSING_TYPE_LIST:
+                case ParsingType.TypeList:
                     {
                         foreach (uint entry in _entries)
                         {
@@ -123,7 +123,7 @@ namespace WoWHeadParser
                     }
                 }
             }
-            catch (Exception e)
+            catch
             {
             }
             finally
