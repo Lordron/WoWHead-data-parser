@@ -332,7 +332,7 @@ namespace WoWHeadParser
             // progressLabel
             // 
             this.progressLabel.AutoSize = true;
-            this.progressLabel.Location = new System.Drawing.Point(264, 182);
+            this.progressLabel.Location = new System.Drawing.Point(255, 182);
             this.progressLabel.Name = "progressLabel";
             this.progressLabel.Size = new System.Drawing.Size(43, 13);
             this.progressLabel.TabIndex = 7;

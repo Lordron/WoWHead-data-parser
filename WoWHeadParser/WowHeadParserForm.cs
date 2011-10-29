@@ -1,12 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
-using System.Net;
 using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace WoWHeadParser
@@ -52,7 +47,7 @@ namespace WoWHeadParser
             {
                 int startValue = (int)rangeStart.Value;
                 int endValue = (int)rangeEnd.Value;
-                int _threadCount = (int)threadCountBox.Value;
+                int threadCount = (int)threadCountBox.Value;
 
                 if (startValue > endValue)
                     throw new NotImplementedException(@"Starting value can not be bigger than ending value!");
@@ -68,10 +63,9 @@ namespace WoWHeadParser
                 progressBar.Visible = true;
                 progressBar.Value = startValue;
                 progressBar.Minimum = startValue;
-                progressBar.Maximum = endValue;
-                progressLabel.Text = "Downloading...";
+                progressBar.Maximum = (endValue - threadCount);
 
-                _worker = new Worker(startValue, endValue, _threadCount, address, backgroundWorker);
+                _worker = new Worker(startValue, endValue, threadCount, address, backgroundWorker);
             }
             else
             {
@@ -79,11 +73,10 @@ namespace WoWHeadParser
                 if (value < 1)
                     throw new NotImplementedException(@"Value can not be smaller than '1'!");
 
-                progressLabel.Text = "Downloading...";
-
                 _worker = new Worker(value, address, backgroundWorker);
             }
 
+            progressLabel.Text = "Downloading...";
             if (_worker != null)
                 _worker.Start();
         }
@@ -125,7 +118,8 @@ namespace WoWHeadParser
                     foreach (Block block in _worker.Pages)
                     {
                         string content = _parser.Parse(block);
-                        stream.Write(content);
+                        if (!string.IsNullOrEmpty(content))
+                            stream.Write(content);
                     }
                 }
             }
@@ -136,7 +130,6 @@ namespace WoWHeadParser
         private void StopButtonClick(object sender, EventArgs e)
         {
             _worker.Stop();
-            _worker.Dispose();
             startButton.Enabled = true;
             stopButton.Enabled = false;
             progressLabel.Text = "Abort...";

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net;
-using System.Text;
 using System.Threading;
 
 namespace WoWHeadParser
@@ -17,19 +16,13 @@ namespace WoWHeadParser
         private string _address;
         private Queue<Block> _pages;
         private BackgroundWorker _background;
-        private Semaphore _semaphore;
-        private WebClient _client;
+        private List<Requests> _requests;
 
         private const int PercentProgress = 1;
 
         public Queue<Block> Pages
         {
             get { return _pages; }
-        }
-
-        public Semaphore Semaphore
-        {
-            get { return _semaphore; }
         }
 
         public Worker(int start, int end, int threadCount, string address, BackgroundWorker background)
@@ -41,10 +34,8 @@ namespace WoWHeadParser
             _background = background;
             _threadLock = new object();
             _pages = new Queue<Block>();
-            _semaphore = new Semaphore(threadCount, threadCount);
-            _client = new WebClient { Encoding = Encoding.UTF8 };
             _background.DoWork += new DoWorkEventHandler(DownloadInitial);
-            _client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(DownloadPageAsyncCompleted);
+            _requests = new List<Requests>();
         }
 
         public Worker(int value, string address, BackgroundWorker background)
@@ -55,9 +46,8 @@ namespace WoWHeadParser
             _background = background;
             _threadLock = new object();
             _pages = new Queue<Block>();
-            _client = new WebClient { Encoding = Encoding.UTF8 };
             _background.DoWork += new DoWorkEventHandler(DownloadInitial);
-            _client.DownloadStringCompleted += new DownloadStringCompletedEventHandler(DownloadPageAsyncCompleted);
+            _requests = new List<Requests>();
         }
 
         public void Start()
@@ -72,59 +62,61 @@ namespace WoWHeadParser
             {
                 for (_entry = _start; _entry < _end; ++_entry)
                 {
-                    if (_semaphore != null)
-                    {
-                        _semaphore.WaitOne();
-                        Thread thread = new Thread(DownloadPage);
-                        thread.Start();
-                    }
+                    Requests request = new Requests(string.Format("{0}{1}", _address, _entry), _entry);
+                    _requests.Add(request);
+                    request.Request.BeginGetResponse(new AsyncCallback(RespCallback), request);
+
+                    Thread.Sleep(500);
                 }
             }
             else
-                DownloadPage();
+            {
+                Requests request = new Requests(string.Format("{0}{1}", _address, _entry), _entry);
+                request.Request.BeginGetResponse(new AsyncCallback(RespCallback), request);
+            }
         }
 
-        public void DownloadPage()
+
+        private void RespCallback(IAsyncResult iar)
         {
+            Requests request = (Requests)iar.AsyncState;
             try
             {
-                _client.DownloadStringAsync(new Uri(string.Format("{0}{1}", _address, _entry)));
-            }
-            catch { }
-        }
-
-        void DownloadPageAsyncCompleted(object sender, DownloadStringCompletedEventArgs e)
-        {
-            if (e.Error == null)
-            {
+                request.Response = (HttpWebResponse)request.Request.EndGetResponse(iar);
+                string text = request.GetContent();
                 lock (_threadLock)
                 {
-                    Block block = new Block(e.Result, (uint)_entry);
-                    _pages.Enqueue(block);
+                    if (!string.IsNullOrEmpty(text))
+                    {
+                        Block block = new Block(text, (uint)request.Entry);
+                        _pages.Enqueue(block);
+                    }
                 }
             }
-
-            if (_background.IsBusy)
-                _background.ReportProgress(PercentProgress);
-
-            if (_semaphore != null)
-                _semaphore.Release();
+            catch (Exception e)
+            {
+            }
+            finally
+            {
+                request.Dispose();
+                if (_background.IsBusy)
+                    _background.ReportProgress(PercentProgress);
+            }
         }
+
 
         public void Stop()
         {
             _background.CancelAsync();
-            StopSemaphore();
+            foreach (Requests request in _requests)
+                request.Dispose();
+
+            Dispose();
         }
 
-        private void StopSemaphore()
+        ~Worker()
         {
-            if (_semaphore != null)
-            {
-                _semaphore.Close();
-                _semaphore.Dispose();
-                _semaphore = null;
-            }
+            Stop();
         }
 
         public void Dispose()
@@ -139,10 +131,8 @@ namespace WoWHeadParser
             {
                 if (_background.IsBusy)
                     _background.CancelAsync();
-                if (_semaphore != null)
-                    StopSemaphore();
-                if (_client != null)
-                    _client.Dispose();
+                if (_pages != null)
+                    _pages.Clear();
             }
         }
     }
