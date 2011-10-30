@@ -30,6 +30,13 @@ namespace WoWHeadParser
                     parserBox.Items.Add(type);
                 }
             }
+
+            DirectoryInfo info = new DirectoryInfo(Application.StartupPath);
+            FileInfo[] Files = info.GetFiles("*.welf", SearchOption.AllDirectories);
+            foreach (FileInfo file in Files)
+            {
+                welfBox.Items.Add(file.Name);
+            }
         }
 
         public void StartButtonClick(object sender, EventArgs e)
@@ -114,7 +121,7 @@ namespace WoWHeadParser
             stopButton.Enabled = false;
         }
 
-        private void backgroundWorker_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void BackgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             if (progressBar.InvokeRequired)
                 progressBar.BeginInvoke(new Action<int>((i) => progressBar.Value += i), e.ProgressPercentage);
@@ -122,7 +129,7 @@ namespace WoWHeadParser
                 progressBar.Value += e.ProgressPercentage;
         }
 
-        void backgroundWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (_worker == null)
                 throw new ArgumentNullException("Worker");
@@ -156,28 +163,32 @@ namespace WoWHeadParser
             progressLabel.Text = "Abort...";
         }
 
-        private void openEntryListDataButton_Click(object sender, EventArgs e)
+        private void WelfBoxSelectedIndexChanged(object sender, EventArgs e)
         {
             _entries = new List<uint>();
 
-            if (openDialog.ShowDialog(this) == DialogResult.OK)
+            if (welfBox.SelectedItem == null)
             {
-                using (StreamReader reader = new StreamReader(openDialog.FileName))
-                {
-                    string str = reader.ReadToEnd();
-                    string[] values = str.Split(',');
-                    foreach (string value in values)
-                    {
-                        uint val;
-                        if (uint.TryParse(value, out val))
-                        {
-                            if (!_entries.Contains(val))
-                                _entries.Add(val);
-                        }
-                    }
+                startButton.Enabled = false;
+                stopButton.Enabled = false;
+                return;
+            }
 
-                    entryCountLabel.Text = string.Format("Entry count: {0}", _entries.Count);
+            using (StreamReader reader = new StreamReader(Path.Combine("EntryList", (string)welfBox.SelectedItem)))
+            {
+                string str = reader.ReadToEnd();
+                string[] values = str.Split(',');
+                foreach (string value in values)
+                {
+                    uint val;
+                    if (uint.TryParse(value, out val))
+                    {
+                        if (!_entries.Contains(val))
+                            _entries.Add(val);
+                    }
                 }
+
+                entryCountLabel.Text = string.Format("Entry count: {0}", _entries.Count);
             }
         }
     }

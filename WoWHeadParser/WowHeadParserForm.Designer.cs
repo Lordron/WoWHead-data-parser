@@ -47,17 +47,16 @@ namespace WoWHeadParser
             this.multipleBox = new System.Windows.Forms.GroupBox();
             this.rangeStart = new System.Windows.Forms.NumericUpDown();
             this.rangeEnd = new System.Windows.Forms.NumericUpDown();
+            this.listTab = new System.Windows.Forms.TabPage();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.welfBox = new System.Windows.Forms.ComboBox();
+            this.entryCountLabel = new System.Windows.Forms.Label();
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.startButton = new System.Windows.Forms.Button();
             this.progressLabel = new System.Windows.Forms.Label();
             this.saveDialog = new System.Windows.Forms.SaveFileDialog();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.stopButton = new System.Windows.Forms.Button();
-            this.listTab = new System.Windows.Forms.TabPage();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.openDialog = new System.Windows.Forms.OpenFileDialog();
-            this.openEntryListDataButton = new System.Windows.Forms.Button();
-            this.entryCountLabel = new System.Windows.Forms.Label();
             rangeEndLabel = new System.Windows.Forms.Label();
             rangeStartLabel = new System.Windows.Forms.Label();
             this.settingsBox.SuspendLayout();
@@ -278,6 +277,50 @@ namespace WoWHeadParser
             0,
             0});
             // 
+            // listTab
+            // 
+            this.listTab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.listTab.Controls.Add(this.groupBox1);
+            this.listTab.Location = new System.Drawing.Point(4, 22);
+            this.listTab.Name = "listTab";
+            this.listTab.Padding = new System.Windows.Forms.Padding(3);
+            this.listTab.Size = new System.Drawing.Size(356, 62);
+            this.listTab.TabIndex = 2;
+            this.listTab.Text = "List";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.welfBox);
+            this.groupBox1.Controls.Add(this.entryCountLabel);
+            this.groupBox1.Location = new System.Drawing.Point(9, 7);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(338, 49);
+            this.groupBox1.TabIndex = 15;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Settings";
+            // 
+            // welfBox
+            // 
+            this.welfBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.welfBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.welfBox.FormattingEnabled = true;
+            this.welfBox.Location = new System.Drawing.Point(16, 19);
+            this.welfBox.Name = "welfBox";
+            this.welfBox.Size = new System.Drawing.Size(187, 21);
+            this.welfBox.TabIndex = 2;
+            this.welfBox.SelectedIndexChanged += new System.EventHandler(this.WelfBoxSelectedIndexChanged);
+            // 
+            // entryCountLabel
+            // 
+            this.entryCountLabel.AutoSize = true;
+            this.entryCountLabel.Location = new System.Drawing.Point(230, 27);
+            this.entryCountLabel.Name = "entryCountLabel";
+            this.entryCountLabel.Size = new System.Drawing.Size(43, 13);
+            this.entryCountLabel.TabIndex = 1;
+            this.entryCountLabel.Text = "<none>";
+            // 
             // progressBar
             // 
             this.progressBar.Location = new System.Drawing.Point(6, 201);
@@ -316,8 +359,8 @@ namespace WoWHeadParser
             // 
             this.backgroundWorker.WorkerReportsProgress = true;
             this.backgroundWorker.WorkerSupportsCancellation = true;
-            this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.backgroundWorker_ProgressChanged);
-            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.backgroundWorker_RunWorkerCompleted);
+            this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundWorkerProgressChanged);
+            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorkerRunWorkerCompleted);
             // 
             // stopButton
             // 
@@ -329,51 +372,6 @@ namespace WoWHeadParser
             this.stopButton.Text = "Stop";
             this.stopButton.UseVisualStyleBackColor = true;
             this.stopButton.Click += new System.EventHandler(this.StopButtonClick);
-            // 
-            // listTab
-            // 
-            this.listTab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.listTab.Controls.Add(this.groupBox1);
-            this.listTab.Location = new System.Drawing.Point(4, 22);
-            this.listTab.Name = "listTab";
-            this.listTab.Padding = new System.Windows.Forms.Padding(3);
-            this.listTab.Size = new System.Drawing.Size(356, 62);
-            this.listTab.TabIndex = 2;
-            this.listTab.Text = "List";
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.entryCountLabel);
-            this.groupBox1.Controls.Add(this.openEntryListDataButton);
-            this.groupBox1.Location = new System.Drawing.Point(9, 7);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(338, 49);
-            this.groupBox1.TabIndex = 15;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Settings";
-            // 
-            // openDialog
-            // 
-            this.openDialog.Filter = "WoWHead Entry List File (.welf)| *.welf|All Files|*.*";
-            // 
-            // openEntryListDataButton
-            // 
-            this.openEntryListDataButton.Location = new System.Drawing.Point(27, 19);
-            this.openEntryListDataButton.Name = "openEntryListDataButton";
-            this.openEntryListDataButton.Size = new System.Drawing.Size(142, 23);
-            this.openEntryListDataButton.TabIndex = 0;
-            this.openEntryListDataButton.Text = "Open WoWHead Entry List Data";
-            this.openEntryListDataButton.UseVisualStyleBackColor = true;
-            this.openEntryListDataButton.Click += new System.EventHandler(this.openEntryListDataButton_Click);
-            // 
-            // entryCountLabel
-            // 
-            this.entryCountLabel.AutoSize = true;
-            this.entryCountLabel.Location = new System.Drawing.Point(205, 29);
-            this.entryCountLabel.Name = "entryCountLabel";
-            this.entryCountLabel.Size = new System.Drawing.Size(43, 13);
-            this.entryCountLabel.TabIndex = 1;
-            this.entryCountLabel.Text = "<none>";
             // 
             // WoWHeadParserForm
             // 
@@ -431,9 +429,8 @@ namespace WoWHeadParser
         private NumericUpDown valueBox;
         private TabPage listTab;
         private GroupBox groupBox1;
-        private OpenFileDialog openDialog;
-        private Button openEntryListDataButton;
         private Label entryCountLabel;
+        private ComboBox welfBox;
     }
 }
 
