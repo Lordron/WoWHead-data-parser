@@ -93,9 +93,9 @@ namespace WoWHeadParser
                     }
                 case ParsingType.TypeList:
                     {
-                        foreach (uint entry in _entries)
+                        for (int i = 0; i < _entries.Count; ++i)
                         {
-                            Requests request = new Requests(new Uri(string.Format("{0}{1}", _address, entry)), (int)entry);
+                            Requests request = new Requests(new Uri(string.Format("{0}{1}", _address, _entries[i])), (int)_entries[i]);
                             _requests.Add(request);
                             request.Request.BeginGetResponse(new AsyncCallback(RespCallback), request);
 

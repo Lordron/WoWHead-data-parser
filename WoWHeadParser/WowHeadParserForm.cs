@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 
 namespace WoWHeadParser
@@ -132,8 +133,9 @@ namespace WoWHeadParser
             if (saveDialog.ShowDialog(this) == DialogResult.OK)
             {
                 progressLabel.Text = "Parsing...";
-                using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile()))
+                using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile(), Encoding.UTF8))
                 {
+                    stream.WriteLine(string.Format("-- Dump of {0} Total object count: {1}", DateTime.Now, _worker.Pages.Count));
                     foreach (Block block in _worker.Pages)
                     {
                         string content = _parser.Parse(block);

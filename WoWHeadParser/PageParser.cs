@@ -25,6 +25,7 @@ namespace WoWHeadParser
                         (i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i)), pages[i].HTMLEscapeSumbols(),
                         (i < pages.Length - 1) ? string.Format("@ENTRY + {0}", i + 1) : "0", (i < pages.Length - 1 ? "," : ";")).AppendLine();
                 }
+                content.AppendLine();
             }
 
             return content.ToString();
