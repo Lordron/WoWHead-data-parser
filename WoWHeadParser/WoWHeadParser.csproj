@@ -81,11 +81,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Block.cs" />
-    <Compile Include="ClassTrainerParser.cs" />
+    <Compile Include="Parser\ClassTrainerParser.cs" />
     <Compile Include="Extensions.cs" />
-    <Compile Include="PageParser.cs" />
-    <Compile Include="Parser.cs" />
-    <Compile Include="ParsingType.cs" />
+    <Compile Include="Parser\PageParser.cs" />
+    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Parser\ParsingType.cs" />
     <Compile Include="WebRequest.cs" />
     <Compile Include="Worker.cs" />
     <Compile Include="WowHeadParserForm.cs">
