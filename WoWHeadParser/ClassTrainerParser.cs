@@ -14,10 +14,8 @@ namespace WoWHeadParser
 
             MatchCollection find = Regex.Matches(block.Page, pattern);
             content.AppendFormat("SET @ENTRY := {0};", block.Entry).AppendLine();
-            content.AppendLine("UPDATE `creature_template` SET `npcflag` | `npcflag` = 48 WHERE `entry = @ENTRY;");
-            //content.AppendLine("DELETE FROM `npc_trainer` WHERE `entry` = @ENTRY;");
-            //content.AppendLine("INSERT INTO `npc_trainer` (`entry`, `spell` `spellcost`, `reqlevel`) VALUES");
-            content.AppendLine("REPLACE INTO `npc_trainer` (`entry`, `spell` `spellcost`, `reqlevel`) VALUES");
+            content.AppendLine("UPDATE `creature_template` SET `npcflag` = `npcflag` | 48 WHERE `entry` = @ENTRY;");
+            content.AppendLine("REPLACE INTO `npc_trainer` (`entry`, `spell`, `spellcost`, `reqlevel`) VALUES");
             foreach (Match item in find)
             {
                 MatchCollection matches = Regex.Matches(item.Value, subPattern);
