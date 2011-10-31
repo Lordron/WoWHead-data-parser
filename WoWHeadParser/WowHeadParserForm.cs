@@ -13,6 +13,7 @@ namespace WoWHeadParser
         private Parser _parser = null;
         private Worker _worker = null;
         private List<uint> _entries = null;
+        private WelfCreator _creator = null;
 
         public WoWHeadParserForm()
         {
@@ -189,6 +190,32 @@ namespace WoWHeadParser
                 }
 
                 entryCountLabel.Text = string.Format("Entry count: {0}", _entries.Count);
+            }
+        }
+
+        private void ExitToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            _worker.Stop();
+            Application.Exit();
+        }
+
+        private void WELFCreatorToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            if (_creator == null || _creator.IsDisposed)
+                _creator = new WelfCreator();
+            if (!_creator.Visible)
+                _creator.Show(this);
+        }
+
+        private void ReloadWelfFilesToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            welfBox.Items.Clear();
+
+            DirectoryInfo info = new DirectoryInfo(Application.StartupPath);
+            FileInfo[] Files = info.GetFiles("*.welf", SearchOption.AllDirectories);
+            foreach (FileInfo file in Files)
+            {
+                welfBox.Items.Add(file.Name);
             }
         }
     }
