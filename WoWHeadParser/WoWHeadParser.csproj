@@ -81,6 +81,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Block.cs" />
+    <Compile Include="ClassTrainerParser.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="PageParser.cs" />
     <Compile Include="Parser.cs" />
