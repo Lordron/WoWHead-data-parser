@@ -52,6 +52,11 @@ namespace WoWHeadParser
 
             string address = string.Format("http://{0}{1}", (string.IsNullOrEmpty(locale) ? "www." : locale), _parser.Address);
 
+            startButton.Enabled = false;
+            stopButton.Enabled = true;
+            progressBar.Value = 0;
+            progressBar.Minimum = 0;
+
             switch (type)
             {
                 case ParsingType.TypeSingle:
@@ -68,8 +73,6 @@ namespace WoWHeadParser
                         if (_entries.Count == -1)
                             throw new NotImplementedException("Entries list is empty!");
 
-                        startButton.Enabled = false;
-                        stopButton.Enabled = true;
                         progressBar.Visible = true;
                         progressBar.Value = 1;
                         progressBar.Minimum = 1;
@@ -89,8 +92,6 @@ namespace WoWHeadParser
                         if (startValue == endValue)
                             throw new NotImplementedException(@"Starting value can not be equal ending value!");
 
-                        startButton.Enabled = false;
-                        stopButton.Enabled = true;
                         progressBar.Visible = true;
                         progressBar.Value = startValue;
                         progressBar.Minimum = startValue;
