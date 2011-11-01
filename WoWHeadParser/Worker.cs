@@ -16,11 +16,11 @@ namespace WoWHeadParser
         private string _address;
         private Queue<Block> _pages;
         private BackgroundWorker _background;
+        private Semaphore _semaphore;
         private List<Requests> _requests;
         private List<uint> _entries;
 
         private const int PercentProgress = 1;
-
         public Queue<Block> Pages
         {
             get { return _pages; }
@@ -37,6 +37,7 @@ namespace WoWHeadParser
             _pages = new Queue<Block>();
             _background.DoWork += new DoWorkEventHandler(DownloadInitial);
             _requests = new List<Requests>();
+            _semaphore = new Semaphore(1, 1);
         }
 
         public Worker(int value, string address, BackgroundWorker background)
@@ -61,6 +62,7 @@ namespace WoWHeadParser
             _pages = new Queue<Block>();
             _background.DoWork += new DoWorkEventHandler(DownloadInitial);
             _requests = new List<Requests>();
+            _semaphore = new Semaphore(1, 1);
         }
 
         public void Start()
@@ -83,11 +85,11 @@ namespace WoWHeadParser
                     {
                         for (_entry = _start; _entry < _end; ++_entry)
                         {
+                            _semaphore.WaitOne();
+
                             Requests request = new Requests(new Uri(string.Format("{0}{1}", _address, _entry)), _entry);
                             _requests.Add(request);
                             request.Request.BeginGetResponse(new AsyncCallback(RespCallback), request);
-
-                            Thread.Sleep(500);
                         }
                         break;
                     }
@@ -95,11 +97,12 @@ namespace WoWHeadParser
                     {
                         for (int i = 0; i < _entries.Count; ++i)
                         {
-                            Requests request = new Requests(new Uri(string.Format("{0}{1}", _address, _entries[i])), (int)_entries[i]);
+                            _semaphore.WaitOne();
+
+                            _entry = (int)_entries[i];
+                            Requests request = new Requests(new Uri(string.Format("{0}{1}", _address, _entry)), _entry);
                             _requests.Add(request);
                             request.Request.BeginGetResponse(new AsyncCallback(RespCallback), request);
-
-                            Thread.Sleep(500);
                         }
                         break;
                     }
@@ -129,15 +132,20 @@ namespace WoWHeadParser
             finally
             {
                 request.Dispose();
-                if (_background.IsBusy)
-                    _background.ReportProgress(PercentProgress);
             }
+
+            if (_semaphore != null)
+                _semaphore.Release();
+
+            if (_background.IsBusy)
+                _background.ReportProgress(PercentProgress);
         }
 
 
         public void Stop()
         {
             _background.CancelAsync();
+
             foreach (Requests request in _requests)
                 request.Dispose();
 
@@ -163,6 +171,8 @@ namespace WoWHeadParser
                     _background.CancelAsync();
                 if (_pages != null)
                     _pages.Clear();
+                if (_semaphore != null)
+                    _semaphore.Dispose();
             }
         }
     }

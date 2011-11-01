@@ -14,6 +14,7 @@ namespace WoWHeadParser
         private Worker _worker = null;
         private List<uint> _entries = null;
         private WelfCreator _creator = null;
+        private DateTime _startTime;
 
         public WoWHeadParserForm()
         {
@@ -106,6 +107,7 @@ namespace WoWHeadParser
             if (_worker == null)
                 throw new ArgumentNullException("Worker");
 
+            _startTime = DateTime.Now;
             _worker.Start();
         }
 
@@ -137,13 +139,14 @@ namespace WoWHeadParser
 
             startButton.Enabled = true;
             stopButton.Enabled = false;
+            DateTime now = DateTime.Now;
 
             if (saveDialog.ShowDialog(this) == DialogResult.OK)
             {
                 progressLabel.Text = "Parsing...";
                 using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile(), Encoding.UTF8))
                 {
-                    stream.WriteLine(string.Format("-- Dump of {0} Total object count: {1}", DateTime.Now, _worker.Pages.Count));
+                    stream.WriteLine("-- Dump of {0} ({1} - {0}) Total object count: {2}", now, _startTime, _worker.Pages.Count);
                     foreach (Block block in _worker.Pages)
                     {
                         string content = _parser.Parse(block);
