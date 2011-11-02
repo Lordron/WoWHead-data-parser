@@ -8,19 +8,20 @@ namespace WoWHeadParser
 {
     public class Worker : IDisposable
     {
-        private ParsingType _type;
         private int _start;
         private int _end;
         private int _entry;
-        private object _threadLock;
         private string _address;
+        private ParsingType _type;
+        private object _threadLock;
         private Queue<Block> _pages;
-        private BackgroundWorker _background;
+        private List<uint> _entries;
         private Semaphore _semaphore;
         private List<Requests> _requests;
-        private List<uint> _entries;
+        private BackgroundWorker _background;
 
         private const int PercentProgress = 1;
+
         public Queue<Block> Pages
         {
             get { return _pages; }
@@ -28,41 +29,41 @@ namespace WoWHeadParser
 
         public Worker(int start, int end, string address, BackgroundWorker background)
         {
-            _type = ParsingType.TypeMultiple;
             _end = end;
             _start = start;
             _address = address;
             _background = background;
             _threadLock = new object();
             _pages = new Queue<Block>();
-            _background.DoWork += new DoWorkEventHandler(DownloadInitial);
+            _type = ParsingType.TypeMultiple;
             _requests = new List<Requests>();
             _semaphore = new Semaphore(1, 1);
+            _background.DoWork += new DoWorkEventHandler(DownloadInitial);
         }
 
         public Worker(int value, string address, BackgroundWorker background)
         {
-            _type = ParsingType.TypeSingle;
             _entry = value;
             _address = address;
             _background = background;
             _threadLock = new object();
             _pages = new Queue<Block>();
-            _background.DoWork += new DoWorkEventHandler(DownloadInitial);
+            _type = ParsingType.TypeSingle;
             _requests = new List<Requests>();
+            _background.DoWork += new DoWorkEventHandler(DownloadInitial);
         }
 
         public Worker(List<uint> entries, string address, BackgroundWorker background)
         {
-            _type = ParsingType.TypeList;
             _entries = entries;
             _address = address;
             _background = background;
             _threadLock = new object();
             _pages = new Queue<Block>();
-            _background.DoWork += new DoWorkEventHandler(DownloadInitial);
+            _type = ParsingType.TypeList;
             _requests = new List<Requests>();
             _semaphore = new Semaphore(1, 1);
+            _background.DoWork += new DoWorkEventHandler(DownloadInitial);
         }
 
         public void Start()

@@ -10,11 +10,11 @@ namespace WoWHeadParser
 {
     public partial class WoWHeadParserForm : Form
     {
+        private DateTime _startTime;
         private Parser _parser = null;
         private Worker _worker = null;
         private List<uint> _entries = null;
         private WelfCreator _creator = null;
-        private DateTime _startTime;
 
         public WoWHeadParserForm()
         {
@@ -28,9 +28,7 @@ namespace WoWHeadParser
             foreach (Type type in Types)
             {
                 if (type.IsSubclassOf(typeof(Parser)))
-                {
                     parserBox.Items.Add(type);
-                }
             }
 
             DirectoryInfo info = new DirectoryInfo(Application.StartupPath);
@@ -48,7 +46,7 @@ namespace WoWHeadParser
 
             _parser = (Parser)Activator.CreateInstance((Type)parserBox.SelectedItem);
             if (_parser == null)
-                throw new ArgumentNullException("Parser");
+                throw new ArgumentNullException(@"Parser");
 
             string address = string.Format("http://{0}{1}", (string.IsNullOrEmpty(locale) ? "www." : locale), _parser.Address);
 
@@ -71,7 +69,7 @@ namespace WoWHeadParser
                 case ParsingType.TypeList:
                     {
                         if (_entries.Count == -1)
-                            throw new NotImplementedException("Entries list is empty!");
+                            throw new NotImplementedException(@"Entries list is empty!");
 
                         progressBar.Visible = true;
                         progressBar.Value = 1;
@@ -101,12 +99,12 @@ namespace WoWHeadParser
                         break;
                     }
                 default:
-                    throw new NotImplementedException(string.Format("Unsupported type: {0}", type));
+                    throw new NotImplementedException(string.Format(@"Unsupported type: {0}", type));
             }
 
             progressLabel.Text = "Downloading...";
             if (_worker == null)
-                throw new ArgumentNullException("Worker");
+                throw new ArgumentNullException(@"Worker");
 
             _startTime = DateTime.Now;
             _worker.Start();
@@ -136,7 +134,7 @@ namespace WoWHeadParser
         void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (_worker == null)
-                throw new ArgumentNullException("Worker");
+                throw new ArgumentNullException(@"Worker");
 
             startButton.Enabled = true;
             stopButton.Enabled = false;
@@ -147,7 +145,7 @@ namespace WoWHeadParser
                 progressLabel.Text = "Parsing...";
                 using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile(), Encoding.UTF8))
                 {
-                    stream.WriteLine("-- Dump of {0} ({1} - {0}) Total object count: {2}", now, _startTime, _worker.Pages.Count);
+                    stream.WriteLine(@"-- Dump of {0} ({1} - {0}) Total object count: {2}", now, _startTime, _worker.Pages.Count);
                     foreach (Block block in _worker.Pages)
                     {
                         string content = _parser.Parse(block);
