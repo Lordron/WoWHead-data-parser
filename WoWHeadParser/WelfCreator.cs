@@ -22,7 +22,7 @@ namespace WoWHeadParser
 
         private void Initial()
         {
-            _client = new WebClient() { Encoding = Encoding.UTF8 };
+            _client = new WebClient { Encoding = Encoding.UTF8 };
             _ids = new List<string>();
             _count = 0;
         }
@@ -44,9 +44,11 @@ namespace WoWHeadParser
 
             foreach (Match match in matches)
             {
-                if (!_ids.Contains(match.Groups[1].Value))
-                    _ids.Add(match.Groups[1].Value);
+                string id = match.Groups[1].Value;
+                if (!_ids.Contains(id))
+                    _ids.Add(id);
             }
+
             _count += matches.Count;
 
             foreach (string id in _ids)

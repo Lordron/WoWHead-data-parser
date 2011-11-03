@@ -51,7 +51,7 @@ namespace WoWHeadParser
             string address = string.Format("http://{0}{1}", (string.IsNullOrEmpty(locale) ? "www." : locale), _parser.Address);
 
             startButton.Enabled = false;
-            stopButton.Enabled = true;
+            abortButton.Enabled = true;
             progressBar.Value = 0;
             progressBar.Minimum = 0;
 
@@ -115,18 +115,18 @@ namespace WoWHeadParser
             if (parserBox.SelectedItem == null)
             {
                 startButton.Enabled = false;
-                stopButton.Enabled = false;
+                abortButton.Enabled = false;
                 return;
             }
 
             startButton.Enabled = true;
-            stopButton.Enabled = false;
+            abortButton.Enabled = false;
         }
 
         private void BackgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             if (progressBar.InvokeRequired)
-                progressBar.BeginInvoke(new Action<int>((i) => progressBar.Value += i), e.ProgressPercentage);
+                progressBar.BeginInvoke(new Action<int>(i => progressBar.Value += i), e.ProgressPercentage);
             else
                 progressBar.Value += e.ProgressPercentage;
         }
@@ -137,7 +137,7 @@ namespace WoWHeadParser
                 throw new ArgumentNullException(@"Worker");
 
             startButton.Enabled = true;
-            stopButton.Enabled = false;
+            abortButton.Enabled = false;
             DateTime now = DateTime.Now;
 
             if (saveDialog.ShowDialog(this) == DialogResult.OK)
@@ -158,11 +158,11 @@ namespace WoWHeadParser
             progressLabel.Text = "Complete!";
         }
 
-        private void StopButtonClick(object sender, EventArgs e)
+        private void AbortButtonClick(object sender, EventArgs e)
         {
             _worker.Stop();
             startButton.Enabled = true;
-            stopButton.Enabled = false;
+            abortButton.Enabled = false;
             progressLabel.Text = "Abort...";
         }
 
@@ -173,7 +173,7 @@ namespace WoWHeadParser
             if (welfBox.SelectedItem == null)
             {
                 startButton.Enabled = false;
-                stopButton.Enabled = false;
+                abortButton.Enabled = false;
                 return;
             }
 

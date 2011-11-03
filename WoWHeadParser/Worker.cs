@@ -38,7 +38,7 @@ namespace WoWHeadParser
             _type = ParsingType.TypeMultiple;
             _requests = new List<Requests>();
             _semaphore = new Semaphore(1, 1);
-            _background.DoWork += new DoWorkEventHandler(DownloadInitial);
+            _background.DoWork += DownloadInitial;
         }
 
         public Worker(int value, string address, BackgroundWorker background)
@@ -50,7 +50,7 @@ namespace WoWHeadParser
             _pages = new Queue<Block>();
             _type = ParsingType.TypeSingle;
             _requests = new List<Requests>();
-            _background.DoWork += new DoWorkEventHandler(DownloadInitial);
+            _background.DoWork += DownloadInitial;
         }
 
         public Worker(List<uint> entries, string address, BackgroundWorker background)
@@ -63,7 +63,7 @@ namespace WoWHeadParser
             _type = ParsingType.TypeList;
             _requests = new List<Requests>();
             _semaphore = new Semaphore(1, 1);
-            _background.DoWork += new DoWorkEventHandler(DownloadInitial);
+            _background.DoWork += DownloadInitial;
         }
 
         public void Start()
@@ -79,7 +79,7 @@ namespace WoWHeadParser
                 case ParsingType.TypeSingle:
                     {
                         Requests request = new Requests(new Uri(string.Format("{0}{1}", _address, _entry)), _entry);
-                        request.Request.BeginGetResponse(new AsyncCallback(RespCallback), request);
+                        request.Request.BeginGetResponse(RespCallback, request);
                         break;
                     }
                 case ParsingType.TypeMultiple:
@@ -90,7 +90,7 @@ namespace WoWHeadParser
 
                             Requests request = new Requests(new Uri(string.Format("{0}{1}", _address, _entry)), _entry);
                             _requests.Add(request);
-                            request.Request.BeginGetResponse(new AsyncCallback(RespCallback), request);
+                            request.Request.BeginGetResponse(RespCallback, request);
                         }
                         break;
                     }
@@ -103,7 +103,7 @@ namespace WoWHeadParser
                             _entry = (int)_entries[i];
                             Requests request = new Requests(new Uri(string.Format("{0}{1}", _address, _entry)), _entry);
                             _requests.Add(request);
-                            request.Request.BeginGetResponse(new AsyncCallback(RespCallback), request);
+                            request.Request.BeginGetResponse(RespCallback, request);
                         }
                         break;
                     }

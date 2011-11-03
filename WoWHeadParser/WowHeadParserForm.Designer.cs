@@ -54,7 +54,7 @@ namespace WoWHeadParser
             this.progressLabel = new System.Windows.Forms.Label();
             this.saveDialog = new System.Windows.Forms.SaveFileDialog();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
-            this.stopButton = new System.Windows.Forms.Button();
+            this.abortButton = new System.Windows.Forms.Button();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -367,16 +367,16 @@ namespace WoWHeadParser
             this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundWorkerProgressChanged);
             this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorkerRunWorkerCompleted);
             // 
-            // stopButton
+            // abortButton
             // 
-            this.stopButton.Enabled = false;
-            this.stopButton.Location = new System.Drawing.Point(103, 178);
-            this.stopButton.Name = "stopButton";
-            this.stopButton.Size = new System.Drawing.Size(75, 26);
-            this.stopButton.TabIndex = 8;
-            this.stopButton.Text = "Stop";
-            this.stopButton.UseVisualStyleBackColor = true;
-            this.stopButton.Click += new System.EventHandler(this.StopButtonClick);
+            this.abortButton.Enabled = false;
+            this.abortButton.Location = new System.Drawing.Point(103, 178);
+            this.abortButton.Name = "abortButton";
+            this.abortButton.Size = new System.Drawing.Size(75, 26);
+            this.abortButton.TabIndex = 8;
+            this.abortButton.Text = "Abort";
+            this.abortButton.UseVisualStyleBackColor = true;
+            this.abortButton.Click += new System.EventHandler(this.AbortButtonClick);
             // 
             // menuStrip1
             // 
@@ -401,7 +401,7 @@ namespace WoWHeadParser
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItemClick);
             // 
@@ -436,7 +436,7 @@ namespace WoWHeadParser
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.ClientSize = new System.Drawing.Size(387, 243);
-            this.Controls.Add(this.stopButton);
+            this.Controls.Add(this.abortButton);
             this.Controls.Add(this.progressLabel);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.progressBar);
@@ -478,7 +478,7 @@ namespace WoWHeadParser
         private Label progressLabel;
         private SaveFileDialog saveDialog;
         private BackgroundWorker backgroundWorker;
-        private Button stopButton;
+        private Button abortButton;
         private TabControl tabControl1;
         private TabPage singleTab;
         private TabPage multipleTab;
