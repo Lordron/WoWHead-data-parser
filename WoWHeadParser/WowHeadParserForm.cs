@@ -160,6 +160,10 @@ namespace WoWHeadParser
 
         private void AbortButtonClick(object sender, EventArgs e)
         {
+            if (_worker == null)
+                throw new ArgumentNullException(@"Worker");
+
+            backgroundWorker.Dispose();
             _worker.Stop();
             startButton.Enabled = true;
             abortButton.Enabled = false;

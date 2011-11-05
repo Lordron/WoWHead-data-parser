@@ -145,8 +145,6 @@ namespace WoWHeadParser
 
         public void Stop()
         {
-            _background.CancelAsync();
-
             foreach (Requests request in _requests)
                 request.Dispose();
 
@@ -170,8 +168,6 @@ namespace WoWHeadParser
             {
                 if (_background.IsBusy)
                     _background.CancelAsync();
-                if (_pages != null)
-                    _pages.Clear();
                 if (_semaphore != null)
                     _semaphore.Dispose();
             }
