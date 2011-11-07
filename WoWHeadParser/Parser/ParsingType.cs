@@ -7,4 +7,11 @@ namespace WoWHeadParser
         TypeMultiple = 1,
         TypeList     = 2,
     }
+
+    public enum TrainerType
+    {
+        TrainerNone = 0,
+        ClassTrainer = 1,
+        RecipeTrainer = 2,
+    }
 }

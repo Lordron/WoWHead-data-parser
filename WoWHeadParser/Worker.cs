@@ -108,6 +108,7 @@ namespace WoWHeadParser
                         break;
                     }
             }
+            Thread.Sleep(1000);
         }
 
 

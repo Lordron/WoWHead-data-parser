@@ -52,8 +52,8 @@ namespace WoWHeadParser
 
             startButton.Enabled = false;
             abortButton.Enabled = true;
-            progressBar.Value = 0;
             progressBar.Minimum = 0;
+            progressBar.Value = 0;
 
             switch (type)
             {
@@ -90,10 +90,11 @@ namespace WoWHeadParser
                         if (startValue == endValue)
                             throw new NotImplementedException(@"Starting value can not be equal ending value!");
 
+                        int dif = endValue - startValue;
                         progressBar.Visible = true;
-                        progressBar.Value = startValue;
-                        progressBar.Minimum = startValue;
-                        progressBar.Maximum = endValue;
+                        progressBar.Value = 0;
+                        progressBar.Minimum = 0;
+                        progressBar.Maximum = dif;
 
                         _worker = new Worker(startValue, endValue, address, backgroundWorker);
                         break;
