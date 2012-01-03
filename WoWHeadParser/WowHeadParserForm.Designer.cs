@@ -46,7 +46,7 @@ namespace WoWHeadParser
             this.rangeStart = new System.Windows.Forms.NumericUpDown();
             this.rangeEnd = new System.Windows.Forms.NumericUpDown();
             this.listTab = new System.Windows.Forms.TabPage();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.listBox = new System.Windows.Forms.GroupBox();
             this.welfBox = new System.Windows.Forms.ComboBox();
             this.entryCountLabel = new System.Windows.Forms.Label();
             this.progressBar = new System.Windows.Forms.ProgressBar();
@@ -73,7 +73,7 @@ namespace WoWHeadParser
             ((System.ComponentModel.ISupportInitialize)(this.rangeStart)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.rangeEnd)).BeginInit();
             this.listTab.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.listBox.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -101,7 +101,6 @@ namespace WoWHeadParser
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.parserBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.parserBox.FormattingEnabled = true;
             this.parserBox.Location = new System.Drawing.Point(66, 19);
             this.parserBox.Name = "parserBox";
             this.parserBox.Size = new System.Drawing.Size(242, 21);
@@ -114,7 +113,6 @@ namespace WoWHeadParser
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.localeBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.localeBox.FormattingEnabled = true;
             this.localeBox.Items.AddRange(new object[] {
             "",
             "ru.",
@@ -181,7 +179,7 @@ namespace WoWHeadParser
             this.valueBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.valueBox.Location = new System.Drawing.Point(49, 19);
             this.valueBox.Maximum = new decimal(new int[] {
-            500000,
+            -2147483648,
             0,
             0,
             0});
@@ -191,8 +189,9 @@ namespace WoWHeadParser
             0,
             0});
             this.valueBox.Name = "valueBox";
-            this.valueBox.Size = new System.Drawing.Size(53, 20);
+            this.valueBox.Size = new System.Drawing.Size(69, 20);
             this.valueBox.TabIndex = 12;
+            this.valueBox.ThousandsSeparator = true;
             this.valueBox.Value = new decimal(new int[] {
             1,
             0,
@@ -241,7 +240,7 @@ namespace WoWHeadParser
             this.rangeStart.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.rangeStart.Location = new System.Drawing.Point(44, 19);
             this.rangeStart.Maximum = new decimal(new int[] {
-            500000,
+            -2147483648,
             0,
             0,
             0});
@@ -251,8 +250,9 @@ namespace WoWHeadParser
             0,
             0});
             this.rangeStart.Name = "rangeStart";
-            this.rangeStart.Size = new System.Drawing.Size(53, 20);
+            this.rangeStart.Size = new System.Drawing.Size(69, 20);
             this.rangeStart.TabIndex = 11;
+            this.rangeStart.ThousandsSeparator = true;
             this.rangeStart.Value = new decimal(new int[] {
             1,
             0,
@@ -264,7 +264,7 @@ namespace WoWHeadParser
             this.rangeEnd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.rangeEnd.Location = new System.Drawing.Point(170, 19);
             this.rangeEnd.Maximum = new decimal(new int[] {
-            500000,
+            -2147483648,
             0,
             0,
             0});
@@ -274,8 +274,9 @@ namespace WoWHeadParser
             0,
             0});
             this.rangeEnd.Name = "rangeEnd";
-            this.rangeEnd.Size = new System.Drawing.Size(54, 20);
+            this.rangeEnd.Size = new System.Drawing.Size(69, 20);
             this.rangeEnd.TabIndex = 14;
+            this.rangeEnd.ThousandsSeparator = true;
             this.rangeEnd.Value = new decimal(new int[] {
             1,
             0,
@@ -285,7 +286,7 @@ namespace WoWHeadParser
             // listTab
             // 
             this.listTab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.listTab.Controls.Add(this.groupBox1);
+            this.listTab.Controls.Add(this.listBox);
             this.listTab.Location = new System.Drawing.Point(4, 22);
             this.listTab.Name = "listTab";
             this.listTab.Padding = new System.Windows.Forms.Padding(3);
@@ -293,16 +294,16 @@ namespace WoWHeadParser
             this.listTab.TabIndex = 2;
             this.listTab.Text = "List";
             // 
-            // groupBox1
+            // listBox
             // 
-            this.groupBox1.Controls.Add(this.welfBox);
-            this.groupBox1.Controls.Add(this.entryCountLabel);
-            this.groupBox1.Location = new System.Drawing.Point(9, 7);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(338, 49);
-            this.groupBox1.TabIndex = 15;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Settings";
+            this.listBox.Controls.Add(this.welfBox);
+            this.listBox.Controls.Add(this.entryCountLabel);
+            this.listBox.Location = new System.Drawing.Point(6, 6);
+            this.listBox.Name = "listBox";
+            this.listBox.Size = new System.Drawing.Size(338, 49);
+            this.listBox.TabIndex = 15;
+            this.listBox.TabStop = false;
+            this.listBox.Text = "Settings";
             // 
             // welfBox
             // 
@@ -310,7 +311,6 @@ namespace WoWHeadParser
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.welfBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.welfBox.FormattingEnabled = true;
             this.welfBox.Location = new System.Drawing.Point(16, 19);
             this.welfBox.Name = "welfBox";
             this.welfBox.Size = new System.Drawing.Size(187, 21);
@@ -363,11 +363,13 @@ namespace WoWHeadParser
             // 
             this.backgroundWorker.WorkerReportsProgress = true;
             this.backgroundWorker.WorkerSupportsCancellation = true;
+            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorkerDoWork);
             this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundWorkerProgressChanged);
             this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorkerRunWorkerCompleted);
             // 
             // abortButton
             // 
+            this.abortButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.abortButton.Enabled = false;
             this.abortButton.Location = new System.Drawing.Point(103, 178);
             this.abortButton.Name = "abortButton";
@@ -431,9 +433,11 @@ namespace WoWHeadParser
             // 
             // WoWHeadParserForm
             // 
+            this.AcceptButton = this.startButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.CancelButton = this.abortButton;
             this.ClientSize = new System.Drawing.Size(387, 243);
             this.Controls.Add(this.abortButton);
             this.Controls.Add(this.progressLabel);
@@ -458,8 +462,8 @@ namespace WoWHeadParser
             ((System.ComponentModel.ISupportInitialize)(this.rangeStart)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.rangeEnd)).EndInit();
             this.listTab.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.listBox.ResumeLayout(false);
+            this.listBox.PerformLayout();
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -488,7 +492,7 @@ namespace WoWHeadParser
         private Label valueLabel;
         private NumericUpDown valueBox;
         private TabPage listTab;
-        private GroupBox groupBox1;
+        private GroupBox listBox;
         private Label entryCountLabel;
         private ComboBox welfBox;
         private MenuStrip menuStrip1;

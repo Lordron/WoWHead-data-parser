@@ -41,6 +41,30 @@ namespace WoWHeadParser
 
         public void StartButtonClick(object sender, EventArgs e)
         {
+            startButton.Enabled = false;
+            abortButton.Enabled = true;
+            progressBar.Minimum = 0;
+            progressBar.Value = 0;
+
+            // Starting work on a different thread to prevent MainForm freezing
+            backgroundWorker.RunWorkerAsync();
+        }
+
+        public void ParserIndexChanged(object sender, EventArgs e)
+        {
+            if (parserBox.SelectedItem == null)
+            {
+                startButton.Enabled = false;
+                abortButton.Enabled = false;
+                return;
+            }
+
+            startButton.Enabled = true;
+            abortButton.Enabled = false;
+        }
+
+        private void BackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
+        {
             string locale = (string)localeBox.SelectedItem;
             ParsingType type = (ParsingType)tabControl1.SelectedIndex;
 
@@ -50,24 +74,19 @@ namespace WoWHeadParser
 
             string address = string.Format("http://{0}{1}", (string.IsNullOrEmpty(locale) ? "www." : locale), _parser.Address);
 
-            startButton.Enabled = false;
-            abortButton.Enabled = true;
-            progressBar.Minimum = 0;
-            progressBar.Value = 0;
-
             switch (type)
             {
                 case ParsingType.TypeSingle:
                     {
                         uint value = (uint)valueBox.Value;
-                        _worker = new Worker(value, address, backgroundWorker);
+                        _worker = new Worker(value, address);
                         break;
                     }
                 case ParsingType.TypeList:
                     {
                         progressBar.Maximum = _entries.Count;
 
-                        _worker = new Worker(_entries, address, backgroundWorker);
+                        _worker = new Worker(_entries, address);
                         break;
                     }
                 case ParsingType.TypeMultiple:
@@ -83,7 +102,7 @@ namespace WoWHeadParser
 
                         progressBar.Maximum = (int)(endValue - startValue);
 
-                        _worker = new Worker(startValue, endValue, address, backgroundWorker);
+                        _worker = new Worker(startValue, endValue, address);
                         break;
                     }
                 default:
@@ -93,20 +112,7 @@ namespace WoWHeadParser
             progressLabel.Text = "Downloading...";
 
             _startTime = DateTime.Now;
-            _worker.Start();
-        }
-
-        public void ParserIndexChanged(object sender, EventArgs e)
-        {
-            if (parserBox.SelectedItem == null)
-            {
-                startButton.Enabled = false;
-                abortButton.Enabled = false;
-                return;
-            }
-
-            startButton.Enabled = true;
-            abortButton.Enabled = false;
+            _worker.Start(backgroundWorker);
         }
 
         private void BackgroundWorkerProgressChanged(object sender, ProgressChangedEventArgs e)
@@ -144,6 +150,10 @@ namespace WoWHeadParser
 
         private void AbortButtonClick(object sender, EventArgs e)
         {
+            DialogResult result = ShowQuestionMessageBox("Do you really want to stop ?");
+            if (result != DialogResult.OK)
+                return;
+
             _worker.Stop();
             startButton.Enabled = true;
             abortButton.Enabled = false;

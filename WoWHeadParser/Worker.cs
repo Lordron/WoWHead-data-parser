@@ -27,53 +27,43 @@ namespace WoWHeadParser
             get { return _pages; }
         }
 
-        public Worker(uint start, uint end, string address, BackgroundWorker background)
+        public Worker(uint start, uint end, string address)
         {
             _end = end;
             _start = start;
             _address = address;
-            _background = background;
             _threadLock = new object();
             _pages = new Queue<Block>();
             _type = ParsingType.TypeMultiple;
             _requests = new List<Requests>();
             _semaphore = new Semaphore(1, 1);
-            _background.DoWork += DownloadInitial;
         }
 
-        public Worker(uint value, string address, BackgroundWorker background)
+        public Worker(uint value, string address)
         {
             _entry = value;
             _address = address;
-            _background = background;
             _threadLock = new object();
             _pages = new Queue<Block>();
             _type = ParsingType.TypeSingle;
             _requests = new List<Requests>();
-            _background.DoWork += DownloadInitial;
         }
 
-        public Worker(List<uint> entries, string address, BackgroundWorker background)
+        public Worker(List<uint> entries, string address)
         {
             _entries = entries;
             _address = address;
-            _background = background;
             _threadLock = new object();
             _pages = new Queue<Block>();
             _type = ParsingType.TypeList;
             _requests = new List<Requests>();
             _semaphore = new Semaphore(1, 1);
-            _background.DoWork += DownloadInitial;
         }
 
-        public void Start()
+        public void Start(BackgroundWorker worker)
         {
-            //Starting work on a different thread to prevent MainForm freezing
-            _background.RunWorkerAsync();
-        }
+            _background = worker;
 
-        public void DownloadInitial(object sender, DoWorkEventArgs e)
-        {
             switch (_type)
             {
                 case ParsingType.TypeSingle:
@@ -112,6 +102,7 @@ namespace WoWHeadParser
                         break;
                     }
             }
+
             Thread.Sleep(1000);
         }
 
