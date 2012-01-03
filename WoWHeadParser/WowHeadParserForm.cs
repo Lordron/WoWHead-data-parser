@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -19,10 +20,9 @@ namespace WoWHeadParser
         public WoWHeadParserForm()
         {
             InitializeComponent();
-            Initial();
         }
 
-        public void Initial()
+        protected override void OnLoad(EventArgs e)
         {
             Type[] Types = Assembly.GetExecutingAssembly().GetTypes();
             foreach (Type type in Types)
@@ -41,12 +41,12 @@ namespace WoWHeadParser
 
         public void StartButtonClick(object sender, EventArgs e)
         {
-            ParsingType type = (ParsingType)tabControl1.SelectedIndex;
             string locale = (string)localeBox.SelectedItem;
+            ParsingType type = (ParsingType)tabControl1.SelectedIndex;
 
             _parser = (Parser)Activator.CreateInstance((Type)parserBox.SelectedItem);
             if (_parser == null)
-                throw new ArgumentNullException(@"Parser");
+                throw new ArgumentNullException();
 
             string address = string.Format("http://{0}{1}", (string.IsNullOrEmpty(locale) ? "www." : locale), _parser.Address);
 
@@ -59,21 +59,12 @@ namespace WoWHeadParser
             {
                 case ParsingType.TypeSingle:
                     {
-                        int value = (int)valueBox.Value;
-                        if (value < 1)
-                            throw new ArgumentOutOfRangeException(@"Value", @"Value can not be smaller than '1'!");
-
+                        uint value = (uint)valueBox.Value;
                         _worker = new Worker(value, address, backgroundWorker);
                         break;
                     }
                 case ParsingType.TypeList:
                     {
-                        if (_entries.Count == -1)
-                            throw new NotImplementedException(@"Entries list is empty!");
-
-                        progressBar.Visible = true;
-                        progressBar.Value = 1;
-                        progressBar.Minimum = 1;
                         progressBar.Maximum = _entries.Count;
 
                         _worker = new Worker(_entries, address, backgroundWorker);
@@ -81,20 +72,16 @@ namespace WoWHeadParser
                     }
                 case ParsingType.TypeMultiple:
                     {
-                        int startValue = (int)rangeStart.Value;
-                        int endValue = (int)rangeEnd.Value;
+                        uint startValue = (uint)rangeStart.Value;
+                        uint endValue = (uint)rangeEnd.Value;
 
                         if (startValue > endValue)
-                            throw new ArgumentOutOfRangeException(@"StartValue", @"Starting value can not be bigger than ending value!");
+                            throw new ArgumentOutOfRangeException(@"Starting value can not be bigger than ending value!");
 
                         if (startValue == endValue)
-                            throw new NotImplementedException(@"Starting value can not be equal ending value!");
+                            throw new ArgumentOutOfRangeException(@"Starting value can not be equal ending value!");
 
-                        int dif = endValue - startValue;
-                        progressBar.Visible = true;
-                        progressBar.Value = 0;
-                        progressBar.Minimum = 0;
-                        progressBar.Maximum = dif;
+                        progressBar.Maximum = (int)(endValue - startValue);
 
                         _worker = new Worker(startValue, endValue, address, backgroundWorker);
                         break;
@@ -104,8 +91,6 @@ namespace WoWHeadParser
             }
 
             progressLabel.Text = "Downloading...";
-            if (_worker == null)
-                throw new ArgumentNullException(@"Worker");
 
             _startTime = DateTime.Now;
             _worker.Start();
@@ -134,9 +119,7 @@ namespace WoWHeadParser
 
         void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (_worker == null)
-                throw new ArgumentNullException(@"Worker");
-
+            progressBar.Visible = true;
             startButton.Enabled = true;
             abortButton.Enabled = false;
             DateTime now = DateTime.Now;
@@ -146,7 +129,7 @@ namespace WoWHeadParser
                 progressLabel.Text = "Parsing...";
                 using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile(), Encoding.UTF8))
                 {
-                    stream.WriteLine(@"-- Dump of {0} ({1} - {0}) Total object count: {2}", now, _startTime, _worker.Pages.Count);
+                    stream.WriteLine(@"-- Dump of {0} ({1}), Total object count: {2}", now, now - _startTime, _worker.Pages.Count);
                     foreach (Block block in _worker.Pages)
                     {
                         string content = _parser.Parse(block);
@@ -161,10 +144,6 @@ namespace WoWHeadParser
 
         private void AbortButtonClick(object sender, EventArgs e)
         {
-            if (_worker == null)
-                throw new ArgumentNullException(@"Worker");
-
-            backgroundWorker.Dispose();
             _worker.Stop();
             startButton.Enabled = true;
             abortButton.Enabled = false;
@@ -197,13 +176,10 @@ namespace WoWHeadParser
                 }
 
                 entryCountLabel.Text = string.Format("Entry count: {0}", _entries.Count);
-            }
-        }
 
-        private void ExitToolStripMenuItemClick(object sender, EventArgs e)
-        {
-            _worker.Stop();
-            Application.Exit();
+                if (_entries.Count == -1)
+                    throw new NotImplementedException(@"Entries list is empty!");
+            }
         }
 
         private void WELFCreatorToolStripMenuItemClick(object sender, EventArgs e)
@@ -224,6 +200,29 @@ namespace WoWHeadParser
             {
                 welfBox.Items.Add(file.Name);
             }
+        }
+
+        private void ExitToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            if (_worker != null)
+                _worker.Stop();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            DialogResult result = ShowQuestionMessageBox("Do you really want to quit WoWHead Parser ?");
+            e.Cancel = (result == DialogResult.Cancel);
+        }
+
+        private static DialogResult ShowQuestionMessageBox(string format, params object[] args)
+        {
+            string msg = string.Format(CultureInfo.InvariantCulture, format, args);
+            return MessageBox.Show(msg, @"WoWHead Parser", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
         }
     }
 }

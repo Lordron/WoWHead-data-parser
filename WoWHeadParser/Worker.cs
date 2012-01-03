@@ -6,11 +6,11 @@ using System.Threading;
 
 namespace WoWHeadParser
 {
-    public class Worker : IDisposable
+    public class Worker
     {
-        private int _start;
-        private int _end;
-        private int _entry;
+        private uint _start;
+        private uint _end;
+        private uint _entry;
         private string _address;
         private ParsingType _type;
         private object _threadLock;
@@ -27,7 +27,7 @@ namespace WoWHeadParser
             get { return _pages; }
         }
 
-        public Worker(int start, int end, string address, BackgroundWorker background)
+        public Worker(uint start, uint end, string address, BackgroundWorker background)
         {
             _end = end;
             _start = start;
@@ -41,7 +41,7 @@ namespace WoWHeadParser
             _background.DoWork += DownloadInitial;
         }
 
-        public Worker(int value, string address, BackgroundWorker background)
+        public Worker(uint value, string address, BackgroundWorker background)
         {
             _entry = value;
             _address = address;
@@ -72,7 +72,7 @@ namespace WoWHeadParser
             _background.RunWorkerAsync();
         }
 
-        void DownloadInitial(object sender, DoWorkEventArgs e)
+        public void DownloadInitial(object sender, DoWorkEventArgs e)
         {
             switch (_type)
             {
@@ -89,8 +89,10 @@ namespace WoWHeadParser
                             _semaphore.WaitOne();
 
                             Requests request = new Requests(new Uri(string.Format("{0}{1}", _address, _entry)), _entry);
-                            _requests.Add(request);
-                            request.Request.BeginGetResponse(RespCallback, request);
+                            {
+                                _requests.Add(request);
+                                request.Request.BeginGetResponse(RespCallback, request);
+                            }
                         }
                         break;
                     }
@@ -100,10 +102,12 @@ namespace WoWHeadParser
                         {
                             _semaphore.WaitOne();
 
-                            _entry = (int)_entries[i];
+                            _entry = _entries[i];
                             Requests request = new Requests(new Uri(string.Format("{0}{1}", _address, _entry)), _entry);
-                            _requests.Add(request);
-                            request.Request.BeginGetResponse(RespCallback, request);
+                            {
+                                _requests.Add(request);
+                                request.Request.BeginGetResponse(RespCallback, request);
+                            }
                         }
                         break;
                     }
@@ -111,21 +115,18 @@ namespace WoWHeadParser
             Thread.Sleep(1000);
         }
 
-
         private void RespCallback(IAsyncResult iar)
         {
             Requests request = (Requests)iar.AsyncState;
             try
             {
                 request.Response = (HttpWebResponse)request.Request.EndGetResponse(iar);
-                string text = request.GetContent();
-                lock (_threadLock)
+                string text = request.ToString();
+                if (!string.IsNullOrEmpty(text))
                 {
-                    if (!string.IsNullOrEmpty(text))
-                    {
-                        Block block = new Block(text, (uint)request.Entry);
+                    Block block = new Block(text, request.Entry);
+                    lock (_threadLock)
                         _pages.Enqueue(block);
-                    }
                 }
             }
             catch
@@ -136,42 +137,27 @@ namespace WoWHeadParser
                 request.Dispose();
             }
 
-            if (_semaphore != null)
-                _semaphore.Release();
-
-            if (_background.IsBusy)
-                _background.ReportProgress(PercentProgress);
+            _semaphore.Release();
+            _background.ReportProgress(PercentProgress);
         }
-
 
         public void Stop()
         {
-            foreach (Requests request in _requests)
-                request.Dispose();
+            if (_semaphore != null)
+                _semaphore.Dispose();
 
-            Dispose();
+            if (_background.IsBusy)
+                _background.Dispose();
+
+            foreach (Requests request in _requests)
+            {
+                request.Dispose();
+            }
         }
 
         ~Worker()
         {
             Stop();
-        }
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_background.IsBusy)
-                    _background.CancelAsync();
-                if (_semaphore != null)
-                    _semaphore.Dispose();
-            }
         }
     }
 }

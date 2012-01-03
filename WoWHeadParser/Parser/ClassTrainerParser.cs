@@ -1,5 +1,7 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace WoWHeadParser
 {
@@ -13,9 +15,19 @@ namespace WoWHeadParser
             TrainerType type = GetTrainerType(page);
 
             string pattern = @"data: \[.*;";
-            string subPattern = "{[^}]*\"id\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*";
+            string subPattern = string.Empty;
 
-            //[{"cat":9,"id":33095,"learnedat":275,"level":1,"name":"@Рыбная ловля","nskillup":1,"schools":1,"skill":[356],"source":[6],"trainingcost":100000}
+            switch (type)
+            {
+                case TrainerType.ClassTrainer:
+                    subPattern = "{[^}]*\"id\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*";
+                    break;
+                case TrainerType.RecipeTrainer:
+                    subPattern = "{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*";
+                    break;
+                default:
+                    return string.Format("-- Unknown trainer type: {0}", type);
+            }
 
             bool print = false;
 
@@ -28,14 +40,29 @@ namespace WoWHeadParser
                     content.AppendLine();
                     content.AppendFormat(@"SET @ENTRY := {0};", block.Entry).AppendLine();
                     content.AppendLine(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | 48 WHERE `entry` = @ENTRY;");
-                    content.AppendLine(@"REPLACE INTO `npc_trainer` (`entry`, `spell`, `spellcost`, `reqlevel`, `reqSkill`) VALUES");
+                    content.AppendLine(@"REPLACE INTO `npc_trainer` (`entry`, `spell`, `spellcost`, `reqlevel`, `reqSkill`, `reqSkillValue`) VALUES");
                     print = true;
                 }
 
                 for (int i = 0; i < matches.Count; ++i)
                 {
                     GroupCollection groups = matches[i].Groups;
-                    content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}){4}", groups[1].Value, groups[4].Value, groups[2].Value, string.IsNullOrEmpty(groups[3].Value) ? "0" : groups[3].Value, (i < matches.Count - 1 ? "," : ";")).AppendLine();
+
+                    string spell = groups[1].Value;
+                    string end = (i < matches.Count - 1 ? "," : ";");
+                    if (type == TrainerType.RecipeTrainer)
+                    {
+                        string reqSkill = (string.IsNullOrEmpty(groups[4].Value) ? "0" : groups[4].Value);
+                        string reqSkillValue = (string.IsNullOrEmpty(groups[2].Value) ? "0" : groups[2].Value);
+
+                        content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}, {4}){5}", spell, groups[5].Value, groups[3].Value, reqSkill, reqSkillValue, end).AppendLine();
+                    }
+                    else if (type == TrainerType.ClassTrainer)
+                    {
+                        string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? "0" : groups[3].Value);
+
+                        content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}, {4}){5}", spell, groups[4].Value, groups[2].Value, reqSkill, "0", end).AppendLine();
+                    }
                 }
             }
 

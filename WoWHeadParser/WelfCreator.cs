@@ -13,18 +13,17 @@ namespace WoWHeadParser
         public WelfCreator()
         {
             InitializeComponent();
-            Initial();
         }
 
-        private WebClient _client;
         private int _count;
         private List<string> _ids;
+        private WebClient _client;
 
-        private void Initial()
+        protected override void OnLoad(EventArgs e)
         {
-            _client = new WebClient { Encoding = Encoding.UTF8 };
-            _ids = new List<string>();
             _count = 0;
+            _ids = new List<string>();
+            _client = new WebClient { Encoding = Encoding.UTF8 };
         }
 
         private void StartButtonClick(object sender, EventArgs e)

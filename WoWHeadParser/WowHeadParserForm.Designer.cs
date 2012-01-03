@@ -334,7 +334,6 @@ namespace WoWHeadParser
             this.progressBar.Size = new System.Drawing.Size(376, 26);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar.TabIndex = 5;
-            this.progressBar.Visible = false;
             // 
             // startButton
             // 
@@ -358,7 +357,7 @@ namespace WoWHeadParser
             // 
             // saveDialog
             // 
-            this.saveDialog.Filter = "Structured Query Language (.sql)| *.sql|All Files|*.*";
+            this.saveDialog.Filter = "Structured Query Language| *.sql|Normal text file| *.txt|All Files| *.*";
             // 
             // backgroundWorker
             // 

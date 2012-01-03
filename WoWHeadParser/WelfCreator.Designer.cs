@@ -51,7 +51,7 @@
             // 
             this.addressBox.Location = new System.Drawing.Point(87, 10);
             this.addressBox.Name = "addressBox";
-            this.addressBox.Size = new System.Drawing.Size(306, 20);
+            this.addressBox.Size = new System.Drawing.Size(303, 20);
             this.addressBox.TabIndex = 0;
             // 
             // welDataBox
@@ -90,7 +90,7 @@
             // countLabel
             // 
             this.countLabel.AutoSize = true;
-            this.countLabel.Location = new System.Drawing.Point(209, 164);
+            this.countLabel.Location = new System.Drawing.Point(234, 164);
             this.countLabel.Name = "countLabel";
             this.countLabel.Size = new System.Drawing.Size(43, 13);
             this.countLabel.TabIndex = 5;

@@ -6,28 +6,24 @@ namespace WoWHeadParser
 {
     public class Requests : IDisposable
     {
-        private HttpWebRequest _request;
-        private HttpWebResponse _response;
-        private int _entry;
+        public HttpWebRequest Request { get; set; }
+        public HttpWebResponse Response { get; set; }
+        public uint Entry { get; set; }
 
-        public HttpWebRequest Request { get { return _request; } }
-        public HttpWebResponse Response { get { return _response; } set { _response = value; } }
-        public int Entry { get { return _entry; } }
-
-        public Requests(Uri url, int entry)
+        public Requests(Uri url, uint entry)
         {
-            _request = (HttpWebRequest)WebRequest.Create(url);
-            _request.UserAgent = @"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/534.6 (KHTML, like Gecko) Chrome/7.0.503.0 Safari/534.6";
-            _request.Method = "POST";
-            _entry = entry;
+            Request = (HttpWebRequest)WebRequest.Create(url);
+            Request.UserAgent = @"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/534.6 (KHTML, like Gecko) Chrome/7.0.503.0 Safari/534.6";
+            Request.Method = "POST";
+            Entry = entry;
         }
 
-        public string GetContent()
+        public override string ToString()
         {
-            if (_response == null)
-                throw new ArgumentNullException("Response");
+            if (Response != null)
+                return new StreamReader(Response.GetResponseStream()).ReadToEnd();
 
-            return new StreamReader(_response.GetResponseStream()).ReadToEnd();
+            return string.Empty;
         }
 
         ~Requests()
@@ -46,13 +42,13 @@ namespace WoWHeadParser
         {
             if (disposing)
             {
-                if (_request != null)
-                    _request.Abort();
+                if (Request != null)
+                    Request.Abort();
 
-                if (_response != null)
+                if (Response != null)
                 {
-                    _response.Close();
-                    _response.Dispose();
+                    Response.Close();
+                    Response.Dispose();
                 }
             }
         }

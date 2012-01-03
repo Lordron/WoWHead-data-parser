@@ -1,26 +1,17 @@
 ﻿
 namespace WoWHeadParser
 {
-    public struct Block
+    public class Block
     {
-        private string _page;
-        private uint _entry;
-
-        public string Page
-        {
-            get { return _page; }
-        }
-
-        public uint Entry
-        {
-            get { return _entry; }
-        }
-
         public Block(string page, uint entry)
         {
-            _page = page;
-            _entry = entry;
+            Page = page;
+            Entry = entry;
         }
+
+        public string Page { get; set; }
+
+        public uint Entry { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -29,22 +20,22 @@ namespace WoWHeadParser
 
         public override int GetHashCode()
         {
-            return _entry.GetHashCode();
+            return Entry.GetHashCode();
         }
 
         public override string ToString()
         {
-            return _page;
+            return Page;
         }
 
         public static bool operator ==(Block block1, Block block2)
         {
-            return block1._entry == block2._entry;
+            return block1.Entry == block2.Entry;
         }
 
         public static bool operator !=(Block block1, Block block2)
         {
-            return block1._entry != block2._entry;
+            return block1.Entry != block2.Entry;
         }
     }
 }
