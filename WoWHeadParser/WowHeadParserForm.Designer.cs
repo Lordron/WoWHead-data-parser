@@ -36,7 +36,7 @@ namespace WoWHeadParser
             this.parserBox = new System.Windows.Forms.ComboBox();
             this.localeBox = new System.Windows.Forms.ComboBox();
             this.settingsBox = new System.Windows.Forms.GroupBox();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.parsingControl = new System.Windows.Forms.TabControl();
             this.singleTab = new System.Windows.Forms.TabPage();
             this.singleBox = new System.Windows.Forms.GroupBox();
             this.valueBox = new System.Windows.Forms.NumericUpDown();
@@ -64,7 +64,7 @@ namespace WoWHeadParser
             rangeEndLabel = new System.Windows.Forms.Label();
             rangeStartLabel = new System.Windows.Forms.Label();
             this.settingsBox.SuspendLayout();
-            this.tabControl1.SuspendLayout();
+            this.parsingControl.SuspendLayout();
             this.singleTab.SuspendLayout();
             this.singleBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.valueBox)).BeginInit();
@@ -126,7 +126,7 @@ namespace WoWHeadParser
             // 
             // settingsBox
             // 
-            this.settingsBox.Controls.Add(this.tabControl1);
+            this.settingsBox.Controls.Add(this.parsingControl);
             this.settingsBox.Controls.Add(this.localeBox);
             this.settingsBox.Controls.Add(this.parserBox);
             this.settingsBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
@@ -137,19 +137,19 @@ namespace WoWHeadParser
             this.settingsBox.TabStop = false;
             this.settingsBox.Text = "Settings";
             // 
-            // tabControl1
+            // parsingControl
             // 
-            this.tabControl1.Controls.Add(this.singleTab);
-            this.tabControl1.Controls.Add(this.multipleTab);
-            this.tabControl1.Controls.Add(this.listTab);
-            this.tabControl1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
-            this.tabControl1.Location = new System.Drawing.Point(6, 46);
-            this.tabControl1.Multiline = true;
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(364, 88);
-            this.tabControl1.SizeMode = System.Windows.Forms.TabSizeMode.FillToRight;
-            this.tabControl1.TabIndex = 9;
+            this.parsingControl.Controls.Add(this.singleTab);
+            this.parsingControl.Controls.Add(this.multipleTab);
+            this.parsingControl.Controls.Add(this.listTab);
+            this.parsingControl.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.parsingControl.Location = new System.Drawing.Point(6, 46);
+            this.parsingControl.Multiline = true;
+            this.parsingControl.Name = "parsingControl";
+            this.parsingControl.SelectedIndex = 0;
+            this.parsingControl.Size = new System.Drawing.Size(364, 88);
+            this.parsingControl.SizeMode = System.Windows.Forms.TabSizeMode.FillToRight;
+            this.parsingControl.TabIndex = 9;
             // 
             // singleTab
             // 
@@ -286,6 +286,7 @@ namespace WoWHeadParser
             // listTab
             // 
             this.listTab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.listTab.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listTab.Controls.Add(this.listBox);
             this.listTab.Location = new System.Drawing.Point(4, 22);
             this.listTab.Name = "listTab";
@@ -451,7 +452,7 @@ namespace WoWHeadParser
             this.Name = "WoWHeadParserForm";
             this.Text = "WowHead Parser";
             this.settingsBox.ResumeLayout(false);
-            this.tabControl1.ResumeLayout(false);
+            this.parsingControl.ResumeLayout(false);
             this.singleTab.ResumeLayout(false);
             this.singleBox.ResumeLayout(false);
             this.singleBox.PerformLayout();
@@ -482,7 +483,7 @@ namespace WoWHeadParser
         private SaveFileDialog saveDialog;
         private BackgroundWorker backgroundWorker;
         private Button abortButton;
-        private TabControl tabControl1;
+        private TabControl parsingControl;
         private TabPage singleTab;
         private TabPage multipleTab;
         private GroupBox multipleBox;

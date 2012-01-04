@@ -43,7 +43,7 @@ namespace WoWHeadParser
         {
             startButton.Enabled = false;
             abortButton.Enabled = true;
-            progressBar.Minimum = 0;
+
             progressBar.Value = 0;
 
             // Starting work on a different thread to prevent MainForm freezing
@@ -66,7 +66,7 @@ namespace WoWHeadParser
         private void BackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             string locale = (string)localeBox.SelectedItem;
-            ParsingType type = (ParsingType)tabControl1.SelectedIndex;
+            ParsingType type = (ParsingType)parsingControl.SelectedIndex;
 
             _parser = (Parser)Activator.CreateInstance((Type)parserBox.SelectedItem);
             if (_parser == null)
@@ -125,7 +125,6 @@ namespace WoWHeadParser
 
         void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            progressBar.Visible = true;
             startButton.Enabled = true;
             abortButton.Enabled = false;
             DateTime now = DateTime.Now;
@@ -133,6 +132,7 @@ namespace WoWHeadParser
             if (saveDialog.ShowDialog(this) == DialogResult.OK)
             {
                 progressLabel.Text = "Parsing...";
+
                 using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile(), Encoding.UTF8))
                 {
                     stream.WriteLine(@"-- Dump of {0} ({1}), Total object count: {2}", now, now - _startTime, _worker.Pages.Count);
@@ -184,12 +184,12 @@ namespace WoWHeadParser
                             _entries.Add(val);
                     }
                 }
-
-                entryCountLabel.Text = string.Format("Entry count: {0}", _entries.Count);
-
-                if (_entries.Count == -1)
-                    throw new NotImplementedException(@"Entries list is empty!");
             }
+
+            entryCountLabel.Text = string.Format("Entry count: {0}", _entries.Count);
+
+            if (_entries.Count == -1)
+                throw new NotImplementedException(@"Entries list is empty!");
         }
 
         private void WELFCreatorToolStripMenuItemClick(object sender, EventArgs e)
