@@ -80,8 +80,8 @@ namespace WoWHeadParser
 
                             Requests request = new Requests(new Uri(string.Format("{0}{1}", _address, _entry)), _entry);
                             {
-                                _requests.Add(request);
                                 request.Request.BeginGetResponse(RespCallback, request);
+                                _requests.Add(request);
                             }
                         }
                         break;
@@ -95,8 +95,8 @@ namespace WoWHeadParser
                             _entry = _entries[i];
                             Requests request = new Requests(new Uri(string.Format("{0}{1}", _address, _entry)), _entry);
                             {
-                                _requests.Add(request);
                                 request.Request.BeginGetResponse(RespCallback, request);
+                                _requests.Add(request);
                             }
                         }
                         break;
@@ -128,8 +128,11 @@ namespace WoWHeadParser
                 request.Dispose();
             }
 
-            _semaphore.Release();
-            _background.ReportProgress(PercentProgress);
+            lock (_threadLock)
+            {
+                _semaphore.Release();
+                _background.ReportProgress(PercentProgress);
+            }
         }
 
         public void Stop()
@@ -137,13 +140,13 @@ namespace WoWHeadParser
             if (_semaphore != null)
                 _semaphore.Dispose();
 
-            if (_background.IsBusy)
-                _background.Dispose();
-
             foreach (Requests request in _requests)
             {
                 request.Dispose();
             }
+
+            if (_background.IsBusy)
+                _background.Dispose();
         }
 
         ~Worker()
