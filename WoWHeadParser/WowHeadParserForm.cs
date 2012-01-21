@@ -142,6 +142,8 @@ namespace WoWHeadParser
                         if (!string.IsNullOrEmpty(content))
                             stream.Write(content);
                     }
+
+                    _worker.Pages.Clear();
                 }
             }
 
