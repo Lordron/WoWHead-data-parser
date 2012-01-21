@@ -113,7 +113,7 @@ namespace WoWHeadParser
             {
                 request.Response = (HttpWebResponse)request.Request.EndGetResponse(iar);
                 string text = request.ToString();
-                if (!string.IsNullOrEmpty(text))
+                if (!string.IsNullOrWhiteSpace(text))
                 {
                     Block block = new Block(text, request.Entry);
                     lock (_threadLock)
