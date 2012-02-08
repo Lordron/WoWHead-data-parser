@@ -3,15 +3,15 @@ namespace WoWHeadParser
 {
     public class Block
     {
-        public Block(string page, uint entry)
+        public Block(string page, uint id)
         {
+            Id = id;
             Page = page;
-            Entry = entry;
         }
 
         public string Page { get; set; }
 
-        public uint Entry { get; set; }
+        public uint Id { get; set; }
 
         public override bool Equals(object obj)
         {
@@ -20,7 +20,7 @@ namespace WoWHeadParser
 
         public override int GetHashCode()
         {
-            return Entry.GetHashCode();
+            return Id.GetHashCode();
         }
 
         public override string ToString()
@@ -30,12 +30,12 @@ namespace WoWHeadParser
 
         public static bool operator ==(Block block1, Block block2)
         {
-            return block1.Entry == block2.Entry;
+            return block1.Id == block2.Id;
         }
 
         public static bool operator !=(Block block1, Block block2)
         {
-            return block1.Entry != block2.Entry;
+            return block1.Id != block2.Id;
         }
     }
 }

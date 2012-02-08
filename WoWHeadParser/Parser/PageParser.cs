@@ -18,7 +18,7 @@ namespace WoWHeadParser
                 string typeStr = groups["page"].Value ?? string.Empty;
                 string[] pages = typeStr.Split(new[] { @"','" }, StringSplitOptions.RemoveEmptyEntries);
 
-                content.AppendFormat(@"SET @ENTRY := SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0};", block.Entry).AppendLine();
+                content.AppendFormat(@"SET @ENTRY := SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0};", block.Id).AppendLine();
                 content.AppendLine(@"INSERT IGNORE INTO `page_text` (`entry`, `text`, `next_page`) VALUES");
 
                 for (int i = 0; i < pages.Length; ++i)

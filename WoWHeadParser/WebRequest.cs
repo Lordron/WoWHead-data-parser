@@ -8,14 +8,16 @@ namespace WoWHeadParser
     {
         public HttpWebRequest Request { get; set; }
         public HttpWebResponse Response { get; set; }
-        public uint Entry { get; set; }
+        public uint Id { get; set; }
 
-        public Requests(Uri url, uint entry)
+        public Requests(string address, uint id)
         {
+            Uri url = new Uri(string.Format("{0}{1}", address, id));
+            Id = id;
+
             Request = (HttpWebRequest)WebRequest.Create(url);
             Request.UserAgent = @"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/534.6 (KHTML, like Gecko) Chrome/7.0.503.0 Safari/534.6";
             Request.Method = "POST";
-            Entry = entry;
         }
 
         public override string ToString()
@@ -33,7 +35,6 @@ namespace WoWHeadParser
 
         public void Dispose()
         {
-
             Dispose(true);
             GC.SuppressFinalize(this);
         }

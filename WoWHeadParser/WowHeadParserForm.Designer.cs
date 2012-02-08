@@ -53,14 +53,15 @@ namespace WoWHeadParser
             this.startButton = new System.Windows.Forms.Button();
             this.progressLabel = new System.Windows.Forms.Label();
             this.saveDialog = new System.Windows.Forms.SaveFileDialog();
-            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.abortButton = new System.Windows.Forms.Button();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.wELFCreatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reloadwelfFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.numericUpDown = new System.Windows.Forms.NumericUpDown();
             rangeEndLabel = new System.Windows.Forms.Label();
             rangeStartLabel = new System.Windows.Forms.Label();
             this.settingsBox.SuspendLayout();
@@ -74,7 +75,8 @@ namespace WoWHeadParser
             ((System.ComponentModel.ISupportInitialize)(this.rangeEnd)).BeginInit();
             this.listTab.SuspendLayout();
             this.listBox.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
+            this.menuStrip.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // rangeEndLabel
@@ -330,7 +332,7 @@ namespace WoWHeadParser
             // progressBar
             // 
             this.progressBar.Location = new System.Drawing.Point(6, 210);
-            this.progressBar.Maximum = 500000;
+            this.progressBar.Maximum = 2147483647;
             this.progressBar.Name = "progressBar";
             this.progressBar.Size = new System.Drawing.Size(376, 26);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
@@ -350,7 +352,7 @@ namespace WoWHeadParser
             // progressLabel
             // 
             this.progressLabel.AutoSize = true;
-            this.progressLabel.Location = new System.Drawing.Point(271, 191);
+            this.progressLabel.Location = new System.Drawing.Point(196, 188);
             this.progressLabel.Name = "progressLabel";
             this.progressLabel.Size = new System.Drawing.Size(43, 13);
             this.progressLabel.TabIndex = 7;
@@ -359,14 +361,6 @@ namespace WoWHeadParser
             // saveDialog
             // 
             this.saveDialog.Filter = "Structured Query Language| *.sql|Normal text file| *.txt|All Files| *.*";
-            // 
-            // backgroundWorker
-            // 
-            this.backgroundWorker.WorkerReportsProgress = true;
-            this.backgroundWorker.WorkerSupportsCancellation = true;
-            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorkerDoWork);
-            this.backgroundWorker.ProgressChanged += new System.ComponentModel.ProgressChangedEventHandler(this.BackgroundWorkerProgressChanged);
-            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorkerRunWorkerCompleted);
             // 
             // abortButton
             // 
@@ -380,16 +374,16 @@ namespace WoWHeadParser
             this.abortButton.UseVisualStyleBackColor = true;
             this.abortButton.Click += new System.EventHandler(this.AbortButtonClick);
             // 
-            // menuStrip1
+            // menuStrip
             // 
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(387, 24);
-            this.menuStrip1.TabIndex = 9;
-            this.menuStrip1.Text = "menuStrip1";
+            this.menuStrip.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Size = new System.Drawing.Size(387, 24);
+            this.menuStrip.TabIndex = 9;
+            this.menuStrip.Text = "menuStrip1";
             // 
             // fileToolStripMenuItem
             // 
@@ -432,6 +426,25 @@ namespace WoWHeadParser
             this.reloadwelfFilesToolStripMenuItem.Text = "Reload .welf files...";
             this.reloadwelfFilesToolStripMenuItem.Click += new System.EventHandler(this.ReloadWelfFilesToolStripMenuItemClick);
             // 
+            // backgroundWorker
+            // 
+            this.backgroundWorker.WorkerSupportsCancellation = true;
+            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorkerDoWork);
+            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorkerRunWorkerCompleted);
+            // 
+            // numericUpDown
+            // 
+            this.numericUpDown.Enabled = false;
+            this.numericUpDown.Location = new System.Drawing.Point(276, 183);
+            this.numericUpDown.Maximum = new decimal(new int[] {
+            int.MaxValue,
+            0,
+            0,
+            0});
+            this.numericUpDown.Name = "numericUpDown";
+            this.numericUpDown.Size = new System.Drawing.Size(106, 20);
+            this.numericUpDown.TabIndex = 10;
+            // 
             // WoWHeadParserForm
             // 
             this.AcceptButton = this.startButton;
@@ -440,15 +453,16 @@ namespace WoWHeadParser
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.CancelButton = this.abortButton;
             this.ClientSize = new System.Drawing.Size(387, 243);
+            this.Controls.Add(this.numericUpDown);
             this.Controls.Add(this.abortButton);
             this.Controls.Add(this.progressLabel);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.settingsBox);
-            this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.menuStrip);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MainMenuStrip = this.menuStrip1;
+            this.MainMenuStrip = this.menuStrip;
             this.Name = "WoWHeadParserForm";
             this.Text = "WowHead Parser";
             this.settingsBox.ResumeLayout(false);
@@ -465,8 +479,9 @@ namespace WoWHeadParser
             this.listTab.ResumeLayout(false);
             this.listBox.ResumeLayout(false);
             this.listBox.PerformLayout();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -477,11 +492,9 @@ namespace WoWHeadParser
         private ComboBox parserBox;
         private ComboBox localeBox;
         private GroupBox settingsBox;
-        private ProgressBar progressBar;
         private Button startButton;
         private Label progressLabel;
         private SaveFileDialog saveDialog;
-        private BackgroundWorker backgroundWorker;
         private Button abortButton;
         private TabControl parsingControl;
         private TabPage singleTab;
@@ -496,12 +509,15 @@ namespace WoWHeadParser
         private GroupBox listBox;
         private Label entryCountLabel;
         private ComboBox welfBox;
-        private MenuStrip menuStrip1;
+        private MenuStrip menuStrip;
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem exitToolStripMenuItem;
         private ToolStripMenuItem editToolStripMenuItem;
         private ToolStripMenuItem wELFCreatorToolStripMenuItem;
         private ToolStripMenuItem reloadwelfFilesToolStripMenuItem;
+        public ProgressBar progressBar;
+        private BackgroundWorker backgroundWorker;
+        private NumericUpDown numericUpDown;
     }
 }
 

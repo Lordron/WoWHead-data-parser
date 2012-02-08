@@ -36,7 +36,7 @@ namespace WoWHeadParser
                 if (!print && matches.Count > 0)
                 {
                     content.AppendLine();
-                    content.AppendFormat(@"SET @ENTRY := {0};", block.Entry).AppendLine();
+                    content.AppendFormat(@"SET @ENTRY := {0};", block.Id).AppendLine();
                     content.AppendLine(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | 48 WHERE `entry` = @ENTRY;");
                     content.AppendLine(@"REPLACE INTO `npc_trainer` (`entry`, `spell`, `spellcost`, `reqlevel`, `reqSkill`, `reqSkillValue`) VALUES");
                     print = true;
