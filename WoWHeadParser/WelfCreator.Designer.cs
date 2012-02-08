@@ -34,8 +34,9 @@
             this.startButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             this.saveDialog = new System.Windows.Forms.SaveFileDialog();
-            this.countLabel = new System.Windows.Forms.Label();
+            this.numericUpDown = new System.Windows.Forms.NumericUpDown();
             addressLabel = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // addressLabel
@@ -49,13 +50,16 @@
             // 
             // addressBox
             // 
+            this.addressBox.BackColor = System.Drawing.SystemColors.Control;
             this.addressBox.Location = new System.Drawing.Point(87, 10);
             this.addressBox.Name = "addressBox";
             this.addressBox.Size = new System.Drawing.Size(303, 20);
             this.addressBox.TabIndex = 0;
+            this.addressBox.TextChanged += new System.EventHandler(this.AddressBoxTextChanged);
             // 
             // welDataBox
             // 
+            this.welDataBox.BackColor = System.Drawing.SystemColors.Control;
             this.welDataBox.Location = new System.Drawing.Point(10, 40);
             this.welDataBox.Name = "welDataBox";
             this.welDataBox.Size = new System.Drawing.Size(380, 108);
@@ -87,14 +91,18 @@
             // 
             this.saveDialog.Filter = "WoWHead Entry List File (.welf)| *.welf|All Files|*.*";
             // 
-            // countLabel
+            // numericUpDown
             // 
-            this.countLabel.AutoSize = true;
-            this.countLabel.Location = new System.Drawing.Point(234, 164);
-            this.countLabel.Name = "countLabel";
-            this.countLabel.Size = new System.Drawing.Size(43, 13);
-            this.countLabel.TabIndex = 5;
-            this.countLabel.Text = "<none>";
+            this.numericUpDown.Enabled = false;
+            this.numericUpDown.Location = new System.Drawing.Point(270, 157);
+            this.numericUpDown.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
+            this.numericUpDown.Name = "numericUpDown";
+            this.numericUpDown.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDown.TabIndex = 6;
             // 
             // WelfCreator
             // 
@@ -102,7 +110,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.ClientSize = new System.Drawing.Size(402, 188);
-            this.Controls.Add(this.countLabel);
+            this.Controls.Add(this.numericUpDown);
             this.Controls.Add(this.saveButton);
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.welDataBox);
@@ -110,7 +118,8 @@
             this.Controls.Add(this.addressBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "WelfCreator";
-            this.Text = "WelfCreator";
+            this.Text = "Welf Creator";
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -123,6 +132,6 @@
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.SaveFileDialog saveDialog;
-        private System.Windows.Forms.Label countLabel;
+        private System.Windows.Forms.NumericUpDown numericUpDown;
     }
 }

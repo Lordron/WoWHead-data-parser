@@ -10,61 +10,62 @@ namespace WoWHeadParser
 {
     public partial class WelfCreator : Form
     {
+        private List<uint> _ids;
+
         public WelfCreator()
         {
             InitializeComponent();
         }
 
-        private int _count;
-        private List<string> _ids;
-        private WebClient _client;
-
         protected override void OnLoad(EventArgs e)
         {
-            _count = 0;
-            _ids = new List<string>();
-            _client = new WebClient { Encoding = Encoding.UTF8 };
+            _ids = new List<uint>();
         }
 
         private void StartButtonClick(object sender, EventArgs e)
         {
-            StringBuilder content = new StringBuilder();
-            string address = addressBox.Text;
+            _ids.Clear();
 
-            if (string.IsNullOrEmpty(address))
-            {
-                welDataBox.AppendText("<ERROR> Address box can not be empty!\n\n");
-                return;
-            }
+            WebClient client = new WebClient { Encoding = Encoding.UTF8 };
+            string page = client.DownloadString(addressBox.Text);
 
-            string page = _client.DownloadString(address);
             Regex pattern = new Regex("\"id\":([0-9]+),", RegexOptions.Multiline);
             MatchCollection matches = pattern.Matches(page);
 
             foreach (Match match in matches)
             {
                 string id = match.Groups[1].Value;
-                if (!_ids.Contains(id))
-                    _ids.Add(id);
+                uint val;
+                if (!uint.TryParse(id, out val))
+                    continue;
+
+                if (!_ids.Contains(val))
+                    _ids.Add(val);
             }
 
-            _count += matches.Count;
+            numericUpDown.Value = _ids.Count;
 
-            foreach (string id in _ids)
+            StringBuilder content = new StringBuilder();
             {
-                content.AppendLine(id);
-            }
+                content.AppendFormat(@" -- Dump of {0}, Total ids count: {1}", DateTime.Now, _ids.Count);
 
-            countLabel.Text = string.Format("Count: {0}", _count);
+                for (int i = 0; i < _ids.Count; ++i)
+                {
+                    content.AppendFormat("{0}{1}", _ids[i], (i < _ids.Count - 1 ? "," : string.Empty));
+                }
+
+                welDataBox.Text = content.ToString();
+            }
 
             if (!saveButton.Enabled)
                 saveButton.Enabled = true;
-
-            welDataBox.AppendText(content.ToString());
         }
 
         private void SaveButtonClick(object sender, EventArgs e)
         {
+            if (_ids.Count <= 0)
+                return;
+
             if (saveDialog.ShowDialog(this) == DialogResult.OK)
             {
                 using (StreamWriter writer = new StreamWriter(saveDialog.FileName))
@@ -75,6 +76,14 @@ namespace WoWHeadParser
                     }
                 }
             }
+
+            saveButton.Enabled = false;
+            startButton.Enabled = true;
+        }
+
+        private void AddressBoxTextChanged(object sender, EventArgs e)
+        {
+            startButton.Enabled = !string.IsNullOrWhiteSpace(addressBox.Text);
         }
     }
 }
