@@ -20,6 +20,8 @@ namespace WoWHeadParser
         public WoWHeadParserForm()
         {
             InitializeComponent();
+
+            _entries = new List<uint>();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -31,12 +33,7 @@ namespace WoWHeadParser
                     parserBox.Items.Add(type);
             }
 
-            DirectoryInfo info = new DirectoryInfo(Application.StartupPath);
-            FileInfo[] Files = info.GetFiles("*.welf", SearchOption.AllDirectories);
-            foreach (FileInfo file in Files)
-            {
-                welfBox.Items.Add(file.Name);
-            }
+            LoadWelfFiles();
         }
 
         public void ParserIndexChanged(object sender, EventArgs e)
@@ -151,7 +148,7 @@ namespace WoWHeadParser
             if (result != DialogResult.OK)
                 return;
 
-            backgroundWorker.CancelAsync();
+            backgroundWorker.Dispose();
             _worker.Dispose();
 
             progressLabel.Text = "Aborted";
@@ -167,10 +164,10 @@ namespace WoWHeadParser
 
         private void WelfBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            _entries = new List<uint>();
-
             using (StreamReader reader = new StreamReader(Path.Combine("EntryList", (string)welfBox.SelectedItem)))
             {
+                _entries.Clear();
+
                 string str = reader.ReadToEnd();
                 string[] values = str.Split(',');
                 foreach (string value in values)
@@ -199,6 +196,11 @@ namespace WoWHeadParser
         }
 
         private void ReloadWelfFilesToolStripMenuItemClick(object sender, EventArgs e)
+        {
+            LoadWelfFiles();
+        }
+
+        private void LoadWelfFiles()
         {
             welfBox.Items.Clear();
 

@@ -105,7 +105,7 @@ namespace WoWHeadParser
             this.parserBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.parserBox.Location = new System.Drawing.Point(66, 19);
             this.parserBox.Name = "parserBox";
-            this.parserBox.Size = new System.Drawing.Size(242, 21);
+            this.parserBox.Size = new System.Drawing.Size(253, 21);
             this.parserBox.TabIndex = 1;
             this.parserBox.SelectedIndexChanged += new System.EventHandler(this.ParserIndexChanged);
             // 
@@ -123,18 +123,20 @@ namespace WoWHeadParser
             "es."});
             this.localeBox.Location = new System.Drawing.Point(6, 19);
             this.localeBox.Name = "localeBox";
-            this.localeBox.Size = new System.Drawing.Size(54, 21);
+            this.localeBox.Size = new System.Drawing.Size(65, 21);
             this.localeBox.TabIndex = 3;
             // 
             // settingsBox
             // 
+            this.settingsBox.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.settingsBox.Controls.Add(this.parsingControl);
             this.settingsBox.Controls.Add(this.localeBox);
             this.settingsBox.Controls.Add(this.parserBox);
+            this.settingsBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.settingsBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.settingsBox.Location = new System.Drawing.Point(6, 28);
+            this.settingsBox.Location = new System.Drawing.Point(0, 24);
             this.settingsBox.Name = "settingsBox";
-            this.settingsBox.Size = new System.Drawing.Size(376, 144);
+            this.settingsBox.Size = new System.Drawing.Size(387, 219);
             this.settingsBox.TabIndex = 4;
             this.settingsBox.TabStop = false;
             this.settingsBox.Text = "Settings";
@@ -331,10 +333,11 @@ namespace WoWHeadParser
             // 
             // progressBar
             // 
-            this.progressBar.Location = new System.Drawing.Point(6, 210);
+            this.progressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.progressBar.Location = new System.Drawing.Point(0, 217);
             this.progressBar.Maximum = 2147483647;
             this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(376, 26);
+            this.progressBar.Size = new System.Drawing.Size(387, 26);
             this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar.TabIndex = 5;
             // 
@@ -434,10 +437,13 @@ namespace WoWHeadParser
             // 
             // numericUpDown
             // 
+            this.numericUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.numericUpDown.Enabled = false;
             this.numericUpDown.Location = new System.Drawing.Point(276, 183);
             this.numericUpDown.Maximum = new decimal(new int[] {
-            int.MaxValue,
+            2147483647,
             0,
             0,
             0});

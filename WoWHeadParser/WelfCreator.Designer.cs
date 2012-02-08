@@ -42,7 +42,7 @@
             // addressLabel
             // 
             addressLabel.AutoSize = true;
-            addressLabel.Location = new System.Drawing.Point(7, 17);
+            addressLabel.Location = new System.Drawing.Point(7, 13);
             addressLabel.Name = "addressLabel";
             addressLabel.Size = new System.Drawing.Size(74, 13);
             addressLabel.TabIndex = 1;

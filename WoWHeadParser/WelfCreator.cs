@@ -17,17 +17,15 @@ namespace WoWHeadParser
             InitializeComponent();
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            _ids = new List<uint>();
-        }
-
         private void StartButtonClick(object sender, EventArgs e)
         {
-            _ids.Clear();
+            _ids = new List<uint>();
 
             WebClient client = new WebClient { Encoding = Encoding.UTF8 };
             string page = client.DownloadString(addressBox.Text);
+
+            if (string.IsNullOrWhiteSpace(page))
+                return;
 
             Regex pattern = new Regex("\"id\":([0-9]+),", RegexOptions.Multiline);
             MatchCollection matches = pattern.Matches(page);
@@ -35,6 +33,7 @@ namespace WoWHeadParser
             foreach (Match match in matches)
             {
                 string id = match.Groups[1].Value;
+
                 uint val;
                 if (!uint.TryParse(id, out val))
                     continue;
