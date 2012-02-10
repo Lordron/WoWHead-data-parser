@@ -22,11 +22,11 @@ namespace WoWHeadParser
     {
         public MessageBoxButtons Button;
         public MessageBoxIcon Icon;
-        public string Message;
+        public string Text;
 
         public Message(string message, MessageBoxButtons button = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.Exclamation)
         {
-            Message = message;
+            Text = message;
             Button = button;
             Icon = icon;
         }

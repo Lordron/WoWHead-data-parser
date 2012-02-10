@@ -250,7 +250,7 @@ namespace WoWHeadParser
                 return DialogResult.None;
 
             Message message = _message[type];
-            string msg = string.Format(CultureInfo.InvariantCulture, message.Message, args);
+            string msg = string.Format(CultureInfo.InvariantCulture, message.Text, args);
             return MessageBox.Show(msg, @"WoWHead Parser", message.Button, message.Icon);
         }
     }
