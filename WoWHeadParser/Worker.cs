@@ -13,7 +13,7 @@ namespace WoWHeadParser
         private bool _working;
         private string _address;
         private Queue<Block> _pages;
-        private List<uint> _entries;
+        private IList<uint> _entries;
         private SemaphoreSlim _semaphore;
 
         private object _threadLock = new object();
@@ -43,7 +43,7 @@ namespace WoWHeadParser
 
         }
 
-        public Worker(List<uint> entries, string address)
+        public Worker(IList<uint> entries, string address)
         {
             _entries = entries;
             _address = address;

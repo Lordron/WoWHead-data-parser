@@ -17,15 +17,24 @@ namespace WoWHeadParser
         private List<uint> _entries = null;
         private WelfCreator _creator = null;
 
+        private Dictionary<MessageType, Message> _message = new Dictionary<MessageType, Message>
+        {
+            {MessageType.MultipleTypeBigger, new Message("Starting value can not be bigger than ending value!")},
+            {MessageType.MultipleTypeEqual, new Message("Starting value can not be equal ending value!")},
+            {MessageType.WelfListEmpty, new Message("Entries list is empty!")},
+            {MessageType.AbortQuestion, new Message("Do you really want to stop ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
+            {MessageType.ExitQuestion, new Message("Do you really want to quit WoWHead Parser ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
+        };
+
         public WoWHeadParserForm()
         {
             InitializeComponent();
-
-            _entries = new List<uint>();
         }
 
         protected override void OnLoad(EventArgs e)
         {
+            _entries = new List<uint>();
+
             Type[] Types = Assembly.GetExecutingAssembly().GetTypes();
             foreach (Type type in Types)
             {
@@ -74,10 +83,16 @@ namespace WoWHeadParser
                         uint endValue = (uint)rangeEnd.Value;
 
                         if (startValue > endValue)
-                            throw new ArgumentOutOfRangeException(@"Starting value can not be bigger than ending value!");
+                        {
+                            ShowMessageBox(MessageType.MultipleTypeBigger);
+                            return;
+                        }
 
                         if (startValue == endValue)
-                            throw new ArgumentOutOfRangeException(@"Starting value can not be equal ending value!");
+                        {
+                            ShowMessageBox(MessageType.MultipleTypeEqual);
+                            return;
+                        }
 
                         progressBar.Maximum = (int)(endValue - startValue);
                         numericUpDown.Maximum = (int)(endValue - startValue);
@@ -144,8 +159,8 @@ namespace WoWHeadParser
 
         private void AbortButtonClick(object sender, EventArgs e)
         {
-            DialogResult result = ShowQuestionMessageBox("Do you really want to stop ?");
-            if (result != DialogResult.OK)
+            DialogResult result = ShowMessageBox(MessageType.AbortQuestion);
+            if (result != DialogResult.Yes)
                 return;
 
             backgroundWorker.Dispose();
@@ -184,7 +199,7 @@ namespace WoWHeadParser
             entryCountLabel.Text = string.Format("Entries count: {0}", _entries.Count);
 
             if (_entries.Count == -1)
-                throw new NotImplementedException(@"Entries list is empty!");
+                ShowMessageBox(MessageType.WelfListEmpty);
         }
 
         private void WELFCreatorToolStripMenuItemClick(object sender, EventArgs e)
@@ -225,14 +240,18 @@ namespace WoWHeadParser
 
         protected override void OnClosing(CancelEventArgs e)
         {
-            DialogResult result = ShowQuestionMessageBox("Do you really want to quit WoWHead Parser ?");
-            e.Cancel = (result == DialogResult.Cancel);
+            DialogResult result = ShowMessageBox(MessageType.ExitQuestion);
+            e.Cancel = (result == DialogResult.No);
         }
 
-        private static DialogResult ShowQuestionMessageBox(string format, params object[] args)
+        private DialogResult ShowMessageBox(MessageType type, params object[] args)
         {
-            string msg = string.Format(CultureInfo.InvariantCulture, format, args);
-            return MessageBox.Show(msg, @"WoWHead Parser", MessageBoxButtons.OKCancel, MessageBoxIcon.Question);
+            if (type >= MessageType.Max)
+                return DialogResult.None;
+
+            Message message = _message[type];
+            string msg = string.Format(CultureInfo.InvariantCulture, message.Message, args);
+            return MessageBox.Show(msg, @"WoWHead Parser", message.Button, message.Icon);
         }
     }
 }
