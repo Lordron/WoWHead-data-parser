@@ -103,7 +103,7 @@ namespace WoWHeadParser
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.parserBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.parserBox.Location = new System.Drawing.Point(66, 19);
+            this.parserBox.Location = new System.Drawing.Point(80, 19);
             this.parserBox.Name = "parserBox";
             this.parserBox.Size = new System.Drawing.Size(253, 21);
             this.parserBox.TabIndex = 1;
@@ -123,7 +123,7 @@ namespace WoWHeadParser
             "es."});
             this.localeBox.Location = new System.Drawing.Point(6, 19);
             this.localeBox.Name = "localeBox";
-            this.localeBox.Size = new System.Drawing.Size(65, 21);
+            this.localeBox.Size = new System.Drawing.Size(68, 21);
             this.localeBox.TabIndex = 3;
             // 
             // settingsBox

@@ -103,6 +103,7 @@ namespace WoWHeadParser
             {
                 request.Response = (HttpWebResponse)request.Request.EndGetResponse(iar);
             }
+            catch { }
             finally
             {
                 string text = request.ToString();

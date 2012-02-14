@@ -47,10 +47,7 @@ namespace WoWHeadParser
                     Request.Abort();
 
                 if (Response != null)
-                {
                     Response.Close();
-                    Response.Dispose();
-                }
             }
         }
     }
