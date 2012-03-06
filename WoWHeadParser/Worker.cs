@@ -16,6 +16,8 @@ namespace WoWHeadParser
         private IList<uint> _entries;
         private SemaphoreSlim _semaphore;
 
+        private int _delay = 2000;
+
         private object _threadLock = new object();
 
         public Queue<Block> Pages
@@ -36,6 +38,8 @@ namespace WoWHeadParser
         {
             _start = value;
             _address = address;
+
+            _delay = 2000;
         }
 
         public void SetValue(uint start, uint end, string address)
@@ -43,12 +47,16 @@ namespace WoWHeadParser
             _end = end;
             _start = start;
             _address = address;
+
+            _delay = 10000;
         }
 
         public void SetValue(IList<uint> entries, string address)
         {
             _entries = entries;
             _address = address;
+
+            _delay = 10000;
         }
 
         public void Start(ParsingType type)
@@ -66,7 +74,7 @@ namespace WoWHeadParser
                     } 
                 case ParsingType.TypeMultiple:
                     {
-                        for (uint entry = _start; entry < _end; ++entry)
+                        for (uint entry = _start; entry <= _end; ++entry)
                         {
                             if (!_working)
                                 return;
@@ -94,7 +102,7 @@ namespace WoWHeadParser
                     }
             }
 
-            Thread.Sleep(10000);
+            Thread.Sleep(_delay);
         }
 
         private void RespCallback(IAsyncResult iar)

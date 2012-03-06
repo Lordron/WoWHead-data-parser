@@ -95,7 +95,7 @@ namespace WoWHeadParser
                             return;
                         }
 
-                        numericUpDown.Maximum = progressBar.Maximum = (int)(endValue - startValue);
+                        numericUpDown.Maximum = progressBar.Maximum = (int)(endValue - startValue) + 1;
                         _worker.SetValue(startValue, endValue, address);
                         break;
                     }
