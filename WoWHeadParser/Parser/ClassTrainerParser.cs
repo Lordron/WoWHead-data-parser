@@ -24,7 +24,7 @@ namespace WoWHeadParser
                     subPattern = "{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*";
                     break;
                 default:
-                    return string.Format("-- Unknown trainer type: {0}", type);
+                    return string.Format("-- Unknown trainer type, Id {0}", block.Id);
             }
 
             bool print = false;

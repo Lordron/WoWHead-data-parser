@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
-using System.Windows.Forms;
 
 namespace WoWHeadParser
 {
