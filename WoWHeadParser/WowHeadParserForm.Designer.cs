@@ -30,9 +30,9 @@ namespace WoWHeadParser
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.Label rangeEndLabel;
-            System.Windows.Forms.Label rangeStartLabel;
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WoWHeadParserForm));
+            this.rangeEndLabel = new System.Windows.Forms.Label();
+            this.rangeStartLabel = new System.Windows.Forms.Label();
             this.parserBox = new System.Windows.Forms.ComboBox();
             this.localeBox = new System.Windows.Forms.ComboBox();
             this.settingsBox = new System.Windows.Forms.GroupBox();
@@ -62,8 +62,6 @@ namespace WoWHeadParser
             this.reloadwelfFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.numericUpDown = new System.Windows.Forms.NumericUpDown();
-            rangeEndLabel = new System.Windows.Forms.Label();
-            rangeStartLabel = new System.Windows.Forms.Label();
             this.settingsBox.SuspendLayout();
             this.parsingControl.SuspendLayout();
             this.singleTab.SuspendLayout();
@@ -81,21 +79,21 @@ namespace WoWHeadParser
             // 
             // rangeEndLabel
             // 
-            rangeEndLabel.AutoSize = true;
-            rangeEndLabel.Location = new System.Drawing.Point(135, 26);
-            rangeEndLabel.Name = "rangeEndLabel";
-            rangeEndLabel.Size = new System.Drawing.Size(29, 13);
-            rangeEndLabel.TabIndex = 13;
-            rangeEndLabel.Text = "End:";
+            this.rangeEndLabel.AutoSize = true;
+            this.rangeEndLabel.Location = new System.Drawing.Point(135, 21);
+            this.rangeEndLabel.Name = "rangeEndLabel";
+            this.rangeEndLabel.Size = new System.Drawing.Size(29, 13);
+            this.rangeEndLabel.TabIndex = 13;
+            this.rangeEndLabel.Text = "End:";
             // 
             // rangeStartLabel
             // 
-            rangeStartLabel.AutoSize = true;
-            rangeStartLabel.Location = new System.Drawing.Point(6, 26);
-            rangeStartLabel.Name = "rangeStartLabel";
-            rangeStartLabel.Size = new System.Drawing.Size(32, 13);
-            rangeStartLabel.TabIndex = 12;
-            rangeStartLabel.Text = "Start:";
+            this.rangeStartLabel.AutoSize = true;
+            this.rangeStartLabel.Location = new System.Drawing.Point(6, 21);
+            this.rangeStartLabel.Name = "rangeStartLabel";
+            this.rangeStartLabel.Size = new System.Drawing.Size(32, 13);
+            this.rangeStartLabel.TabIndex = 12;
+            this.rangeStartLabel.Text = "Start:";
             // 
             // parserBox
             // 
@@ -205,7 +203,7 @@ namespace WoWHeadParser
             // valueLabel
             // 
             this.valueLabel.AutoSize = true;
-            this.valueLabel.Location = new System.Drawing.Point(6, 26);
+            this.valueLabel.Location = new System.Drawing.Point(6, 21);
             this.valueLabel.Name = "valueLabel";
             this.valueLabel.Size = new System.Drawing.Size(37, 13);
             this.valueLabel.TabIndex = 13;
@@ -228,9 +226,9 @@ namespace WoWHeadParser
             // 
             // multipleBox
             // 
-            this.multipleBox.Controls.Add(rangeStartLabel);
+            this.multipleBox.Controls.Add(this.rangeStartLabel);
             this.multipleBox.Controls.Add(this.rangeStart);
-            this.multipleBox.Controls.Add(rangeEndLabel);
+            this.multipleBox.Controls.Add(this.rangeEndLabel);
             this.multipleBox.Controls.Add(this.rangeEnd);
             this.multipleBox.Location = new System.Drawing.Point(6, 6);
             this.multipleBox.Name = "multipleBox";
@@ -400,7 +398,7 @@ namespace WoWHeadParser
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
             this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(134, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItemClick);
             // 
@@ -521,9 +519,11 @@ namespace WoWHeadParser
         private ToolStripMenuItem editToolStripMenuItem;
         private ToolStripMenuItem wELFCreatorToolStripMenuItem;
         private ToolStripMenuItem reloadwelfFilesToolStripMenuItem;
-        public ProgressBar progressBar;
         private BackgroundWorker backgroundWorker;
         private NumericUpDown numericUpDown;
+        private ProgressBar progressBar;
+        private Label rangeEndLabel;
+        private Label rangeStartLabel;
     }
 }
 

@@ -17,12 +17,12 @@ namespace WoWHeadParser
 
         private Dictionary<MessageType, Message> _message = new Dictionary<MessageType, Message>
         {
-            {MessageType.MultipleTypeBigger, new Message("Starting value can not be bigger than ending value!")},
-            {MessageType.MultipleTypeEqual, new Message("Starting value can not be equal ending value!")},
-            {MessageType.WelfListEmpty, new Message("Entries list is empty!")},
-            {MessageType.UnsupportedParsingType, new Message("Unsupported parsing type: {0}!")},
-            {MessageType.AbortQuestion, new Message("Do you really want to stop ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
-            {MessageType.ExitQuestion, new Message("Do you really want to quit WoWHead Parser ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
+            {MessageType.MultipleTypeBigger, new Message(@"Starting value can not be bigger than ending value!")},
+            {MessageType.MultipleTypeEqual, new Message(@"Starting value can not be equal ending value!")},
+            {MessageType.WelfListEmpty, new Message(@"Entries list is empty!")},
+            {MessageType.UnsupportedParsingType, new Message(@"Unsupported parsing type: {0}!")},
+            {MessageType.AbortQuestion, new Message(@"Do you really want to stop ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
+            {MessageType.ExitQuestion, new Message(@"Do you really want to quit WoWHead Parser ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
         };
 
         public WoWHeadParserForm()
