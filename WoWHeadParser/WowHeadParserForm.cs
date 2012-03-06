@@ -11,17 +11,16 @@ namespace WoWHeadParser
 {
     public partial class WoWHeadParserForm : Form
     {
+        private Worker _worker;
         private DateTime _startTime;
-        private Parser _parser = null;
-        private Worker _worker = null;
-        private List<uint> _entries = null;
-        private WelfCreator _creator = null;
+        private List<uint> _entries;
 
         private Dictionary<MessageType, Message> _message = new Dictionary<MessageType, Message>
         {
             {MessageType.MultipleTypeBigger, new Message("Starting value can not be bigger than ending value!")},
             {MessageType.MultipleTypeEqual, new Message("Starting value can not be equal ending value!")},
             {MessageType.WelfListEmpty, new Message("Entries list is empty!")},
+            {MessageType.UnsupportedParsingType, new Message("Unsupported parsing type: {0}!")},
             {MessageType.AbortQuestion, new Message("Do you really want to stop ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
             {MessageType.ExitQuestion, new Message("Do you really want to quit WoWHead Parser ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
         };
@@ -29,12 +28,18 @@ namespace WoWHeadParser
         public WoWHeadParserForm()
         {
             InitializeComponent();
+
+            _worker = new Worker();
+            {
+                _worker.PageDownloaded += new Worker.OnPageDownloaded(WorkerPageDownloaded);
+                _worker.Finished += new Worker.OnFinished(WorkerFinished);
+            }
+
+            _entries = new List<uint>();
         }
 
         protected override void OnLoad(EventArgs e)
         {
-            _entries = new List<uint>();
-
             Type[] Types = Assembly.GetExecutingAssembly().GetTypes();
             foreach (Type type in Types)
             {
@@ -52,13 +57,10 @@ namespace WoWHeadParser
 
         public void StartButtonClick(object sender, EventArgs e)
         {
-            abortButton.Enabled = true;
-            settingsBox.Enabled = startButton.Enabled = false;
-
-            _parser = (Parser)Activator.CreateInstance((Type)parserBox.SelectedItem);
+            Parser parser = (Parser)Activator.CreateInstance((Type)parserBox.SelectedItem);
 
             string locale = (string)localeBox.SelectedItem;
-            string address = string.Format("http://{0}{1}", (string.IsNullOrEmpty(locale) ? "www." : locale), _parser.Address);
+            string address = string.Format("http://{0}{1}", (string.IsNullOrWhiteSpace(locale) ? "www." : locale), parser.Address);
 
             ParsingType type = (ParsingType)parsingControl.SelectedIndex;
 
@@ -67,14 +69,13 @@ namespace WoWHeadParser
                 case ParsingType.TypeSingle:
                     {
                         uint value = (uint)valueBox.Value;
-                        _worker = new Worker(value, address);
+                        _worker.SetValue(value, address);
                         break;
                     }
                 case ParsingType.TypeList:
                     {
-                        progressBar.Maximum = _entries.Count;
-                        numericUpDown.Maximum = _entries.Count;
-                        _worker = new Worker(_entries, address);
+                        numericUpDown.Maximum = progressBar.Maximum = _entries.Count;
+                        _worker.SetValue(_entries, address);
                         break;
                     }
                 case ParsingType.TypeMultiple:
@@ -94,21 +95,22 @@ namespace WoWHeadParser
                             return;
                         }
 
-                        progressBar.Maximum = (int)(endValue - startValue);
-                        numericUpDown.Maximum = (int)(endValue - startValue);
-                        _worker = new Worker(startValue, endValue, address);
+                        numericUpDown.Maximum = progressBar.Maximum = (int)(endValue - startValue);
+                        _worker.SetValue(startValue, endValue, address);
                         break;
                     }
                 default:
+                    ShowMessageBox(MessageType.UnsupportedParsingType, type);
                     return;
             }
 
-            _worker.PageDownloaded += new Worker.OnPageDownloaded(WorkerPageDownloaded);
-            _worker.Disposed += new Worker.OnDisposed(WorkerDisposed);
-
+            abortButton.Enabled = true;
+            settingsBox.Enabled = startButton.Enabled = false;
             progressLabel.Text = "Downloading...";
-            _startTime = DateTime.Now;
+            numericUpDown.Value = progressBar.Value = 0;
 
+            _startTime = DateTime.Now;
+            
             backgroundWorker.RunWorkerAsync(type);
         }
 
@@ -121,30 +123,32 @@ namespace WoWHeadParser
         private void WorkerPageDownloaded()
         {
             if (progressBar.InvokeRequired)
-                progressBar.BeginInvoke(new Action<int>(i => progressBar.Value += i), 1);
+                progressBar.BeginInvoke(new Action(() => ++progressBar.Value));
             else
-                progressBar.Value++;
+                ++progressBar.Value;
 
             if (numericUpDown.InvokeRequired)
-                numericUpDown.BeginInvoke(new Action<int>(i => numericUpDown.Value += i), 1);
+                numericUpDown.BeginInvoke(new Action(() => ++numericUpDown.Value));
             else
-                numericUpDown.Value++;
+                ++numericUpDown.Value;
         }
 
         void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             DateTime now = DateTime.Now;
 
-            if (_worker.Pages.Count > 0)
+            if (!_worker.Empty)
             {
                 if (saveDialog.ShowDialog(this) == DialogResult.OK)
                 {
                     using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile(), Encoding.UTF8))
                     {
+                        Parser parser = (Parser)Activator.CreateInstance((Type)parserBox.SelectedItem);
                         stream.WriteLine(@"-- Dump of {0} ({1}), Total object count: {2}", now, now - _startTime, _worker.Pages.Count);
-                        foreach (Block block in _worker.Pages)
+                        while(!_worker.Empty)
                         {
-                            string content = _parser.Parse(block);
+                            Block block = _worker.Pages.Dequeue();
+                            string content = parser.Parse(block);
                             if (!string.IsNullOrEmpty(content))
                                 stream.Write(content);
                         }
@@ -152,29 +156,25 @@ namespace WoWHeadParser
                 }
             }
 
-            _worker.Dispose();
-
-            progressLabel.Text = "Complete!";
+            _worker.Finish();
         }
 
         private void AbortButtonClick(object sender, EventArgs e)
         {
-            DialogResult result = ShowMessageBox(MessageType.AbortQuestion);
-            if (result != DialogResult.Yes)
+            if (ShowMessageBox(MessageType.AbortQuestion) != DialogResult.Yes)
                 return;
 
-            backgroundWorker.Dispose();
-            _worker.Dispose();
-
-            progressLabel.Text = "Aborted";
+            _worker.Stop();
+            backgroundWorker.CancelAsync();
         }
 
-        private void WorkerDisposed()
+        private void WorkerFinished()
         {
-            progressBar.Value = 0;
-            numericUpDown.Value = 0;
+            numericUpDown.Value = progressBar.Value = 0;
             abortButton.Enabled = false;
             settingsBox.Enabled = startButton.Enabled = true;
+
+            progressLabel.Text = "Finished!";
         }
 
         private void WelfBoxSelectedIndexChanged(object sender, EventArgs e)
@@ -204,10 +204,7 @@ namespace WoWHeadParser
 
         private void WELFCreatorToolStripMenuItemClick(object sender, EventArgs e)
         {
-            if (_creator == null || _creator.IsDisposed)
-                _creator = new WelfCreator();
-            if (!_creator.Visible)
-                _creator.Show(this);
+            new WelfCreator().Show();
         }
 
         private void ReloadWelfFilesToolStripMenuItemClick(object sender, EventArgs e)

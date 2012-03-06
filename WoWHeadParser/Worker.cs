@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace WoWHeadParser
 {
@@ -9,7 +10,6 @@ namespace WoWHeadParser
     {
         private uint _start;
         private uint _end;
-        private uint _entry;
         private bool _working;
         private string _address;
         private Queue<Block> _pages;
@@ -23,32 +23,32 @@ namespace WoWHeadParser
             get { return _pages; }
         }
 
-        public Worker(uint value, string address)
+        public bool Empty { get { return _pages.Count <= 0; } }
+
+        public Worker()
         {
-            _entry = value;
-            _address = address;
-            _pages = new Queue<Block>(1);
-            _semaphore = new SemaphoreSlim(1, 10);
+            _pages = new Queue<Block>();
+            _entries = new List<uint>();
+            _semaphore = new SemaphoreSlim(10, 10);
         }
 
-        public Worker(uint start, uint end, string address)
+        public void SetValue(uint value, string address)
+        {
+            _start = value;
+            _address = address;
+        }
+
+        public void SetValue(uint start, uint end, string address)
         {
             _end = end;
             _start = start;
             _address = address;
-
-            int max = (int)(_end - start);
-            _pages = new Queue<Block>(max);
-            _semaphore = new SemaphoreSlim(1, 10);
-
         }
 
-        public Worker(IList<uint> entries, string address)
+        public void SetValue(IList<uint> entries, string address)
         {
             _entries = entries;
             _address = address;
-            _semaphore = new SemaphoreSlim(1, 10);
-            _pages = new Queue<Block>(entries.Count);
         }
 
         public void Start(ParsingType type)
@@ -60,20 +60,20 @@ namespace WoWHeadParser
                 case ParsingType.TypeSingle:
                     {
                         _semaphore.Wait();
-                        Requests request = new Requests(_address, _entry);
+                        Requests request = new Requests(_address, _start);
                         request.Request.BeginGetResponse(RespCallback, request);
                         break;
-                    }
+                    } 
                 case ParsingType.TypeMultiple:
                     {
-                        for (_entry = _start; _entry < _end; ++_entry)
+                        for (uint entry = _start; entry < _end; ++entry)
                         {
                             if (!_working)
-                                break;
+                                return;
 
                             _semaphore.Wait();
 
-                            Requests request = new Requests(_address, _entry);
+                            Requests request = new Requests(_address, entry);
                             request.Request.BeginGetResponse(RespCallback, request);
                         }
                         break;
@@ -83,50 +83,67 @@ namespace WoWHeadParser
                         for (int i = 0; i < _entries.Count; ++i)
                         {
                             if (!_working)
-                                break;
+                                return;
 
                             _semaphore.Wait();
 
-                            _entry = _entries[i];
-                            Requests request = new Requests(_address, _entry);
+                            Requests request = new Requests(_address, _entries[i]);
                             request.Request.BeginGetResponse(RespCallback, request);
                         }
                         break;
                     }
             }
+
+            Thread.Sleep(10000);
         }
 
         private void RespCallback(IAsyncResult iar)
         {
+            if (!_working)
+                return;
+
             Requests request = (Requests)iar.AsyncState;
             try
             {
                 request.Response = (HttpWebResponse)request.Request.EndGetResponse(iar);
             }
             catch { }
-            finally
-            {
-                string text = request.ToString();
-                if (!string.IsNullOrWhiteSpace(text))
-                {
-                    lock (_threadLock)
-                    {
-                        if (_pages != null)
-                            _pages.Enqueue(new Block(text, request.Id));
-                    }
-                }
 
-                request.Dispose();
+            string text = request.ToString();
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                lock (_threadLock)
+                {
+                    if (_pages != null)
+                        _pages.Enqueue(new Block(text, request.Id));
+                }
             }
+
+            request.Dispose();
 
             lock (_threadLock)
             {
                 if (_semaphore != null)
                     _semaphore.Release();
-
-                if (PageDownloaded != null)
-                    PageDownloaded();
             }
+
+            if (PageDownloaded != null)
+                PageDownloaded();
+        }
+
+        public void Stop()
+        {
+            if (_working)
+                _working = false;
+        }
+
+        public void Finish()
+        {
+            Stop();
+            _pages.Clear();
+
+            if (Finished != null)
+                Finished();
         }
 
         ~Worker()
@@ -145,34 +162,18 @@ namespace WoWHeadParser
             if (!disposing)
                 return;
 
-            if (_working)
-                _working = false;
+            Stop();
 
-            if (_semaphore != null)
-            {
-                _semaphore.Dispose();
-                _semaphore = null;
-            }
+            _pages.Clear();
+            _semaphore.Dispose();
 
-            if (_pages != null)
-            {
-                _pages.Clear();
-                _pages = null;
-            }
-
-            if (_entries != null)
-            {
-                _entries.Clear();
-                _entries = null;
-            }
-
-            if (Disposed != null)
-                Disposed();
+            _pages = null;
+            _semaphore = null;
         }
 
         public delegate void OnPageDownloaded();
 
-        public delegate void OnDisposed();
+        public delegate void OnFinished();
 
         /// <summary>
         /// Occurs when a page is downloaded.
@@ -180,8 +181,8 @@ namespace WoWHeadParser
         public event OnPageDownloaded PageDownloaded;
 
         /// <summary>
-        /// Occurs when the component is disposed
+        /// Occurs when the working is finished
         /// </summary>
-        public event OnDisposed Disposed; 
+        public event OnFinished Finished; 
     }
 }

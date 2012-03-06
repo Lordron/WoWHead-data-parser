@@ -15,6 +15,7 @@ namespace WoWHeadParser
         AbortQuestion,
         ExitQuestion,
         WelfListEmpty,
+        UnsupportedParsingType,
         Max,
     }
 
