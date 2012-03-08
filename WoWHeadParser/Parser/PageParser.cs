@@ -40,5 +40,13 @@ namespace WoWHeadParser
                 return "wowhead.com/object=";
             }
         }
+
+        public override string Name
+        {
+            get
+            {
+                return "Page data parser";
+            }
+        }
     }
 }

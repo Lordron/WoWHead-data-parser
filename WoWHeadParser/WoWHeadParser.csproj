@@ -67,6 +67,10 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json, Version=4.0.8.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -87,7 +91,8 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="Parser\PageParser.cs" />
     <Compile Include="Parser\Parser.cs" />
-    <Compile Include="Parser\ParsingType.cs" />
+    <Compile Include="Parser\VendorParser.cs" />
+    <Compile Include="ParsingType.cs" />
     <Compile Include="WebRequest.cs" />
     <Compile Include="WelfCreator.cs">
       <SubType>Form</SubType>
@@ -124,6 +129,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="EntryList\page.welf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="EntryList\vendor.welf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Properties\Settings.settings">
@@ -165,6 +173,7 @@
     <None Include="Resources\wowIcon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Lib\Newtonsoft.Json.dll" />
     <Content Include="Resources\drop.ico" />
     <Content Include="Resources\ok.ico" />
   </ItemGroup>

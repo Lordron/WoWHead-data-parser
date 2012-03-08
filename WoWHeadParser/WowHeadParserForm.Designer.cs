@@ -30,6 +30,7 @@ namespace WoWHeadParser
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WoWHeadParserForm));
             this.rangeEndLabel = new System.Windows.Forms.Label();
             this.rangeStartLabel = new System.Windows.Forms.Label();
@@ -54,14 +55,14 @@ namespace WoWHeadParser
             this.progressLabel = new System.Windows.Forms.Label();
             this.saveDialog = new System.Windows.Forms.SaveFileDialog();
             this.abortButton = new System.Windows.Forms.Button();
-            this.menuStrip = new System.Windows.Forms.MenuStrip();
-            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.wELFCreatorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.reloadwelfFilesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.numericUpDown = new System.Windows.Forms.NumericUpDown();
+            this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
+            this.fileMenuItem = new System.Windows.Forms.MenuItem();
+            this.exitMenuItem = new System.Windows.Forms.MenuItem();
+            this.editMenuItem = new System.Windows.Forms.MenuItem();
+            this.reloadMenuItem = new System.Windows.Forms.MenuItem();
+            this.launchMenuItem = new System.Windows.Forms.MenuItem();
             this.settingsBox.SuspendLayout();
             this.parsingControl.SuspendLayout();
             this.singleTab.SuspendLayout();
@@ -73,7 +74,6 @@ namespace WoWHeadParser
             ((System.ComponentModel.ISupportInitialize)(this.rangeEnd)).BeginInit();
             this.listTab.SuspendLayout();
             this.listBox.SuspendLayout();
-            this.menuStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
@@ -132,9 +132,9 @@ namespace WoWHeadParser
             this.settingsBox.Controls.Add(this.parserBox);
             this.settingsBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.settingsBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.settingsBox.Location = new System.Drawing.Point(0, 24);
+            this.settingsBox.Location = new System.Drawing.Point(0, 0);
             this.settingsBox.Name = "settingsBox";
-            this.settingsBox.Size = new System.Drawing.Size(387, 219);
+            this.settingsBox.Size = new System.Drawing.Size(387, 243);
             this.settingsBox.TabIndex = 4;
             this.settingsBox.TabStop = false;
             this.settingsBox.Text = "Settings";
@@ -325,9 +325,9 @@ namespace WoWHeadParser
             this.entryCountLabel.AutoSize = true;
             this.entryCountLabel.Location = new System.Drawing.Point(230, 27);
             this.entryCountLabel.Name = "entryCountLabel";
-            this.entryCountLabel.Size = new System.Drawing.Size(43, 13);
+            this.entryCountLabel.Size = new System.Drawing.Size(13, 13);
             this.entryCountLabel.TabIndex = 1;
-            this.entryCountLabel.Text = "<none>";
+            this.entryCountLabel.Text = "0";
             // 
             // progressBar
             // 
@@ -355,9 +355,8 @@ namespace WoWHeadParser
             this.progressLabel.AutoSize = true;
             this.progressLabel.Location = new System.Drawing.Point(196, 188);
             this.progressLabel.Name = "progressLabel";
-            this.progressLabel.Size = new System.Drawing.Size(43, 13);
+            this.progressLabel.Size = new System.Drawing.Size(0, 13);
             this.progressLabel.TabIndex = 7;
-            this.progressLabel.Text = "<none>";
             // 
             // saveDialog
             // 
@@ -374,58 +373,6 @@ namespace WoWHeadParser
             this.abortButton.Text = "Abort";
             this.abortButton.UseVisualStyleBackColor = true;
             this.abortButton.Click += new System.EventHandler(this.AbortButtonClick);
-            // 
-            // menuStrip
-            // 
-            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem,
-            this.editToolStripMenuItem});
-            this.menuStrip.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(387, 24);
-            this.menuStrip.TabIndex = 9;
-            this.menuStrip.Text = "menuStrip1";
-            // 
-            // fileToolStripMenuItem
-            // 
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.exitToolStripMenuItem});
-            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(46, 20);
-            this.fileToolStripMenuItem.Text = "File...";
-            // 
-            // exitToolStripMenuItem
-            // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Alt | System.Windows.Forms.Keys.F4)));
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.ExitToolStripMenuItemClick);
-            // 
-            // editToolStripMenuItem
-            // 
-            this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.wELFCreatorToolStripMenuItem,
-            this.reloadwelfFilesToolStripMenuItem});
-            this.editToolStripMenuItem.Name = "editToolStripMenuItem";
-            this.editToolStripMenuItem.Size = new System.Drawing.Size(39, 20);
-            this.editToolStripMenuItem.Text = "Edit";
-            // 
-            // wELFCreatorToolStripMenuItem
-            // 
-            this.wELFCreatorToolStripMenuItem.Name = "wELFCreatorToolStripMenuItem";
-            this.wELFCreatorToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.W)));
-            this.wELFCreatorToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
-            this.wELFCreatorToolStripMenuItem.Text = "WELF Creator...";
-            this.wELFCreatorToolStripMenuItem.Click += new System.EventHandler(this.WELFCreatorToolStripMenuItemClick);
-            // 
-            // reloadwelfFilesToolStripMenuItem
-            // 
-            this.reloadwelfFilesToolStripMenuItem.Name = "reloadwelfFilesToolStripMenuItem";
-            this.reloadwelfFilesToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.R)));
-            this.reloadwelfFilesToolStripMenuItem.Size = new System.Drawing.Size(212, 22);
-            this.reloadwelfFilesToolStripMenuItem.Text = "Reload .welf files...";
-            this.reloadwelfFilesToolStripMenuItem.Click += new System.EventHandler(this.ReloadWelfFilesToolStripMenuItemClick);
             // 
             // backgroundWorker
             // 
@@ -449,6 +396,46 @@ namespace WoWHeadParser
             this.numericUpDown.Size = new System.Drawing.Size(106, 20);
             this.numericUpDown.TabIndex = 10;
             // 
+            // mainMenu1
+            // 
+            this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.fileMenuItem,
+            this.editMenuItem});
+            // 
+            // fileMenuItem
+            // 
+            this.fileMenuItem.Index = 0;
+            this.fileMenuItem.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.exitMenuItem});
+            this.fileMenuItem.Text = "File";
+            // 
+            // exitMenuItem
+            // 
+            this.exitMenuItem.Index = 0;
+            this.exitMenuItem.Shortcut = System.Windows.Forms.Shortcut.AltF4;
+            this.exitMenuItem.Text = "Exit";
+            this.exitMenuItem.Click += new System.EventHandler(this.ExitMenuClick);
+            // 
+            // editMenuItem
+            // 
+            this.editMenuItem.Index = 1;
+            this.editMenuItem.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.reloadMenuItem,
+            this.launchMenuItem});
+            this.editMenuItem.Text = "Edit";
+            // 
+            // reloadMenuItem
+            // 
+            this.reloadMenuItem.Index = 0;
+            this.reloadMenuItem.Text = "Reload .welf files";
+            this.reloadMenuItem.Click += new System.EventHandler(this.ReloadWelfFilesMenuClick);
+            // 
+            // launchMenuItem
+            // 
+            this.launchMenuItem.Index = 1;
+            this.launchMenuItem.Text = "Launch .welf creator";
+            this.launchMenuItem.Click += new System.EventHandler(this.WELFCreatorMenuClick);
+            // 
             // WoWHeadParserForm
             // 
             this.AcceptButton = this.startButton;
@@ -463,10 +450,9 @@ namespace WoWHeadParser
             this.Controls.Add(this.startButton);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.settingsBox);
-            this.Controls.Add(this.menuStrip);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MainMenuStrip = this.menuStrip;
+            this.Menu = this.mainMenu1;
             this.Name = "WoWHeadParserForm";
             this.Text = "WowHead Parser";
             this.settingsBox.ResumeLayout(false);
@@ -483,8 +469,6 @@ namespace WoWHeadParser
             this.listTab.ResumeLayout(false);
             this.listBox.ResumeLayout(false);
             this.listBox.PerformLayout();
-            this.menuStrip.ResumeLayout(false);
-            this.menuStrip.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -513,17 +497,17 @@ namespace WoWHeadParser
         private GroupBox listBox;
         private Label entryCountLabel;
         private ComboBox welfBox;
-        private MenuStrip menuStrip;
-        private ToolStripMenuItem fileToolStripMenuItem;
-        private ToolStripMenuItem exitToolStripMenuItem;
-        private ToolStripMenuItem editToolStripMenuItem;
-        private ToolStripMenuItem wELFCreatorToolStripMenuItem;
-        private ToolStripMenuItem reloadwelfFilesToolStripMenuItem;
         private BackgroundWorker backgroundWorker;
         private NumericUpDown numericUpDown;
         private ProgressBar progressBar;
         private Label rangeEndLabel;
         private Label rangeStartLabel;
+        private MainMenu mainMenu1;
+        private MenuItem fileMenuItem;
+        private MenuItem exitMenuItem;
+        private MenuItem editMenuItem;
+        private MenuItem reloadMenuItem;
+        private MenuItem launchMenuItem;
     }
 }
 

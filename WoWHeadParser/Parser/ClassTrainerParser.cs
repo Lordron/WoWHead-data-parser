@@ -93,5 +93,20 @@ namespace WoWHeadParser
                 return "wowhead.com/npc=";
             }
         }
+
+        public override string Name
+        {
+            get
+            {
+                return "Professions & Class Trainer data parser";
+            }
+        }
+
+        public enum TrainerType
+        {
+            TrainerNone = 0,
+            ClassTrainer = 1,
+            RecipeTrainer = 2,
+        }
     }
 }

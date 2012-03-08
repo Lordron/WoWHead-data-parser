@@ -15,6 +15,8 @@ namespace WoWHeadParser
         private DateTime _startTime;
         private List<uint> _entries;
 
+        private List<Type> _types;
+
         private Dictionary<MessageType, Message> _message = new Dictionary<MessageType, Message>
         {
             {MessageType.MultipleTypeBigger, new Message(@"Starting value can not be bigger than ending value!")},
@@ -35,16 +37,22 @@ namespace WoWHeadParser
                 _worker.Finished += new Worker.OnFinished(WorkerFinished);
             }
 
+            _types = new List<Type>();
             _entries = new List<uint>();
         }
 
         protected override void OnLoad(EventArgs e)
         {
-            Type[] Types = Assembly.GetExecutingAssembly().GetTypes();
-            foreach (Type type in Types)
+            Type[] types = Assembly.GetExecutingAssembly().GetTypes();
+            foreach (Type type in types)
             {
-                if (type.IsSubclassOf(typeof(Parser)))
-                    parserBox.Items.Add(type);
+                if (!type.IsSubclassOf(typeof(Parser)))
+                    continue;
+
+                Parser parser = (Parser)Activator.CreateInstance(type);
+                parserBox.Items.Add(parser.Name);
+
+                _types.Add(type);
             }
 
             LoadWelfFiles();
@@ -57,7 +65,7 @@ namespace WoWHeadParser
 
         public void StartButtonClick(object sender, EventArgs e)
         {
-            Parser parser = (Parser)Activator.CreateInstance((Type)parserBox.SelectedItem);
+            Parser parser = (Parser)Activator.CreateInstance(_types[parserBox.SelectedIndex]);
 
             string locale = (string)localeBox.SelectedItem;
             string address = string.Format("http://{0}{1}", (string.IsNullOrWhiteSpace(locale) ? "www." : locale), parser.Address);
@@ -106,8 +114,8 @@ namespace WoWHeadParser
 
             abortButton.Enabled = true;
             settingsBox.Enabled = startButton.Enabled = false;
-            progressLabel.Text = "Downloading...";
             numericUpDown.Value = progressBar.Value = 0;
+            progressLabel.Text = "Downloading...";
 
             _startTime = DateTime.Now;
             
@@ -143,7 +151,7 @@ namespace WoWHeadParser
                 {
                     using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile(), Encoding.UTF8))
                     {
-                        Parser parser = (Parser)Activator.CreateInstance((Type)parserBox.SelectedItem);
+                        Parser parser = (Parser)Activator.CreateInstance(_types[parserBox.SelectedIndex]);
                         stream.WriteLine(@"-- Dump of {0} ({1}), Total object count: {2}", now, now - _startTime, _worker.Pages.Count);
                         while(!_worker.Empty)
                         {
@@ -202,12 +210,12 @@ namespace WoWHeadParser
                 ShowMessageBox(MessageType.WelfListEmpty);
         }
 
-        private void WELFCreatorToolStripMenuItemClick(object sender, EventArgs e)
+        private void WELFCreatorMenuClick(object sender, EventArgs e)
         {
             new WelfCreator().Show();
         }
 
-        private void ReloadWelfFilesToolStripMenuItemClick(object sender, EventArgs e)
+        private void ReloadWelfFilesMenuClick(object sender, EventArgs e)
         {
             LoadWelfFiles();
         }
@@ -224,7 +232,7 @@ namespace WoWHeadParser
             }
         }
 
-        private void ExitToolStripMenuItemClick(object sender, EventArgs e)
+        private void ExitMenuClick(object sender, EventArgs e)
         {
             Application.Exit();
         }
@@ -243,7 +251,7 @@ namespace WoWHeadParser
 
         private DialogResult ShowMessageBox(MessageType type, params object[] args)
         {
-            if (type >= MessageType.Max)
+            if (!_message.ContainsKey(type))
                 return DialogResult.None;
 
             Message message = _message[type];
