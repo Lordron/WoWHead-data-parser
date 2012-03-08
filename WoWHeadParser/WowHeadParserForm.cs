@@ -22,6 +22,7 @@ namespace WoWHeadParser
             {MessageType.MultipleTypeBigger, new Message(@"Starting value can not be bigger than ending value!")},
             {MessageType.MultipleTypeEqual, new Message(@"Starting value can not be equal ending value!")},
             {MessageType.WelfListEmpty, new Message(@"Entries list is empty!")},
+            {MessageType.WelfFileNotFound, new Message(@"File {0} not found!")},
             {MessageType.UnsupportedParsingType, new Message(@"Unsupported parsing type: {0}!")},
             {MessageType.AbortQuestion, new Message(@"Do you really want to stop ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
             {MessageType.ExitQuestion, new Message(@"Do you really want to quit WoWHead Parser ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
@@ -189,7 +190,15 @@ namespace WoWHeadParser
 
         private void WelfBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            using (StreamReader reader = new StreamReader(Path.Combine("EntryList", (string)welfBox.SelectedItem)))
+            string fileName = Path.Combine("EntryList", (string)welfBox.SelectedItem);
+
+            if (!File.Exists(fileName))
+            {
+                ShowMessageBox(MessageType.WelfFileNotFound, fileName);
+                return;
+            }
+
+            using (StreamReader reader = new StreamReader(fileName))
             {
                 _entries.Clear();
 

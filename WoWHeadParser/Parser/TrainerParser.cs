@@ -20,7 +20,7 @@ namespace WoWHeadParser
             string page = block.Page;
             TrainerType type = GetTrainerType(page);
 
-            string pattern = @"data: \[.*;";
+            const string pattern = @"data: \[.*;";
             string subPattern = _patterns[type];
 
             if (type == TrainerType.TypeNone)

@@ -5,7 +5,7 @@ using Newtonsoft.Json.Linq;
 
 namespace WoWHeadParser
 {
-    class VendorParser : Parser
+    internal class VendorParser : Parser
     {
         public override string Parse(Block block)
         {

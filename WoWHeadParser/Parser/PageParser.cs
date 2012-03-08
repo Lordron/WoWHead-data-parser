@@ -9,8 +9,9 @@ namespace WoWHeadParser
         public override string Parse(Block block)
         {
             StringBuilder content = new StringBuilder();
-            Regex reg = new Regex(@"new Book\({ parent: '.+', pages: \['(?<page>.+)'\]}\)", RegexOptions.Multiline);
-            MatchCollection matches = reg.Matches(block.Page);
+
+            Regex regex = new Regex(@"new Book\({ parent: '.+', pages: \['(?<page>.+)'\]}\)", RegexOptions.Multiline);
+            MatchCollection matches = regex.Matches(block.Page);
 
             foreach (Match match in matches)
             {
