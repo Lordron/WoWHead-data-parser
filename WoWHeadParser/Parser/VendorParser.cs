@@ -52,8 +52,11 @@ namespace WoWHeadParser
                     JObject obj = (JObject)ser[i];
 
                     string cost = string.Empty;
+                    string count = string.Empty;
                     string id = obj["id"].ToString();
                     string avail = obj["avail"].ToString();
+
+                    uint extendedCostEntry = 0;
 
                     if (!(obj["cost"] is JArray))
                         continue;
@@ -75,6 +78,7 @@ namespace WoWHeadParser
                                 foreach (Match match in matches)
                                 {
                                     cost = match.Groups[1].Value;
+                                    count = match.Groups[2].Value;
                                 }
                             }
                         }
@@ -85,10 +89,22 @@ namespace WoWHeadParser
                     avail = avail.Equals("-1") ? "0" : avail;
                     int incrTime = avail.Equals("0") ? 0 : 3600;
 
-                    if (string.IsNullOrWhiteSpace(cost) || cost.Equals("0"))
+                    if (!string.IsNullOrWhiteSpace(cost) && !cost.Equals("0"))
+                    {
+                        if (!string.IsNullOrEmpty(count))
+                        {
+                            uint priceId = uint.Parse(cost);
+                            uint counts = uint.Parse(count);
+                            extendedCostEntry = DB2Reader.GetIdFromCurrency(priceId, counts);
+                            if (extendedCostEntry == 0)
+                                extendedCostEntry = DB2Reader.GetIdFromItem(priceId, counts);
+                        }
+
+                    }
+                    else
                         cost = "9999999";
 
-                    content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}){4}", id, avail, incrTime, cost, (i < ser.Count - 1 ? "," : ";")).AppendLine();
+                    content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}){4}", id, avail, incrTime, extendedCostEntry, (i < ser.Count - 1 ? "," : ";")).AppendLine();
                 }
             }
             content.AppendLine();

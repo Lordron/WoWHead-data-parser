@@ -40,6 +40,8 @@ namespace WoWHeadParser
 
             _types = new List<Type>();
             _entries = new List<uint>();
+
+            new DB2Loader();
         }
 
         protected override void OnLoad(EventArgs e)
