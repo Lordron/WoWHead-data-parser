@@ -76,7 +76,7 @@ namespace WoWHeadParser
                         for (uint entry = _start; entry <= _end; ++entry)
                         {
                             if (!_working)
-                                return;
+                                break;
 
                             _semaphore.Wait();
 
@@ -90,7 +90,7 @@ namespace WoWHeadParser
                         for (int i = 0; i < _entries.Count; ++i)
                         {
                             if (!_working)
-                                return;
+                                break;
 
                             _semaphore.Wait();
 

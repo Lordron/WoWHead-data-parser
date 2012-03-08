@@ -1,10 +1,18 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace WoWHeadParser
 {
-    internal class ClassTrainerParser : Parser
+    internal class TrainerParser : Parser
     {
+        private Dictionary<TrainerType, string> _patterns = new Dictionary<TrainerType, string>
+        {
+            {TrainerType.TypeNone, ""},
+            {TrainerType.ClassTrainer, "{[^}]*\"id\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*" },
+            {TrainerType.RecipeTrainer, "{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*" },
+        };
+
         public override string Parse(Block block)
         {
             StringBuilder content = new StringBuilder();
@@ -13,19 +21,10 @@ namespace WoWHeadParser
             TrainerType type = GetTrainerType(page);
 
             string pattern = @"data: \[.*;";
-            string subPattern = string.Empty;
+            string subPattern = _patterns[type];
 
-            switch (type)
-            {
-                case TrainerType.ClassTrainer:
-                    subPattern = "{[^}]*\"id\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*";
-                    break;
-                case TrainerType.RecipeTrainer:
-                    subPattern = "{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*";
-                    break;
-                default:
-                    return string.Format("-- Unknown trainer type, Id {0}", block.Id);
-            }
+            if (type == TrainerType.TypeNone)
+                return string.Format("-- Unknown trainer type, Id {0}", block.Id);
 
             bool print = false;
 
@@ -70,20 +69,18 @@ namespace WoWHeadParser
         public TrainerType GetTrainerType(string page)
         {
             Regex regex = new Regex("template: 'spell', id: ('[a-z\\-]+'), name: ", RegexOptions.Multiline);
+            MatchCollection matches = regex.Matches(page);
+            foreach (Match item in matches)
             {
-                MatchCollection matches = regex.Matches(page);
-                foreach (Match item in matches)
+                switch (item.Groups[1].Value)
                 {
-                    switch (item.Groups[1].Value)
-                    {
-                        case "\'teaches-ability\'": 
-                            return TrainerType.ClassTrainer;
-                        case "\'teaches-recipe\'":
-                            return TrainerType.RecipeTrainer;
-                    }
+                    case "\'teaches-ability\'":
+                        return TrainerType.ClassTrainer;
+                    case "\'teaches-recipe\'":
+                        return TrainerType.RecipeTrainer;
                 }
             }
-            return TrainerType.TrainerNone;
+            return TrainerType.TypeNone;
         }
 
         public override string Address
@@ -104,9 +101,9 @@ namespace WoWHeadParser
 
         public enum TrainerType
         {
-            TrainerNone = 0,
-            ClassTrainer = 1,
-            RecipeTrainer = 2,
+            TypeNone,
+            ClassTrainer,
+            RecipeTrainer,
         }
     }
 }

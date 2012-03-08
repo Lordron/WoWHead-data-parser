@@ -87,7 +87,7 @@
   <ItemGroup>
     <Compile Include="Block.cs" />
     <Compile Include="Message.cs" />
-    <Compile Include="Parser\ClassTrainerParser.cs" />
+    <Compile Include="Parser\TrainerParser.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Parser\PageParser.cs" />
     <Compile Include="Parser\Parser.cs" />
@@ -125,7 +125,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <None Include="EntryList\classtrainer.welf">
+    <None Include="EntryList\trainer.welf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="EntryList\page.welf">

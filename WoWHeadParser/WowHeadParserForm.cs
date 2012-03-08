@@ -174,6 +174,8 @@ namespace WoWHeadParser
 
             _worker.Stop();
             backgroundWorker.CancelAsync();
+
+            progressLabel.Text = "Aborting...";
         }
 
         private void WorkerFinished()
