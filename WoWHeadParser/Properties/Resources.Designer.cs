@@ -59,19 +59,5 @@ namespace WoWHeadParser.Properties {
                 resourceCulture = value;
             }
         }
-        
-        internal static System.Drawing.Bitmap drop {
-            get {
-                object obj = ResourceManager.GetObject("drop", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        internal static System.Drawing.Bitmap ok {
-            get {
-                object obj = ResourceManager.GetObject("ok", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
     }
 }

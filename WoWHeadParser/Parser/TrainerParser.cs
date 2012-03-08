@@ -6,6 +6,7 @@ namespace WoWHeadParser
 {
     internal class TrainerParser : Parser
     {
+        // 38513 - errors
         private Dictionary<TrainerType, string> _patterns = new Dictionary<TrainerType, string>
         {
             {TrainerType.TypeNone, ""},
