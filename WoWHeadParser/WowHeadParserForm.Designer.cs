@@ -50,14 +50,16 @@ namespace WoWHeadParser
             this.listBox = new System.Windows.Forms.GroupBox();
             this.welfBox = new System.Windows.Forms.ComboBox();
             this.entryCountLabel = new System.Windows.Forms.Label();
-            this.progressBar = new System.Windows.Forms.ProgressBar();
-            this.startButton = new System.Windows.Forms.Button();
+            this.consoleGroupBox = new System.Windows.Forms.GroupBox();
+            this.consoleBox = new System.Windows.Forms.RichTextBox();
             this.progressLabel = new System.Windows.Forms.Label();
-            this.saveDialog = new System.Windows.Forms.SaveFileDialog();
-            this.abortButton = new System.Windows.Forms.Button();
-            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
             this.numericUpDown = new System.Windows.Forms.NumericUpDown();
-            this.mainMenu1 = new System.Windows.Forms.MainMenu(this.components);
+            this.abortButton = new System.Windows.Forms.Button();
+            this.startButton = new System.Windows.Forms.Button();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.saveDialog = new System.Windows.Forms.SaveFileDialog();
+            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.mainMenu = new System.Windows.Forms.MainMenu(this.components);
             this.fileMenuItem = new System.Windows.Forms.MenuItem();
             this.exitMenuItem = new System.Windows.Forms.MenuItem();
             this.editMenuItem = new System.Windows.Forms.MenuItem();
@@ -74,6 +76,7 @@ namespace WoWHeadParser
             ((System.ComponentModel.ISupportInitialize)(this.rangeEnd)).BeginInit();
             this.listTab.SuspendLayout();
             this.listBox.SuspendLayout();
+            this.consoleGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
@@ -103,7 +106,7 @@ namespace WoWHeadParser
             this.parserBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.parserBox.Location = new System.Drawing.Point(80, 19);
             this.parserBox.Name = "parserBox";
-            this.parserBox.Size = new System.Drawing.Size(253, 21);
+            this.parserBox.Size = new System.Drawing.Size(290, 21);
             this.parserBox.TabIndex = 1;
             this.parserBox.SelectedIndexChanged += new System.EventHandler(this.ParserIndexChanged);
             // 
@@ -130,11 +133,10 @@ namespace WoWHeadParser
             this.settingsBox.Controls.Add(this.parsingControl);
             this.settingsBox.Controls.Add(this.localeBox);
             this.settingsBox.Controls.Add(this.parserBox);
-            this.settingsBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.settingsBox.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.settingsBox.Location = new System.Drawing.Point(0, 0);
+            this.settingsBox.Location = new System.Drawing.Point(0, 3);
             this.settingsBox.Name = "settingsBox";
-            this.settingsBox.Size = new System.Drawing.Size(387, 243);
+            this.settingsBox.Size = new System.Drawing.Size(379, 145);
             this.settingsBox.TabIndex = 4;
             this.settingsBox.TabStop = false;
             this.settingsBox.Text = "Settings";
@@ -329,56 +331,35 @@ namespace WoWHeadParser
             this.entryCountLabel.TabIndex = 1;
             this.entryCountLabel.Text = "0";
             // 
-            // progressBar
+            // consoleGroupBox
             // 
-            this.progressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.progressBar.Location = new System.Drawing.Point(0, 217);
-            this.progressBar.Maximum = 2147483647;
-            this.progressBar.Name = "progressBar";
-            this.progressBar.Size = new System.Drawing.Size(387, 26);
-            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
-            this.progressBar.TabIndex = 5;
+            this.consoleGroupBox.Controls.Add(this.consoleBox);
+            this.consoleGroupBox.Location = new System.Drawing.Point(0, 154);
+            this.consoleGroupBox.Name = "consoleGroupBox";
+            this.consoleGroupBox.Size = new System.Drawing.Size(379, 134);
+            this.consoleGroupBox.TabIndex = 11;
+            this.consoleGroupBox.TabStop = false;
+            this.consoleGroupBox.Text = "Console";
             // 
-            // startButton
+            // consoleBox
             // 
-            this.startButton.Enabled = false;
-            this.startButton.Location = new System.Drawing.Point(6, 178);
-            this.startButton.Name = "startButton";
-            this.startButton.Size = new System.Drawing.Size(75, 26);
-            this.startButton.TabIndex = 6;
-            this.startButton.Text = "Start";
-            this.startButton.UseVisualStyleBackColor = true;
-            this.startButton.Click += new System.EventHandler(this.StartButtonClick);
+            this.consoleBox.BackColor = System.Drawing.Color.Black;
+            this.consoleBox.Font = new System.Drawing.Font("Lucida Console", 8.25F);
+            this.consoleBox.ForeColor = System.Drawing.Color.Cyan;
+            this.consoleBox.Location = new System.Drawing.Point(6, 12);
+            this.consoleBox.Name = "consoleBox";
+            this.consoleBox.ReadOnly = true;
+            this.consoleBox.Size = new System.Drawing.Size(367, 116);
+            this.consoleBox.TabIndex = 0;
+            this.consoleBox.Text = "";
             // 
             // progressLabel
             // 
             this.progressLabel.AutoSize = true;
-            this.progressLabel.Location = new System.Drawing.Point(196, 188);
+            this.progressLabel.Location = new System.Drawing.Point(191, 301);
             this.progressLabel.Name = "progressLabel";
-            this.progressLabel.Size = new System.Drawing.Size(0, 13);
+            this.progressLabel.Size = new System.Drawing.Size(73, 13);
             this.progressLabel.TabIndex = 7;
-            // 
-            // saveDialog
-            // 
-            this.saveDialog.Filter = "Structured Query Language| *.sql|Normal text file| *.txt|All Files| *.*";
-            // 
-            // abortButton
-            // 
-            this.abortButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.abortButton.Enabled = false;
-            this.abortButton.Location = new System.Drawing.Point(103, 178);
-            this.abortButton.Name = "abortButton";
-            this.abortButton.Size = new System.Drawing.Size(75, 26);
-            this.abortButton.TabIndex = 8;
-            this.abortButton.Text = "Abort";
-            this.abortButton.UseVisualStyleBackColor = true;
-            this.abortButton.Click += new System.EventHandler(this.AbortButtonClick);
-            // 
-            // backgroundWorker
-            // 
-            this.backgroundWorker.WorkerSupportsCancellation = true;
-            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorkerDoWork);
-            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorkerRunWorkerCompleted);
             // 
             // numericUpDown
             // 
@@ -386,19 +367,62 @@ namespace WoWHeadParser
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.numericUpDown.Enabled = false;
-            this.numericUpDown.Location = new System.Drawing.Point(276, 183);
+            this.numericUpDown.Location = new System.Drawing.Point(281, 299);
             this.numericUpDown.Maximum = new decimal(new int[] {
             2147483647,
             0,
             0,
             0});
             this.numericUpDown.Name = "numericUpDown";
-            this.numericUpDown.Size = new System.Drawing.Size(106, 20);
+            this.numericUpDown.Size = new System.Drawing.Size(98, 20);
             this.numericUpDown.TabIndex = 10;
             // 
-            // mainMenu1
+            // abortButton
             // 
-            this.mainMenu1.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
+            this.abortButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            this.abortButton.Enabled = false;
+            this.abortButton.Location = new System.Drawing.Point(99, 294);
+            this.abortButton.Name = "abortButton";
+            this.abortButton.Size = new System.Drawing.Size(75, 26);
+            this.abortButton.TabIndex = 8;
+            this.abortButton.Text = "Abort";
+            this.abortButton.UseVisualStyleBackColor = true;
+            this.abortButton.Click += new System.EventHandler(this.AbortButtonClick);
+            // 
+            // startButton
+            // 
+            this.startButton.Enabled = false;
+            this.startButton.Location = new System.Drawing.Point(3, 294);
+            this.startButton.Name = "startButton";
+            this.startButton.Size = new System.Drawing.Size(75, 26);
+            this.startButton.TabIndex = 6;
+            this.startButton.Text = "Start";
+            this.startButton.UseVisualStyleBackColor = true;
+            this.startButton.Click += new System.EventHandler(this.StartButtonClick);
+            // 
+            // progressBar
+            // 
+            this.progressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.progressBar.Location = new System.Drawing.Point(0, 327);
+            this.progressBar.Maximum = 2147483647;
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(379, 26);
+            this.progressBar.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
+            this.progressBar.TabIndex = 5;
+            // 
+            // saveDialog
+            // 
+            this.saveDialog.Filter = "Structured Query Language| *.sql|Normal text file| *.txt|All Files| *.*";
+            // 
+            // backgroundWorker
+            // 
+            this.backgroundWorker.WorkerSupportsCancellation = true;
+            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorkerDoWork);
+            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorkerRunWorkerCompleted);
+            // 
+            // mainMenu
+            // 
+            this.mainMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.fileMenuItem,
             this.editMenuItem});
             // 
@@ -443,16 +467,17 @@ namespace WoWHeadParser
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.CancelButton = this.abortButton;
-            this.ClientSize = new System.Drawing.Size(387, 243);
-            this.Controls.Add(this.numericUpDown);
-            this.Controls.Add(this.abortButton);
+            this.ClientSize = new System.Drawing.Size(379, 353);
+            this.Controls.Add(this.consoleGroupBox);
             this.Controls.Add(this.progressLabel);
-            this.Controls.Add(this.startButton);
             this.Controls.Add(this.progressBar);
             this.Controls.Add(this.settingsBox);
+            this.Controls.Add(this.numericUpDown);
+            this.Controls.Add(this.abortButton);
+            this.Controls.Add(this.startButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Menu = this.mainMenu1;
+            this.Menu = this.mainMenu;
             this.Name = "WoWHeadParserForm";
             this.Text = "WowHead Parser";
             this.settingsBox.ResumeLayout(false);
@@ -469,6 +494,7 @@ namespace WoWHeadParser
             this.listTab.ResumeLayout(false);
             this.listBox.ResumeLayout(false);
             this.listBox.PerformLayout();
+            this.consoleGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -502,12 +528,14 @@ namespace WoWHeadParser
         private ProgressBar progressBar;
         private Label rangeEndLabel;
         private Label rangeStartLabel;
-        private MainMenu mainMenu1;
+        private MainMenu mainMenu;
         private MenuItem fileMenuItem;
         private MenuItem exitMenuItem;
         private MenuItem editMenuItem;
         private MenuItem reloadMenuItem;
         private MenuItem launchMenuItem;
+        private GroupBox consoleGroupBox;
+        private RichTextBox consoleBox;
     }
 }
 

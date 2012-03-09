@@ -112,6 +112,7 @@ namespace WoWHeadParser
             }
             catch
             {
+                Console.WriteLine("Cannot get response from {0}", request.Uri);
             }
 
             string text = request.ToString();

@@ -98,6 +98,7 @@
     <Compile Include="Parser\Parser.cs" />
     <Compile Include="Parser\VendorParser.cs" />
     <Compile Include="ParsingType.cs" />
+    <Compile Include="RichTextBoxWriter.cs" />
     <Compile Include="WebRequest.cs" />
     <Compile Include="WelfCreator.cs">
       <SubType>Form</SubType>

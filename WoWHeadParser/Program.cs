@@ -15,7 +15,9 @@ namespace WoWHeadParser
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            Console.SetOut(RichTextBoxWriter.Instance);
             Application.Run(new WoWHeadParserForm());
+            RichTextBoxWriter.Instance.Close();
         }
     }
 }
