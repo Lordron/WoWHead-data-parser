@@ -101,7 +101,7 @@ namespace WoWHeadParser
 
                     }
                     else
-                        scost = "9999999";
+                        extendedCostEntry = 9999999;
 
                     content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}){4}", id, maxcount, incrTime, extendedCostEntry, (i < ser.Count - 1 ? "," : ";")).AppendLine();
                 }
