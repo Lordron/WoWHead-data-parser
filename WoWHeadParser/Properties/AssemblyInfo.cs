@@ -8,7 +8,7 @@ using System.Resources;
 // associated with an assembly.
 [assembly: AssemblyTitle("WoWHeadParser")]
 [assembly: AssemblyDescription("WoWHeadParser C#")]
-[assembly: AssemblyConfiguration("MVS 2011 x64")]
+[assembly: AssemblyConfiguration(".NET 4.0 x32")]
 [assembly: AssemblyCompany("Heisenberg and brain!")]
 [assembly: AssemblyProduct("WoWHeadParser")]
 [assembly: AssemblyCopyright("Copyright © Heisenberg 2011")]
@@ -33,6 +33,6 @@ using System.Resources;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.0.0")]
+[assembly: AssemblyVersion("2.0.1.0")]
+[assembly: AssemblyFileVersion("2.0.1.0")]
 [assembly: NeutralResourcesLanguageAttribute("en")]
