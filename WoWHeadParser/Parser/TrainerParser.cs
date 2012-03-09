@@ -6,7 +6,6 @@ namespace WoWHeadParser
 {
     internal class TrainerParser : Parser
     {
-        // 38513 - errors
         private Dictionary<TrainerType, string> _patterns = new Dictionary<TrainerType, string>
         {
             {TrainerType.TypeNone, ""},
@@ -19,28 +18,54 @@ namespace WoWHeadParser
             StringBuilder content = new StringBuilder();
 
             string page = block.Page;
-            TrainerType type = GetTrainerType(page);
 
-            const string pattern = @"data: \[.*;";
-            string subPattern = _patterns[type];
+            TrainerType type = TrainerType.TypeNone;
+
+            Regex regex = new Regex("template: 'spell', id: ('[a-z\\-]+'), name: ", RegexOptions.Multiline);
+            {
+                MatchCollection matches = regex.Matches(page);
+                foreach (Match item in matches)
+                {
+                    string stype = item.Groups[1].Value;
+
+                    switch (item.Groups[1].Value)
+                    {
+                        case "\'teaches-ability\'":
+                            type = TrainerType.ClassTrainer;
+                            break;
+                        case "\'teaches-recipe\'":
+                            type = TrainerType.RecipeTrainer;
+                            break;
+                        default:
+                            continue;
+                    }
+
+                    int start = item.Index;
+                    int end = page.IndexOf("});", start);
+
+                    page = page.Substring(start, end - start + 3);
+                }
+            }
 
             if (type == TrainerType.TypeNone)
                 return string.Format("-- Unknown trainer type, Id {0}", block.Id);
 
-            bool print = false;
+            const string pattern = @"data: \[.*;";
+            string subPattern = _patterns[type];
+
 
             MatchCollection find = Regex.Matches(page, pattern);
+
+            if (find.Count > 0)
+            {
+                content.AppendFormat(@"SET @ENTRY := {0};", block.Id).AppendLine();
+                content.AppendLine(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | 48 WHERE `entry` = @ENTRY;");
+                content.AppendLine(@"REPLACE INTO `npc_trainer` (`entry`, `spell`, `spellcost`, `reqlevel`, `reqSkill`, `reqSkillValue`) VALUES");
+            }
+
             foreach (Match item in find)
             {
                 MatchCollection matches = Regex.Matches(item.Value, subPattern);
-                if (!print && matches.Count > 0)
-                {
-                    content.AppendLine();
-                    content.AppendFormat(@"SET @ENTRY := {0};", block.Id).AppendLine();
-                    content.AppendLine(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | 48 WHERE `entry` = @ENTRY;");
-                    content.AppendLine(@"REPLACE INTO `npc_trainer` (`entry`, `spell`, `spellcost`, `reqlevel`, `reqSkill`, `reqSkillValue`) VALUES");
-                    print = true;
-                }
 
                 for (int i = 0; i < matches.Count; ++i)
                 {
@@ -64,24 +89,8 @@ namespace WoWHeadParser
                 }
             }
 
+            content.AppendLine();
             return content.ToString();
-        }
-
-        public TrainerType GetTrainerType(string page)
-        {
-            Regex regex = new Regex("template: 'spell', id: ('[a-z\\-]+'), name: ", RegexOptions.Multiline);
-            MatchCollection matches = regex.Matches(page);
-            foreach (Match item in matches)
-            {
-                switch (item.Groups[1].Value)
-                {
-                    case "\'teaches-ability\'":
-                        return TrainerType.ClassTrainer;
-                    case "\'teaches-recipe\'":
-                        return TrainerType.RecipeTrainer;
-                }
-            }
-            return TrainerType.TypeNone;
         }
 
         public override string Address
