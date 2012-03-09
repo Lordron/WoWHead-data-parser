@@ -12,27 +12,26 @@ namespace WoWHeadParser
         public static Dictionary<uint, T> ReadDb2<T>(Dictionary<uint, string> strDict) where T : struct
         {
             Dictionary<uint, T> dict = new Dictionary<uint, T>();
-            string fileName =
-                Path.Combine(Application.StartupPath + "\\" + "db2", typeof(T).Name + ".db2").Replace("Entry",
-                                                                                                             string.
-                                                                                                                 Empty);
 
-            using (FileStream stream = new FileStream(fileName, FileMode.Open, FileAccess.Read))
+            string fileName = typeof(T).Name.Replace("Entry", string.Empty) + ".db2";
+            string path = Path.Combine(Application.StartupPath, "db2", fileName);
+
+            if (!File.Exists(path))
+                return new Dictionary<uint, T>();
+
+            using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
             using (BinaryReader reader = new BinaryReader(stream, Encoding.UTF8))
             {
-                if (!File.Exists(fileName))
-                    throw new FileNotFoundException();
-
                 Db2Header header = reader.ReadStruct<Db2Header>();
                 int size = Marshal.SizeOf(typeof (T));
 
                 if (!header.IsDb2)
-                    throw new Exception(fileName + " is not DBC files");
+                    throw new Exception(path + " is not DBC files");
 
                 if (header.RecordSize != size)
                     throw new Exception(
                         string.Format("Size of row in DB2 file ({0}) != size of DB2 struct ({1}) in DB2: {2}",
-                                      header.RecordSize, size, fileName));
+                                      header.RecordSize, size, path));
 
                 // WDB2 specific fields
                 uint tableHash = reader.ReadUInt32(); // new field in WDB2
