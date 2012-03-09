@@ -34,8 +34,8 @@ namespace WoWHeadParser
 
             _worker = new Worker();
             {
-                _worker.PageDownloaded += new Worker.OnPageDownloaded(WorkerPageDownloaded);
-                _worker.Finished += new Worker.OnFinished(WorkerFinished);
+                _worker.PageDownloaded += WorkerPageDownloaded;
+                _worker.Finished += WorkerFinished;
             }
 
             _types = new List<Type>();
@@ -118,10 +118,10 @@ namespace WoWHeadParser
             abortButton.Enabled = true;
             settingsBox.Enabled = startButton.Enabled = false;
             numericUpDown.Value = progressBar.Value = 0;
-            progressLabel.Text = "Downloading...";
+            progressLabel.Text = @"Downloading...";
 
             _startTime = DateTime.Now;
-            
+
             backgroundWorker.RunWorkerAsync(type);
         }
 
@@ -144,7 +144,7 @@ namespace WoWHeadParser
                 ++numericUpDown.Value;
         }
 
-        void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             DateTime now = DateTime.Now;
 
@@ -156,7 +156,7 @@ namespace WoWHeadParser
                     {
                         Parser parser = (Parser)Activator.CreateInstance(_types[parserBox.SelectedIndex]);
                         stream.WriteLine(@"-- Dump of {0} ({1}), Total object count: {2}", now, now - _startTime, _worker.Pages.Count);
-                        while(!_worker.Empty)
+                        while (!_worker.Empty)
                         {
                             Block block = _worker.Pages.Dequeue();
                             string content = parser.Parse(block);
@@ -178,7 +178,7 @@ namespace WoWHeadParser
             _worker.Stop();
             backgroundWorker.CancelAsync();
 
-            progressLabel.Text = "Aborting...";
+            progressLabel.Text = @"Aborting...";
         }
 
         private void WorkerFinished()
@@ -187,7 +187,7 @@ namespace WoWHeadParser
             abortButton.Enabled = false;
             settingsBox.Enabled = startButton.Enabled = true;
 
-            progressLabel.Text = "Finished!";
+            progressLabel.Text = @"Finished!";
         }
 
         private void WelfBoxSelectedIndexChanged(object sender, EventArgs e)
@@ -209,11 +209,11 @@ namespace WoWHeadParser
                 foreach (string value in values)
                 {
                     uint val;
-                    if (uint.TryParse(value, out val))
-                    {
-                        if (!_entries.Contains(val))
-                            _entries.Add(val);
-                    }
+                    if (!uint.TryParse(value, out val))
+                        continue;
+
+                    if (!_entries.Contains(val))
+                        _entries.Add(val);
                 }
             }
 
@@ -238,8 +238,8 @@ namespace WoWHeadParser
             welfBox.Items.Clear();
 
             DirectoryInfo info = new DirectoryInfo(Application.StartupPath);
-            FileInfo[] Files = info.GetFiles("*.welf", SearchOption.AllDirectories);
-            foreach (FileInfo file in Files)
+            FileInfo[] files = info.GetFiles("*.welf", SearchOption.AllDirectories);
+            foreach (FileInfo file in files)
             {
                 welfBox.Items.Add(file.Name);
             }

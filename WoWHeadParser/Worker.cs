@@ -11,7 +11,6 @@ namespace WoWHeadParser
         private uint _end;
         private bool _working;
         private string _address;
-        private Queue<Block> _pages;
         private IList<uint> _entries;
         private SemaphoreSlim _semaphore;
 
@@ -19,16 +18,13 @@ namespace WoWHeadParser
 
         private object _threadLock = new object();
 
-        public Queue<Block> Pages
-        {
-            get { return _pages; }
-        }
+        public Queue<Block> Pages { get; private set; }
 
-        public bool Empty { get { return _pages.Count <= 0; } }
+        public bool Empty { get { return Pages.Count <= 0; } }
 
         public Worker()
         {
-            _pages = new Queue<Block>();
+            Pages = new Queue<Block>();
             _entries = new List<uint>();
             _semaphore = new SemaphoreSlim(10, 10);
         }
@@ -70,7 +66,7 @@ namespace WoWHeadParser
                         Requests request = new Requests(_address, _start);
                         request.Request.BeginGetResponse(RespCallback, request);
                         break;
-                    } 
+                    }
                 case ParsingType.TypeMultiple:
                     {
                         for (uint entry = _start; entry <= _end; ++entry)
@@ -114,21 +110,23 @@ namespace WoWHeadParser
             {
                 request.Response = (HttpWebResponse)request.Request.EndGetResponse(iar);
             }
-            catch { }
+            catch
+            {
+            }
 
             string text = request.ToString();
             if (!string.IsNullOrWhiteSpace(text))
             {
-                lock (_threadLock)
+                lock(_threadLock)
                 {
-                    if (_pages != null)
-                        _pages.Enqueue(new Block(text, request.Id));
+                    if (Pages != null)
+                        Pages.Enqueue(new Block(text, request.Id));
                 }
             }
 
             request.Dispose();
 
-            lock (_threadLock)
+            lock(_threadLock)
             {
                 if (_semaphore != null)
                     _semaphore.Release();
@@ -147,7 +145,7 @@ namespace WoWHeadParser
         public void Finish()
         {
             Stop();
-            _pages.Clear();
+            Pages.Clear();
 
             if (Finished != null)
                 Finished();
@@ -171,10 +169,10 @@ namespace WoWHeadParser
 
             Stop();
 
-            _pages.Clear();
+            Pages.Clear();
             _semaphore.Dispose();
 
-            _pages = null;
+            Pages = null;
             _semaphore = null;
         }
 
@@ -190,6 +188,6 @@ namespace WoWHeadParser
         /// <summary>
         /// Occurs when the working is finished
         /// </summary>
-        public event OnFinished Finished; 
+        public event OnFinished Finished;
     }
 }

@@ -9,8 +9,8 @@ namespace WoWHeadParser
         private Dictionary<TrainerType, string> _patterns = new Dictionary<TrainerType, string>
         {
             {TrainerType.TypeNone, ""},
-            {TrainerType.ClassTrainer, "{[^}]*\"id\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*" },
-            {TrainerType.RecipeTrainer, "{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*" },
+            {TrainerType.ClassTrainer, "{[^}]*\"id\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*"},
+            {TrainerType.RecipeTrainer, "{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*"},
         };
 
         public override string Parse(Block block)
@@ -26,8 +26,6 @@ namespace WoWHeadParser
                 MatchCollection matches = regex.Matches(page);
                 foreach (Match item in matches)
                 {
-                    string stype = item.Groups[1].Value;
-
                     switch (item.Groups[1].Value)
                     {
                         case "\'teaches-ability\'":
@@ -53,7 +51,6 @@ namespace WoWHeadParser
             const string pattern = @"data: \[.*;";
             string subPattern = _patterns[type];
 
-
             MatchCollection find = Regex.Matches(page, pattern);
 
             if (find.Count > 0)
@@ -73,18 +70,23 @@ namespace WoWHeadParser
 
                     string spell = groups[1].Value;
                     string end = (i < matches.Count - 1 ? "," : ";");
-                    if (type == TrainerType.RecipeTrainer)
+                    switch (type)
                     {
-                        string reqSkill = (string.IsNullOrEmpty(groups[4].Value) ? "0" : groups[4].Value);
-                        string reqSkillValue = (string.IsNullOrEmpty(groups[2].Value) ? "0" : groups[2].Value);
+                        case TrainerType.RecipeTrainer:
+                            {
+                                string reqSkill = (string.IsNullOrEmpty(groups[4].Value) ? "0" : groups[4].Value);
+                                string reqSkillValue = (string.IsNullOrEmpty(groups[2].Value) ? "0" : groups[2].Value);
 
-                        content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}, {4}){5}", spell, groups[5].Value, groups[3].Value, reqSkill, reqSkillValue, end).AppendLine();
-                    }
-                    else if (type == TrainerType.ClassTrainer)
-                    {
-                        string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? "0" : groups[3].Value);
+                                content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}, {4}){5}", spell, groups[5].Value, groups[3].Value, reqSkill, reqSkillValue, end).AppendLine();
+                            }
+                            break;
+                        case TrainerType.ClassTrainer:
+                            {
+                                string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? "0" : groups[3].Value);
 
-                        content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}, {4}){5}", spell, groups[4].Value, groups[2].Value, reqSkill, "0", end).AppendLine();
+                                content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}, {4}){5}", spell, groups[4].Value, groups[2].Value, reqSkill, "0", end).AppendLine();
+                            }
+                            break;
                     }
                 }
             }
@@ -93,21 +95,9 @@ namespace WoWHeadParser
             return content.ToString();
         }
 
-        public override string Address
-        {
-            get
-            {
-                return "wowhead.com/npc=";
-            }
-        }
+        public override string Address { get { return "wowhead.com/npc="; } }
 
-        public override string Name
-        {
-            get
-            {
-                return "Professions & Class Trainer data parser";
-            }
-        }
+        public override string Name { get { return "Professions & Class Trainer data parser"; } }
 
         public enum TrainerType
         {

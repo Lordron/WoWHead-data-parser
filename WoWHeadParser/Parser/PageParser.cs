@@ -17,7 +17,7 @@ namespace WoWHeadParser
             {
                 GroupCollection groups = match.Groups;
                 string typeStr = groups["page"].Value ?? string.Empty;
-                string[] pages = typeStr.Split(new[] { @"','" }, StringSplitOptions.RemoveEmptyEntries);
+                string[] pages = typeStr.Split(new[] {@"','"}, StringSplitOptions.RemoveEmptyEntries);
 
                 content.AppendFormat(@"SET @ENTRY := SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0};", block.Id).AppendLine();
                 content.AppendLine(@"INSERT IGNORE INTO `page_text` (`entry`, `text`, `next_page`) VALUES");
@@ -25,8 +25,8 @@ namespace WoWHeadParser
                 for (int i = 0; i < pages.Length; ++i)
                 {
                     content.AppendFormat(@"({0}, '{1}', {2}){3}",
-                        (i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i)), pages[i].HTMLEscapeSumbols(),
-                        (i < pages.Length - 1) ? string.Format("@ENTRY + {0}", i + 1) : "0", (i < pages.Length - 1 ? "," : ";")).AppendLine();
+                                         (i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i)), pages[i].HTMLEscapeSumbols(),
+                                         (i < pages.Length - 1) ? string.Format("@ENTRY + {0}", i + 1) : "0", (i < pages.Length - 1 ? "," : ";")).AppendLine();
                 }
                 content.AppendLine();
             }
@@ -34,20 +34,8 @@ namespace WoWHeadParser
             return content.ToString();
         }
 
-        public override string Address
-        {
-            get
-            {
-                return "wowhead.com/object=";
-            }
-        }
+        public override string Address { get { return "wowhead.com/object="; } }
 
-        public override string Name
-        {
-            get
-            {
-                return "Page data parser";
-            }
-        }
+        public override string Name { get { return "Page data parser"; } }
     }
 }

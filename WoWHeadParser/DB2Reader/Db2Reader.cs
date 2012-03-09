@@ -23,29 +23,29 @@ namespace WoWHeadParser
             using (BinaryReader reader = new BinaryReader(stream, Encoding.UTF8))
             {
                 Db2Header header = reader.ReadStruct<Db2Header>();
-                int size = Marshal.SizeOf(typeof (T));
+                int size = Marshal.SizeOf(typeof(T));
 
                 if (!header.IsDb2)
-                    throw new Exception(path + " is not DBC files");
+                    throw new Exception(fileName + " is not DBC files");
 
                 if (header.RecordSize != size)
                     throw new Exception(
-                        string.Format("Size of row in DB2 file ({0}) != size of DB2 struct ({1}) in DB2: {2}",
-                                      header.RecordSize, size, path));
+                            string.Format("Size of row in DB2 file ({0}) != size of DB2 struct ({1}) in DB2: {2}",
+                                          header.RecordSize, size, path));
 
                 // WDB2 specific fields
                 uint tableHash = reader.ReadUInt32(); // new field in WDB2
-                uint build = reader.ReadUInt32();     // new field in WDB2
+                uint build = reader.ReadUInt32(); // new field in WDB2
 
-                int unk1 = reader.ReadInt32();        // new field in WDB2
-                int unk2 = reader.ReadInt32();        // new field in WDB2
-                int unk3 = reader.ReadInt32();        // new field in WDB2 (index table?)
-                int locale = reader.ReadInt32();      // new field in WDB2
-                int unk5 = reader.ReadInt32();        // new field in WDB2
+                int unk1 = reader.ReadInt32(); // new field in WDB2
+                int unk2 = reader.ReadInt32(); // new field in WDB2
+                int unk3 = reader.ReadInt32(); // new field in WDB2 (index table?)
+                int locale = reader.ReadInt32(); // new field in WDB2
+                int unk5 = reader.ReadInt32(); // new field in WDB2
 
                 if (unk3 != 0)
                 {
-                    reader.ReadBytes(unk3 * 4 - 48);     // an index for rows
+                    reader.ReadBytes(unk3 * 4 - 48); // an index for rows
                     reader.ReadBytes(unk3 * 2 - 48 * 2); // a memory allocation bank
                 }
 
@@ -63,7 +63,7 @@ namespace WoWHeadParser
                 {
                     while (reader.BaseStream.Position != reader.BaseStream.Length)
                     {
-                        uint offset = (uint) (reader.BaseStream.Position - header.StartStringPosition);
+                        uint offset = (uint)(reader.BaseStream.Position - header.StartStringPosition);
                         string str = reader.ReadCString();
                         strDict.Add(offset, str);
                     }

@@ -15,8 +15,8 @@ namespace WoWHeadParser
 
             const string pattern = @"data: \[.*;";
 
-            char[] anyOf = new char[] { '[', ']', '{', '}' };
-            string[] subPatterns = new string[] { @"\[(\d+),(\d+)\]", @"\[\[(\d+),(\d+)\]\]" };
+            char[] anyOf = new[] {'[', ']', '{', '}'};
+            string[] subPatterns = new[] {@"\[(\d+),(\d+)\]", @"\[\[(\d+),(\d+)\]\]"};
 
             Regex regex = new Regex("template: 'item', id: ('[a-z\\-]+'), name: ", RegexOptions.Multiline);
             {
@@ -98,7 +98,6 @@ namespace WoWHeadParser
                             uint count = uint.Parse(scount);
                             extendedCostEntry = DB2Reader.GetExtendedCost(cost, count);
                         }
-
                     }
                     else
                         extendedCostEntry = 9999999;
@@ -110,20 +109,8 @@ namespace WoWHeadParser
             return content.ToString();
         }
 
-        public override string Address
-        {
-            get
-            {
-                return "wowhead.com/npc=";
-            }
-        }
+        public override string Address { get { return "wowhead.com/npc="; } }
 
-        public override string Name
-        {
-            get
-            {
-                return "Vendor data parser";
-            }
-        }
+        public override string Name { get { return "Vendor data parser"; } }
     }
 }

@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 
 namespace WoWHeadParser
 {
@@ -11,20 +10,11 @@ namespace WoWHeadParser
         public int RecordSize;
         public int StringTableSize;
 
-        public bool IsDb2
-        {
-            get { return Signature == 0x32424457; }
-        }
+        public bool IsDb2 { get { return Signature == 0x32424457; } }
 
-        public long DataSize
-        {
-            get { return RecordsCount * RecordSize; }
-        }
+        public long DataSize { get { return RecordsCount * RecordSize; } }
 
-        public long StartStringPosition
-        {
-            get { return DataSize + Marshal.SizeOf(typeof(Db2Header)); }
-        }
+        public long StartStringPosition { get { return DataSize + Marshal.SizeOf(typeof(Db2Header)); } }
     };
 
     public struct ItemExtendedCostEntry

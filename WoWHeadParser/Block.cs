@@ -1,5 +1,4 @@
-﻿
-namespace WoWHeadParser
+﻿namespace WoWHeadParser
 {
     public class Block
     {
