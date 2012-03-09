@@ -80,22 +80,16 @@ namespace WoWHeadParser
             return value;
         }
 
-        public static uint GetIdFromCurrency(uint currency, uint count)
+        public static uint GetExtendedCost(uint cost, uint count)
         {
-            foreach(KeyValuePair<uint, ItemExtendedCostEntry> entry in DB2.ExtendedCost)
+            foreach (KeyValuePair<uint, ItemExtendedCostEntry> kvp in DB2.ExtendedCost)
             {
-                if (entry.Value.HaveCurrency(currency, count))
-                    return entry.Value.Id;
-            }
-            return 0;
-        }
+                ItemExtendedCostEntry entry = kvp.Value;
+                if (entry.HaveCurrency(cost, count))
+                    return entry.Id;
 
-        public static uint GetIdFromItem(uint item, uint count)
-        {
-            foreach (KeyValuePair<uint, ItemExtendedCostEntry> entry in DB2.ExtendedCost)
-            {
-                if (entry.Value.HaveItem(item, count))
-                    return entry.Value.Id;
+                if (entry.HaveItem(cost, count))
+                    return entry.Id;
             }
             return 0;
         }

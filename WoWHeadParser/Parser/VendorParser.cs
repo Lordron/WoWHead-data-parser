@@ -15,7 +15,7 @@ namespace WoWHeadParser
 
             const string pattern = @"data: \[.*;";
 
-            char[] items = new char[] { '[', ']', '{', '}' };
+            char[] anyOf = new char[] { '[', ']', '{', '}' };
             string[] subPatterns = new string[] { @"\[(\d+),(\d+)\]", @"\[\[(\d+),(\d+)\]\]" };
 
             Regex regex = new Regex("template: 'item', id: ('[a-z\\-]+'), name: ", RegexOptions.Multiline);
@@ -49,62 +49,61 @@ namespace WoWHeadParser
 
                 for (int i = 0; i < ser.Count; ++i)
                 {
-                    JObject obj = (JObject)ser[i];
+                    JObject jobj = (JObject)ser[i];
 
-                    string cost = string.Empty;
-                    string count = string.Empty;
-                    string id = obj["id"].ToString();
-                    string avail = obj["avail"].ToString();
+                    string scost = string.Empty;
+                    string scount = string.Empty;
+                    string id = jobj["id"].ToString();
+                    string maxcount = jobj["avail"].ToString();
 
                     uint extendedCostEntry = 0;
 
-                    if (!(obj["cost"] is JArray))
+                    object obj = jobj["cost"];
+                    if (!(obj is JArray))
                         continue;
 
-                    JArray array = obj["cost"] as JArray;
-                    foreach (JToken costBlock in array)
+                    JArray array = obj as JArray;
+                    foreach (JToken token in array)
                     {
-                        string scost = costBlock.ToString().Trim();
-                        scost = scost.Replace("\r\n", "").Replace(" ", "");
+                        string costBlock = token.ToString();
+                        costBlock = costBlock.Replace("\r\n", "").Replace(" ", "");
 
-                        if (scost.Equals("0"))
+                        if (costBlock.Equals("0"))
                             continue;
 
-                        if (scost.IndexOfAny(items) != -1)
+                        if (costBlock.IndexOfAny(anyOf) != -1)
                         {
                             foreach (string subpattern in subPatterns)
                             {
-                                MatchCollection matches = Regex.Matches(scost, subpattern);
+                                MatchCollection matches = Regex.Matches(costBlock, subpattern);
                                 foreach (Match match in matches)
                                 {
-                                    cost = match.Groups[1].Value;
-                                    count = match.Groups[2].Value;
+                                    scost = match.Groups[1].Value;
+                                    scount = match.Groups[2].Value;
                                 }
                             }
                         }
                         else
-                            cost = scost;
+                            scost = costBlock;
                     }
 
-                    avail = avail.Equals("-1") ? "0" : avail;
-                    int incrTime = avail.Equals("0") ? 0 : 3600;
+                    maxcount = maxcount.Equals("-1") ? "0" : maxcount;
+                    int incrTime = maxcount.Equals("0") ? 0 : 3600;
 
-                    if (!string.IsNullOrWhiteSpace(cost) && !cost.Equals("0"))
+                    if (!string.IsNullOrWhiteSpace(scost) && !scost.Equals("0"))
                     {
-                        if (!string.IsNullOrEmpty(count))
+                        if (!string.IsNullOrEmpty(scount))
                         {
-                            uint priceId = uint.Parse(cost);
-                            uint counts = uint.Parse(count);
-                            extendedCostEntry = DB2Reader.GetIdFromCurrency(priceId, counts);
-                            if (extendedCostEntry == 0)
-                                extendedCostEntry = DB2Reader.GetIdFromItem(priceId, counts);
+                            uint cost = uint.Parse(scost);
+                            uint count = uint.Parse(scount);
+                            extendedCostEntry = DB2Reader.GetExtendedCost(cost, count);
                         }
 
                     }
                     else
-                        cost = "9999999";
+                        scost = "9999999";
 
-                    content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}){4}", id, avail, incrTime, extendedCostEntry, (i < ser.Count - 1 ? "," : ";")).AppendLine();
+                    content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}){4}", id, maxcount, incrTime, extendedCostEntry, (i < ser.Count - 1 ? "," : ";")).AppendLine();
                 }
             }
             content.AppendLine();
