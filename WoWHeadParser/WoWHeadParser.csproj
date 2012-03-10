@@ -91,6 +91,7 @@
     <Compile Include="DB2Reader\Db2Header.cs" />
     <Compile Include="DB2Reader\Db2Loader.cs" />
     <Compile Include="DB2Reader\Db2Reader.cs" />
+    <Compile Include="Locale.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Parser\TrainerParser.cs" />
     <Compile Include="Extensions.cs" />

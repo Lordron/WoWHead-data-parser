@@ -11,6 +11,7 @@ namespace WoWHeadParser
 {
     public partial class WoWHeadParserForm : Form
     {
+        private Parser _parser;
         private Worker _worker;
         private DateTime _startTime;
         private List<uint> _entries;
@@ -25,6 +26,15 @@ namespace WoWHeadParser
             {MessageType.WelfFileNotFound, new Message(@"File {0} not found!")},
             {MessageType.AbortQuestion, new Message(@"Do you really want to stop ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
             {MessageType.ExitQuestion, new Message(@"Do you really want to quit WoWHead Parser ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
+        };
+
+        private Dictionary<Locale, string> _locales = new Dictionary<Locale, string>
+        {
+            {Locale.English, "www."},
+            {Locale.Russia, "ru."},
+            {Locale.Germany, "de."},
+            {Locale.France, "fr."},
+            {Locale.Spain, "es."},
         };
 
         public WoWHeadParserForm()
@@ -59,6 +69,13 @@ namespace WoWHeadParser
                 _types.Add(type);
             }
 
+            foreach (Locale locale in Enum.GetValues(typeof(Locale)))
+            {
+                localeBox.Items.Add(locale);
+            }
+
+            localeBox.SelectedItem = Locale.English;
+
             LoadWelfFiles();
         }
 
@@ -69,10 +86,12 @@ namespace WoWHeadParser
 
         public void StartButtonClick(object sender, EventArgs e)
         {
-            Parser parser = (Parser)Activator.CreateInstance(_types[parserBox.SelectedIndex]);
+            _parser = (Parser)Activator.CreateInstance(_types[parserBox.SelectedIndex]);
 
-            string locale = (string)localeBox.SelectedItem;
-            string address = string.Format("http://{0}{1}", (string.IsNullOrWhiteSpace(locale) ? "www." : locale), parser.Address);
+            _parser.Locale = (Locale)localeBox.SelectedItem;
+
+            string locale = _locales[_parser.Locale];
+            string address = string.Format("http://{0}{1}", locale, _parser.Address);
 
             ParsingType type = (ParsingType)parsingControl.SelectedIndex;
 
@@ -154,12 +173,11 @@ namespace WoWHeadParser
                 {
                     using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile(), Encoding.UTF8))
                     {
-                        Parser parser = (Parser)Activator.CreateInstance(_types[parserBox.SelectedIndex]);
                         stream.WriteLine(@"-- Dump of {0} ({1}), Total object count: {2}", now, now - _startTime, _worker.Pages.Count);
                         while (!_worker.Empty)
                         {
                             Block block = _worker.Pages.Dequeue();
-                            string content = parser.Parse(block);
+                            string content = _parser.Parse(block);
                             if (!string.IsNullOrEmpty(content))
                                 stream.Write(content);
                         }

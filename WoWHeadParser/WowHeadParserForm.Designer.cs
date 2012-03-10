@@ -116,12 +116,6 @@ namespace WoWHeadParser
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.localeBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.localeBox.Items.AddRange(new object[] {
-            "",
-            "ru.",
-            "de.",
-            "fr.",
-            "es."});
             this.localeBox.Location = new System.Drawing.Point(6, 19);
             this.localeBox.Name = "localeBox";
             this.localeBox.Size = new System.Drawing.Size(68, 21);
@@ -358,7 +352,7 @@ namespace WoWHeadParser
             this.progressLabel.AutoSize = true;
             this.progressLabel.Location = new System.Drawing.Point(191, 301);
             this.progressLabel.Name = "progressLabel";
-            this.progressLabel.Size = new System.Drawing.Size(73, 13);
+            this.progressLabel.Size = new System.Drawing.Size(0, 13);
             this.progressLabel.TabIndex = 7;
             // 
             // numericUpDown
