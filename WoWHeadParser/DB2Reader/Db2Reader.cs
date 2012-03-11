@@ -81,13 +81,17 @@ namespace WoWHeadParser
 
         public static uint GetExtendedCost(uint cost, uint count)
         {
+            uint currencyCount = count * 100;
             foreach (KeyValuePair<uint, ItemExtendedCostEntry> kvp in DB2.ExtendedCost)
             {
                 ItemExtendedCostEntry entry = kvp.Value;
+                if (entry.HaveItem(cost, count))
+                    return entry.Id;
+
                 if (entry.HaveCurrency(cost, count))
                     return entry.Id;
 
-                if (entry.HaveItem(cost, count))
+                if (entry.HaveCurrency(cost, currencyCount))
                     return entry.Id;
             }
             return 0;
