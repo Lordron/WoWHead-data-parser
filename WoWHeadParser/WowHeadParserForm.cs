@@ -35,6 +35,7 @@ namespace WoWHeadParser
             {Locale.Germany, "de."},
             {Locale.France, "fr."},
             {Locale.Spain, "es."},
+            {Local.Portugal, "pt."},
         };
 
         public WoWHeadParserForm()
