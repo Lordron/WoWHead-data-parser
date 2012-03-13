@@ -24,6 +24,7 @@ namespace WoWHeadParser
             {MessageType.MultipleTypeEqual, new Message(@"Starting value can not be equal ending value!")},
             {MessageType.WelfListEmpty, new Message(@"Entries list is empty!")},
             {MessageType.WelfFileNotFound, new Message(@"File {0} not found!")},
+            {MessageType.PagesListIsEmpty, new Message(@"Downloaded pages list is empty!")},
             {MessageType.AbortQuestion, new Message(@"Do you really want to stop ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
             {MessageType.ExitQuestion, new Message(@"Do you really want to quit WoWHead Parser ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
         };
@@ -35,7 +36,7 @@ namespace WoWHeadParser
             {Locale.Germany, "de."},
             {Locale.France, "fr."},
             {Locale.Spain, "es."},
-            {Local.Portugal, "pt."},
+            {Locale.Portugal, "pt."},
         };
 
         public WoWHeadParserForm()
@@ -185,6 +186,8 @@ namespace WoWHeadParser
                     }
                 }
             }
+            else
+                ShowMessageBox(MessageType.PagesListIsEmpty);
 
             _worker.Finish();
         }

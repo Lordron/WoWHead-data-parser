@@ -14,27 +14,25 @@ namespace WoWHeadParser
         private IList<uint> _entries;
         private SemaphoreSlim _semaphore;
 
-        private int _delay = 2000;
-
         private object _threadLock = new object();
 
         public Queue<Block> Pages { get; private set; }
 
         public bool Empty { get { return Pages.Count <= 0; } }
 
+        private const int SemaphoreCount = 10;
+
         public Worker()
         {
             Pages = new Queue<Block>();
             _entries = new List<uint>();
-            _semaphore = new SemaphoreSlim(10, 10);
+            _semaphore = new SemaphoreSlim(SemaphoreCount, SemaphoreCount);
         }
 
         public void SetValue(uint value, string address)
         {
             _start = value;
             _address = address;
-
-            _delay = 2000;
         }
 
         public void SetValue(uint start, uint end, string address)
@@ -42,16 +40,12 @@ namespace WoWHeadParser
             _end = end;
             _start = start;
             _address = address;
-
-            _delay = 10000;
         }
 
         public void SetValue(IList<uint> entries, string address)
         {
             _entries = entries;
             _address = address;
-
-            _delay = 10000;
         }
 
         public void Start(ParsingType type)
@@ -97,13 +91,14 @@ namespace WoWHeadParser
                     }
             }
 
-            Thread.Sleep(_delay);
+            while (_semaphore.CurrentCount != SemaphoreCount)
+            {
+                continue;
+            }
         }
 
         private void RespCallback(IAsyncResult iar)
         {
-            if (!_working)
-                return;
 
             Requests request = (Requests)iar.AsyncState;
             try
