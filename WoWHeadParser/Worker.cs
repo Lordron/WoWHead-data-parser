@@ -57,6 +57,7 @@ namespace WoWHeadParser
                 case ParsingType.TypeSingle:
                     {
                         _semaphore.Wait();
+
                         Requests request = new Requests(_address, _start);
                         request.Request.BeginGetResponse(RespCallback, request);
                         break;
@@ -99,7 +100,6 @@ namespace WoWHeadParser
 
         private void RespCallback(IAsyncResult iar)
         {
-
             Requests request = (Requests)iar.AsyncState;
             try
             {
@@ -128,8 +128,8 @@ namespace WoWHeadParser
                     _semaphore.Release();
             }
 
-            if (PageDownloaded != null)
-                PageDownloaded();
+            if (PageDownloadingComplete != null)
+                PageDownloadingComplete();
         }
 
         public void Stop()
@@ -143,8 +143,8 @@ namespace WoWHeadParser
             Stop();
             Pages.Clear();
 
-            if (Finished != null)
-                Finished();
+            if (RunWorkerCompleted != null)
+                RunWorkerCompleted();
         }
 
         ~Worker()
@@ -172,18 +172,18 @@ namespace WoWHeadParser
             _semaphore = null;
         }
 
-        public delegate void OnPageDownloaded();
+        public delegate void OnPageDownloadingComplete();
 
-        public delegate void OnFinished();
+        public delegate void OnRunWorkerCompleted();
 
         /// <summary>
         /// Occurs when a page is downloaded.
         /// </summary>
-        public event OnPageDownloaded PageDownloaded;
+        public event OnPageDownloadingComplete PageDownloadingComplete;
 
         /// <summary>
-        /// Occurs when the working is finished
+        /// Occurs when the working is completed or has been canceled
         /// </summary>
-        public event OnFinished Finished;
+        public event OnRunWorkerCompleted RunWorkerCompleted;
     }
 }

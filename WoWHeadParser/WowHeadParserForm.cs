@@ -16,7 +16,7 @@ namespace WoWHeadParser
         private DateTime _startTime;
         private List<uint> _entries;
 
-        private List<Type> _types;
+        private List<Parser> _parsers;
 
         private Dictionary<MessageType, Message> _message = new Dictionary<MessageType, Message>
         {
@@ -47,12 +47,12 @@ namespace WoWHeadParser
 
             _worker = new Worker();
             {
-                _worker.PageDownloaded += WorkerPageDownloaded;
-                _worker.Finished += WorkerFinished;
+                _worker.PageDownloadingComplete += WorkerPageDownloaded;
+                _worker.RunWorkerCompleted += WorkerRunWorkerCompleted;
             }
 
-            _types = new List<Type>();
             _entries = new List<uint>();
+            _parsers = new List<Parser>();
 
             new DB2Loader();
         }
@@ -68,7 +68,7 @@ namespace WoWHeadParser
                 Parser parser = (Parser)Activator.CreateInstance(type);
                 parserBox.Items.Add(parser.Name);
 
-                _types.Add(type);
+                _parsers.Add(parser);
             }
 
             foreach (Locale locale in Enum.GetValues(typeof(Locale)))
@@ -84,12 +84,12 @@ namespace WoWHeadParser
         public void ParserIndexChanged(object sender, EventArgs e)
         {
             startButton.Enabled = true;
+
+            _parser = _parsers[parserBox.SelectedIndex];
         }
 
         public void StartButtonClick(object sender, EventArgs e)
         {
-            _parser = (Parser)Activator.CreateInstance(_types[parserBox.SelectedIndex]);
-
             _parser.Locale = (Locale)localeBox.SelectedItem;
 
             string locale = _locales[_parser.Locale];
@@ -198,12 +198,10 @@ namespace WoWHeadParser
                 return;
 
             _worker.Stop();
-            backgroundWorker.CancelAsync();
-
             progressLabel.Text = @"Aborting...";
         }
 
-        private void WorkerFinished()
+        private void WorkerRunWorkerCompleted()
         {
             numericUpDown.Value = progressBar.Value = 0;
             abortButton.Enabled = false;
@@ -255,6 +253,17 @@ namespace WoWHeadParser
             LoadWelfFiles();
         }
 
+        private void ExitMenuClick(object sender, EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        protected override void OnClosing(CancelEventArgs e)
+        {
+            DialogResult result = ShowMessageBox(MessageType.ExitQuestion);
+            e.Cancel = (result == DialogResult.No);
+        }
+
         private void LoadWelfFiles()
         {
             welfBox.Items.Clear();
@@ -265,23 +274,6 @@ namespace WoWHeadParser
             {
                 welfBox.Items.Add(file.Name);
             }
-        }
-
-        private void ExitMenuClick(object sender, EventArgs e)
-        {
-            Application.Exit();
-        }
-
-        protected override void OnClosed(EventArgs e)
-        {
-            if (_worker != null)
-                _worker.Dispose();
-        }
-
-        protected override void OnClosing(CancelEventArgs e)
-        {
-            DialogResult result = ShowMessageBox(MessageType.ExitQuestion);
-            e.Cancel = (result == DialogResult.No);
         }
 
         private DialogResult ShowMessageBox(MessageType type, params object[] args)
