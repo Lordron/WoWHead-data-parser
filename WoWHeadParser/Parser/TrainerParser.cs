@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -9,8 +10,8 @@ namespace WoWHeadParser
         private Dictionary<TrainerType, string> _patterns = new Dictionary<TrainerType, string>
         {
             {TrainerType.TypeNone, ""},
-            {TrainerType.ClassTrainer, "{[^}]*\"id\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*"},
-            {TrainerType.RecipeTrainer, "{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*"},
+            {TrainerType.TypeClass, "{[^}]*\"id\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*"},
+            {TrainerType.TypeTradeskills, "{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*"},
         };
 
         public override string Parse(Block block)
@@ -19,6 +20,7 @@ namespace WoWHeadParser
 
             string page = block.Page;
 
+            int npcflag = 16;
             TrainerType type = TrainerType.TypeNone;
 
             Regex regex = new Regex("template: 'spell', id: ('[a-z\\-]+'), name: ", RegexOptions.Multiline);
@@ -29,10 +31,12 @@ namespace WoWHeadParser
                     switch (item.Groups[1].Value)
                     {
                         case "\'teaches-ability\'":
-                            type = TrainerType.ClassTrainer;
+                            npcflag = 48;
+                            type = TrainerType.TypeClass;
                             break;
                         case "\'teaches-recipe\'":
-                            type = TrainerType.RecipeTrainer;
+                            npcflag = 80;
+                            type = TrainerType.TypeTradeskills;
                             break;
                         default:
                             continue;
@@ -46,7 +50,10 @@ namespace WoWHeadParser
             }
 
             if (type == TrainerType.TypeNone)
-                return string.Format("-- Unknown trainer type, Id {0}", block.Id);
+            {
+                Console.WriteLine("-- Unknown trainer type, Id {0}", block.Id);
+                return string.Empty;
+            }
 
             const string pattern = @"data: \[.*;";
             string subPattern = _patterns[type];
@@ -56,7 +63,7 @@ namespace WoWHeadParser
             if (find.Count > 0)
             {
                 content.AppendFormat(@"SET @ENTRY := {0};", block.Id).AppendLine();
-                content.AppendLine(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | 48 WHERE `entry` = @ENTRY;");
+                content.AppendFormat(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | {0}, `trainer_type` = {1} WHERE `entry` = @ENTRY;", npcflag, (int)type).AppendLine();
                 content.AppendLine(@"REPLACE INTO `npc_trainer` (`entry`, `spell`, `spellcost`, `reqlevel`, `reqSkill`, `reqSkillValue`) VALUES");
             }
 
@@ -72,7 +79,7 @@ namespace WoWHeadParser
                     string end = (i < matches.Count - 1 ? "," : ";");
                     switch (type)
                     {
-                        case TrainerType.RecipeTrainer:
+                        case TrainerType.TypeTradeskills:
                             {
                                 string reqSkill = (string.IsNullOrEmpty(groups[4].Value) ? "0" : groups[4].Value);
                                 string reqSkillValue = (string.IsNullOrEmpty(groups[2].Value) ? "0" : groups[2].Value);
@@ -80,7 +87,7 @@ namespace WoWHeadParser
                                 content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}, {4}){5}", spell, groups[5].Value, groups[3].Value, reqSkill, reqSkillValue, end).AppendLine();
                             }
                             break;
-                        case TrainerType.ClassTrainer:
+                        case TrainerType.TypeClass:
                             {
                                 string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? "0" : groups[3].Value);
 
@@ -95,15 +102,27 @@ namespace WoWHeadParser
             return content.ToString();
         }
 
+        public override string BeforParsing()
+        {
+            StringBuilder content = new StringBuilder();
+
+            content.AppendLine("-- Uncomment");
+            content.AppendLine("-- DELETE FROM `npc_trainer`; -- Delete all data");
+
+            return content.AppendLine().ToString();
+        }
+
         public override string Address { get { return "wowhead.com/npc="; } }
 
         public override string Name { get { return "Professions & Class Trainer data parser"; } }
 
         public enum TrainerType
         {
-            TypeNone,
-            ClassTrainer,
-            RecipeTrainer,
+            TypeNone = -1,
+            TypeClass = 0,
+            TypeMounts = 1,
+            TypeTradeskills = 2,
+            TypePets = 3,
         }
     }
 }

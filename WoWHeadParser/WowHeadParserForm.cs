@@ -176,6 +176,9 @@ namespace WoWHeadParser
                     using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile(), Encoding.UTF8))
                     {
                         stream.WriteLine(@"-- Dump of {0} ({1}), Total object count: {2}", now, now - _startTime, _worker.Pages.Count);
+
+                        stream.Write(_parser.BeforParsing());
+
                         while (!_worker.Empty)
                         {
                             Block block = _worker.Pages.Dequeue();

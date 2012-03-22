@@ -58,6 +58,11 @@ namespace WoWHeadParser
             return content.ToString();
         }
 
+        public override string BeforParsing()
+        {
+            return string.Empty;
+        }
+
         public override string Address { get { return "wowhead.com/object="; } }
 
         public override string Name { get { return "Page data parser"; } }

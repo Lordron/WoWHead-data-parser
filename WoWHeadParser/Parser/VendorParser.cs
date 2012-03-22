@@ -102,11 +102,26 @@ namespace WoWHeadParser
                     else
                         extendedCostEntry = 9999999;
 
-                    content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}){4}", id, maxcount, incrTime, extendedCostEntry, (i < ser.Count - 1 ? "," : ";")).AppendLine();
+                    if (extendedCostEntry == 9999999)
+                        content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, @UNK_COST){3}", id, maxcount, incrTime, (i < ser.Count - 1 ? "," : ";")).AppendLine();
+                    else
+                        content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}){4}", id, maxcount, incrTime, extendedCostEntry, (i < ser.Count - 1 ? "," : ";")).AppendLine();
                 }
             }
             content.AppendLine();
             return content.ToString();
+        }
+
+        public override string BeforParsing()
+        {
+            StringBuilder content = new StringBuilder();
+
+            content.AppendLine("-- Uncomment");
+            content.AppendLine("-- DELETE FROM `npc_vendor`; -- Delete all data");
+            content.AppendLine();
+            content.AppendLine(@"SET @UNK_COST := 9999999;");
+
+            return content.AppendLine().ToString();
         }
 
         public override string Address { get { return "wowhead.com/npc="; } }
