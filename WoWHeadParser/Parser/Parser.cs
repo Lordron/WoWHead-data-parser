@@ -11,5 +11,7 @@
         public abstract string Address { get; }
 
         public abstract string Name { get; }
+
+        public abstract int MaxCount { get; }
     }
 }

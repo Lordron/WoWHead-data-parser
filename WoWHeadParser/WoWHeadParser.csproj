@@ -93,6 +93,9 @@
     <Compile Include="DB2Reader\Db2Reader.cs" />
     <Compile Include="Locale.cs" />
     <Compile Include="Message.cs" />
+    <Compile Include="Parser\NpcDataParser.cs" />
+    <Compile Include="Parser\ParserAttribute.cs" />
+    <Compile Include="Parser\QuestDataParser.cs" />
     <Compile Include="Parser\TrainerParser.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Parser\PageParser.cs" />

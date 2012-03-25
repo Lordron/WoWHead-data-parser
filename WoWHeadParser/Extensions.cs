@@ -2,6 +2,7 @@
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace WoWHeadParser
 {
@@ -28,6 +29,29 @@ namespace WoWHeadParser
                     .Replace(@"<race>", @"$R")
                     .Replace(@"<lad:lass>", @"$G")
                     .Replace(@"<br />", @"$B");
+        }
+
+        public static string Substring(this string input, string check)
+        {
+            string pattern = string.Format("template: '.+', id: ('[a-z\\-]+'), data: ");
+            Regex regex = new Regex(pattern, RegexOptions.Multiline);
+            {
+                MatchCollection matches = regex.Matches(input);
+                foreach (Match item in matches)
+                {
+                    string type = item.Groups[1].Value;
+
+                    if (!type.Equals(check))
+                        continue;
+
+                    int start = item.Index;
+                    int end = input.IndexOf("});", start);
+
+                    input = input.Substring(start, end - start + 3);
+                }
+            }
+
+            return input;
         }
 
         public static string ReadCString(this BinaryReader reader)

@@ -90,6 +90,20 @@ namespace WoWHeadParser
                         }
                         break;
                     }
+                case ParsingType.TypeWoWHead:
+                    {
+                        for (uint entry = 0; entry <= _start; ++entry)
+                        {
+                            if (!_working)
+                                break;
+
+                            _semaphore.Wait();
+
+                            Requests request = new Requests(_address, (entry * 200), ((entry + 1) * 200));
+                            request.Request.BeginGetResponse(RespCallback, request);
+                        }
+                        break;
+                    }
             }
 
             while (_semaphore.CurrentCount != SemaphoreCount)

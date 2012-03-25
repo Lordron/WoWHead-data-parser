@@ -44,7 +44,7 @@ namespace WoWHeadParser
                 else
                 {
                     string locale = _tables[Locale];
-                    content.AppendFormat(@"INSERT IGNORE INTO `locales_page_text` (`entry`, `{0}`) VALUES", locale);
+                    content.AppendFormat(@"INSERT IGNORE INTO `locales_page_text` (`entry`, `{0}`) VALUES", locale).AppendLine();
                     for (int i = 0; i < pages.Length; ++i)
                     {
                         content.AppendFormat(@"({0}, '{1}'){2}",
@@ -66,5 +66,7 @@ namespace WoWHeadParser
         public override string Address { get { return "wowhead.com/object="; } }
 
         public override string Name { get { return "Page data parser"; } }
+
+        public override int MaxCount { get { return 0; } }
     }
 }

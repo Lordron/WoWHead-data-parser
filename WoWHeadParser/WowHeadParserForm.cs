@@ -132,6 +132,13 @@ namespace WoWHeadParser
                         _worker.SetValue(startValue, endValue, address);
                         break;
                     }
+                case ParsingType.TypeWoWHead:
+                    {
+                        int maxValue = (_parser.MaxCount / 200);
+                        _worker.SetValue((uint)maxValue, address);
+                        numericUpDown.Maximum = progressBar.Maximum = maxValue + 1;
+                        break;
+                    }
                 default:
                     return;
             }

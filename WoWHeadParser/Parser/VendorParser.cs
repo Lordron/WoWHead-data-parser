@@ -127,5 +127,7 @@ namespace WoWHeadParser
         public override string Address { get { return "wowhead.com/npc="; } }
 
         public override string Name { get { return "Vendor data parser"; } }
+
+        public override int MaxCount{ get { return 0; } }
     }
 }

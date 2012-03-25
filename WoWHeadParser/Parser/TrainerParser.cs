@@ -116,6 +116,8 @@ namespace WoWHeadParser
 
         public override string Name { get { return "Professions & Class Trainer data parser"; } }
 
+        public override int MaxCount { get { return 0; } }
+
         public enum TrainerType
         {
             TypeNone = -1,

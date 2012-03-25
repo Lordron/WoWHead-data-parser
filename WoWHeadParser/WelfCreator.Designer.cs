@@ -28,47 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.Label addressLabel;
-            this.addressBox = new System.Windows.Forms.TextBox();
-            this.welDataBox = new System.Windows.Forms.RichTextBox();
             this.startButton = new System.Windows.Forms.Button();
             this.saveButton = new System.Windows.Forms.Button();
             this.saveDialog = new System.Windows.Forms.SaveFileDialog();
             this.numericUpDown = new System.Windows.Forms.NumericUpDown();
-            addressLabel = new System.Windows.Forms.Label();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.backgroundWorker = new System.ComponentModel.BackgroundWorker();
+            this.languageBox = new System.Windows.Forms.ComboBox();
+            this.typeBox = new System.Windows.Forms.ComboBox();
+            this.languageLabel = new System.Windows.Forms.Label();
+            this.typeLabel = new System.Windows.Forms.Label();
+            this.stateLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
-            // addressLabel
-            // 
-            addressLabel.AutoSize = true;
-            addressLabel.Location = new System.Drawing.Point(7, 13);
-            addressLabel.Name = "addressLabel";
-            addressLabel.Size = new System.Drawing.Size(74, 13);
-            addressLabel.TabIndex = 1;
-            addressLabel.Text = "Web Address:";
-            // 
-            // addressBox
-            // 
-            this.addressBox.BackColor = System.Drawing.SystemColors.Control;
-            this.addressBox.Location = new System.Drawing.Point(87, 10);
-            this.addressBox.Name = "addressBox";
-            this.addressBox.Size = new System.Drawing.Size(303, 20);
-            this.addressBox.TabIndex = 0;
-            this.addressBox.TextChanged += new System.EventHandler(this.AddressBoxTextChanged);
-            // 
-            // welDataBox
-            // 
-            this.welDataBox.BackColor = System.Drawing.SystemColors.Control;
-            this.welDataBox.Location = new System.Drawing.Point(10, 40);
-            this.welDataBox.Name = "welDataBox";
-            this.welDataBox.Size = new System.Drawing.Size(380, 108);
-            this.welDataBox.TabIndex = 2;
-            this.welDataBox.Text = "";
-            // 
             // startButton
             // 
-            this.startButton.Location = new System.Drawing.Point(10, 154);
+            this.startButton.Enabled = false;
+            this.startButton.Location = new System.Drawing.Point(221, 10);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(75, 23);
             this.startButton.TabIndex = 3;
@@ -79,7 +56,7 @@
             // saveButton
             // 
             this.saveButton.Enabled = false;
-            this.saveButton.Location = new System.Drawing.Point(95, 154);
+            this.saveButton.Location = new System.Drawing.Point(221, 42);
             this.saveButton.Name = "saveButton";
             this.saveButton.Size = new System.Drawing.Size(75, 23);
             this.saveButton.TabIndex = 4;
@@ -94,7 +71,7 @@
             // numericUpDown
             // 
             this.numericUpDown.Enabled = false;
-            this.numericUpDown.Location = new System.Drawing.Point(270, 157);
+            this.numericUpDown.Location = new System.Drawing.Point(176, 101);
             this.numericUpDown.Maximum = new decimal(new int[] {
             2147483647,
             0,
@@ -104,18 +81,80 @@
             this.numericUpDown.Size = new System.Drawing.Size(120, 20);
             this.numericUpDown.TabIndex = 6;
             // 
+            // progressBar
+            // 
+            this.progressBar.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.progressBar.Location = new System.Drawing.Point(0, 130);
+            this.progressBar.Maximum = 36636;
+            this.progressBar.Name = "progressBar";
+            this.progressBar.Size = new System.Drawing.Size(297, 23);
+            this.progressBar.Step = 1;
+            this.progressBar.TabIndex = 7;
+            // 
+            // backgroundWorker
+            // 
+            this.backgroundWorker.DoWork += new System.ComponentModel.DoWorkEventHandler(this.BackgroundWorkerDoWork);
+            this.backgroundWorker.RunWorkerCompleted += new System.ComponentModel.RunWorkerCompletedEventHandler(this.BackgroundWorkerRunWorkerCompleted);
+            // 
+            // languageBox
+            // 
+            this.languageBox.FormattingEnabled = true;
+            this.languageBox.Location = new System.Drawing.Point(71, 12);
+            this.languageBox.Name = "languageBox";
+            this.languageBox.Size = new System.Drawing.Size(121, 21);
+            this.languageBox.TabIndex = 8;
+            // 
+            // typeBox
+            // 
+            this.typeBox.FormattingEnabled = true;
+            this.typeBox.Location = new System.Drawing.Point(71, 49);
+            this.typeBox.Name = "typeBox";
+            this.typeBox.Size = new System.Drawing.Size(121, 21);
+            this.typeBox.TabIndex = 9;
+            this.typeBox.SelectedIndexChanged += new System.EventHandler(this.TypeBoxSelectedIndexChanged);
+            // 
+            // languageLabel
+            // 
+            this.languageLabel.AutoSize = true;
+            this.languageLabel.Location = new System.Drawing.Point(9, 15);
+            this.languageLabel.Name = "languageLabel";
+            this.languageLabel.Size = new System.Drawing.Size(55, 13);
+            this.languageLabel.TabIndex = 10;
+            this.languageLabel.Text = "Language";
+            // 
+            // typeLabel
+            // 
+            this.typeLabel.AutoSize = true;
+            this.typeLabel.Location = new System.Drawing.Point(9, 52);
+            this.typeLabel.Name = "typeLabel";
+            this.typeLabel.Size = new System.Drawing.Size(31, 13);
+            this.typeLabel.TabIndex = 11;
+            this.typeLabel.Text = "Type";
+            // 
+            // stateLabel
+            // 
+            this.stateLabel.AutoSize = true;
+            this.stateLabel.Location = new System.Drawing.Point(9, 103);
+            this.stateLabel.Name = "stateLabel";
+            this.stateLabel.Size = new System.Drawing.Size(33, 13);
+            this.stateLabel.TabIndex = 12;
+            this.stateLabel.Text = "None";
+            // 
             // WelfCreator
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.ClientSize = new System.Drawing.Size(402, 188);
+            this.ClientSize = new System.Drawing.Size(297, 153);
+            this.Controls.Add(this.stateLabel);
+            this.Controls.Add(this.typeLabel);
+            this.Controls.Add(this.languageLabel);
+            this.Controls.Add(this.typeBox);
+            this.Controls.Add(this.languageBox);
+            this.Controls.Add(this.progressBar);
             this.Controls.Add(this.numericUpDown);
             this.Controls.Add(this.saveButton);
             this.Controls.Add(this.startButton);
-            this.Controls.Add(this.welDataBox);
-            this.Controls.Add(addressLabel);
-            this.Controls.Add(this.addressBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "WelfCreator";
             this.Text = "Welf Creator";
@@ -127,11 +166,16 @@
 
         #endregion
 
-        private System.Windows.Forms.TextBox addressBox;
-        private System.Windows.Forms.RichTextBox welDataBox;
         private System.Windows.Forms.Button startButton;
         private System.Windows.Forms.Button saveButton;
         private System.Windows.Forms.SaveFileDialog saveDialog;
         private System.Windows.Forms.NumericUpDown numericUpDown;
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.ComponentModel.BackgroundWorker backgroundWorker;
+        private System.Windows.Forms.ComboBox languageBox;
+        private System.Windows.Forms.ComboBox typeBox;
+        private System.Windows.Forms.Label languageLabel;
+        private System.Windows.Forms.Label typeLabel;
+        private System.Windows.Forms.Label stateLabel;
     }
 }

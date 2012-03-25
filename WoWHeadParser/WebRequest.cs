@@ -21,6 +21,16 @@ namespace WoWHeadParser
             Request.Method = "POST";
         }
 
+        public Requests(string address, uint ids, uint ide)
+        {
+            Uri = new Uri(string.Format("{0}crv={1}:{2}", address, ids, ide));
+            Id = ids;
+
+            Request = (HttpWebRequest)WebRequest.Create(Uri);
+            Request.UserAgent = @"Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US) AppleWebKit/534.6 (KHTML, like Gecko) Chrome/7.0.503.0 Safari/534.6";
+            Request.Method = "POST";
+        }
+
         public override string ToString()
         {
             if (Response != null)
