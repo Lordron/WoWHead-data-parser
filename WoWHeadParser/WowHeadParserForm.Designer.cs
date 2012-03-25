@@ -50,8 +50,8 @@ namespace WoWHeadParser
             this.listBox = new System.Windows.Forms.GroupBox();
             this.welfBox = new System.Windows.Forms.ComboBox();
             this.entryCountLabel = new System.Windows.Forms.Label();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.label1 = new System.Windows.Forms.Label();
+            this.wowheadFilterTab = new System.Windows.Forms.TabPage();
+            this.notifyLabel = new System.Windows.Forms.Label();
             this.consoleGroupBox = new System.Windows.Forms.GroupBox();
             this.consoleBox = new System.Windows.Forms.RichTextBox();
             this.progressLabel = new System.Windows.Forms.Label();
@@ -78,7 +78,7 @@ namespace WoWHeadParser
             ((System.ComponentModel.ISupportInitialize)(this.rangeEnd)).BeginInit();
             this.listTab.SuspendLayout();
             this.listBox.SuspendLayout();
-            this.tabPage1.SuspendLayout();
+            this.wowheadFilterTab.SuspendLayout();
             this.consoleGroupBox.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).BeginInit();
             this.SuspendLayout();
@@ -143,7 +143,7 @@ namespace WoWHeadParser
             this.parsingControl.Controls.Add(this.singleTab);
             this.parsingControl.Controls.Add(this.multipleTab);
             this.parsingControl.Controls.Add(this.listTab);
-            this.parsingControl.Controls.Add(this.tabPage1);
+            this.parsingControl.Controls.Add(this.wowheadFilterTab);
             this.parsingControl.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             this.parsingControl.Location = new System.Drawing.Point(6, 46);
             this.parsingControl.Multiline = true;
@@ -329,25 +329,25 @@ namespace WoWHeadParser
             this.entryCountLabel.TabIndex = 1;
             this.entryCountLabel.Text = "0";
             // 
-            // tabPage1
+            // wowheadFilterTab
             // 
-            this.tabPage1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.tabPage1.Controls.Add(this.label1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(356, 62);
-            this.tabPage1.TabIndex = 3;
-            this.tabPage1.Text = "WoW Head Filter";
+            this.wowheadFilterTab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.wowheadFilterTab.Controls.Add(this.notifyLabel);
+            this.wowheadFilterTab.Location = new System.Drawing.Point(4, 22);
+            this.wowheadFilterTab.Name = "wowheadFilterTab";
+            this.wowheadFilterTab.Padding = new System.Windows.Forms.Padding(3);
+            this.wowheadFilterTab.Size = new System.Drawing.Size(356, 62);
+            this.wowheadFilterTab.TabIndex = 3;
+            this.wowheadFilterTab.Text = "WoW Head Filter";
             // 
-            // label1
+            // notifyLabel
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 15);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(288, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "This page used only for NPC & Quest Locale and data parser";
+            this.notifyLabel.AutoSize = true;
+            this.notifyLabel.Location = new System.Drawing.Point(6, 15);
+            this.notifyLabel.Name = "notifyLabel";
+            this.notifyLabel.Size = new System.Drawing.Size(288, 13);
+            this.notifyLabel.TabIndex = 0;
+            this.notifyLabel.Text = "This page used only for NPC & Quest Locale and data parser";
             // 
             // consoleGroupBox
             // 
@@ -512,8 +512,8 @@ namespace WoWHeadParser
             this.listTab.ResumeLayout(false);
             this.listBox.ResumeLayout(false);
             this.listBox.PerformLayout();
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage1.PerformLayout();
+            this.wowheadFilterTab.ResumeLayout(false);
+            this.wowheadFilterTab.PerformLayout();
             this.consoleGroupBox.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).EndInit();
             this.ResumeLayout(false);
@@ -556,8 +556,8 @@ namespace WoWHeadParser
         private MenuItem launchMenuItem;
         private GroupBox consoleGroupBox;
         private RichTextBox consoleBox;
-        private TabPage tabPage1;
-        private Label label1;
+        private TabPage wowheadFilterTab;
+        private Label notifyLabel;
     }
 }
 
