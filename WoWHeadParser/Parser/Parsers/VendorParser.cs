@@ -11,29 +11,13 @@ namespace WoWHeadParser
         {
             StringBuilder content = new StringBuilder();
 
-            string page = block.Page;
+            string page = block.Page.Substring("\'sells\'");
 
             const string pattern = @"data: \[.*;";
 
             char[] anyOf = new[] {'[', ']', '{', '}'};
             string[] subPatterns = new[] {@"\[(\d+),(\d+)\]", @"\[\[(\d+),(\d+)\]\]"};
 
-            Regex regex = new Regex("template: 'item', id: ('[a-z\\-]+'), name: ", RegexOptions.Multiline);
-            {
-                MatchCollection matches = regex.Matches(page);
-                foreach (Match item in matches)
-                {
-                    string type = item.Groups[1].Value;
-
-                    if (!type.Equals("\'sells\'"))
-                        continue;
-
-                    int start = item.Index;
-                    int end = page.IndexOf("});", start);
-
-                    page = page.Substring(start, end - start + 3);
-                }
-            }
             MatchCollection find = Regex.Matches(page, pattern);
 
             if (find.Count > 0)
@@ -45,11 +29,11 @@ namespace WoWHeadParser
             foreach (Match item in find)
             {
                 string text = item.Value.Replace("data: ", "").Replace("});", "");
-                JArray ser = (JArray)JsonConvert.DeserializeObject(text);
+                JArray serialization = (JArray)JsonConvert.DeserializeObject(text);
 
-                for (int i = 0; i < ser.Count; ++i)
+                for (int i = 0; i < serialization.Count; ++i)
                 {
-                    JObject jobj = (JObject)ser[i];
+                    JObject jobj = (JObject)serialization[i];
 
                     string scost = string.Empty;
                     string scount = string.Empty;
@@ -65,8 +49,7 @@ namespace WoWHeadParser
                     JArray array = obj as JArray;
                     foreach (JToken token in array)
                     {
-                        string costBlock = token.ToString();
-                        costBlock = costBlock.Replace("\r\n", "").Replace(" ", "");
+                        string costBlock = token.ToString().Replace("\r\n", "").Replace(" ", "");
 
                         if (costBlock.Equals("0"))
                             continue;
@@ -103,13 +86,13 @@ namespace WoWHeadParser
                         extendedCostEntry = 9999999;
 
                     if (extendedCostEntry == 9999999)
-                        content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, @UNK_COST){3}", id, maxcount, incrTime, (i < ser.Count - 1 ? "," : ";")).AppendLine();
+                        content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, @UNK_COST){3}", id, maxcount, incrTime, (i < serialization.Count - 1 ? "," : ";")).AppendLine();
                     else
-                        content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}){4}", id, maxcount, incrTime, extendedCostEntry, (i < ser.Count - 1 ? "," : ";")).AppendLine();
+                        content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}){4}", id, maxcount, incrTime, extendedCostEntry, (i < serialization.Count - 1 ? "," : ";")).AppendLine();
                 }
             }
-            content.AppendLine();
-            return content.ToString();
+
+            return content.AppendLine().ToString();
         }
 
         public override string BeforParsing()

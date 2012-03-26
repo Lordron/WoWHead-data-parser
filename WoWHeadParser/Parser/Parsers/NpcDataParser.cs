@@ -28,17 +28,17 @@ namespace WoWHeadParser
             foreach (Match item in find)
             {
                 string text = item.Value.Replace("data: ", "").Replace("});", "");
-                JArray ser = (JArray)JsonConvert.DeserializeObject(text);
+                JArray serialization = (JArray)JsonConvert.DeserializeObject(text);
 
-                if (ser.Count > 0 && Locale > Locale.English)
+                if (serialization.Count > 0)
                 {
-                    string locale = _tables[Locale];
-                    content.AppendFormat(@"INSERT IGNORE INTO `locales_creature` (`entry`, `name_{0}`, `subname_{0}`) VALUES", locale).AppendLine();
+                    if (Locale > Locale.English)
+                        content.AppendFormat(@"INSERT IGNORE INTO `locales_creature` (`entry`, `name_{0}`, `subname_{0}`) VALUES", _tables[Locale]).AppendLine();
                 }
 
-                for (int i = 0; i < ser.Count; ++i)
+                for (int i = 0; i < serialization.Count; ++i)
                 {
-                    JObject jobj = (JObject)ser[i];
+                    JObject jobj = (JObject)serialization[i];
 
                     string id = jobj["id"].ToString();
                     string name = string.Empty;
@@ -59,11 +59,11 @@ namespace WoWHeadParser
                     if (Locale == Locale.English)
                         content.AppendFormat("UPDATE `creature_template` SET `name` = '{0}', `subname` = '{1}' WHERE `entry` = {2};", name, subName,  id).AppendLine();
                     else
-                        content.AppendFormat("({0}, '{1}', '{2}'){3}", id, name, subName, (i < ser.Count - 1 ? "," : ";")).AppendLine();
+                        content.AppendFormat("({0}, '{1}', '{2}'){3}", id, name, subName, (i < serialization.Count - 1 ? "," : ";")).AppendLine();
                 }
             }
 
-            return content.ToString();
+            return content.AppendLine().ToString();
         }
 
         public override string BeforParsing()
@@ -92,11 +92,11 @@ namespace WoWHeadParser
             foreach (Match item in find)
             {
                 string text = item.Value.Replace("data: ", "").Replace("});", "");
-                JArray ser = (JArray)JsonConvert.DeserializeObject(text);
+                JArray serialization = (JArray)JsonConvert.DeserializeObject(text);
 
-                for (int i = 0; i < ser.Count; ++i)
+                for (int i = 0; i < serialization.Count; ++i)
                 {
-                    JObject jobj = (JObject)ser[i];
+                    JObject jobj = (JObject)serialization[i];
 
                     string id = jobj["id"].ToString();
                     string maxLevel = string.Empty;
@@ -113,9 +113,9 @@ namespace WoWHeadParser
                         minLevel = minLevelToken.ToString();
 
                     if (minLevel.Equals("9999"))
-                        minLevel = "@UNK_LEVEL";
+                        minLevel = "@BOSS_LEVEL";
                     if (maxLevel.Equals("9999"))
-                        maxLevel = "@UNK_LEVEL";
+                        maxLevel = "@BOSS_LEVEL";
 
                     if (string.IsNullOrEmpty(minLevel))
                         minLevel = "`minlevel`";
@@ -127,13 +127,13 @@ namespace WoWHeadParser
                 }
             }
 
-            return content.ToString();
+            return content.AppendLine().ToString();
         }
 
         public override string BeforParsing()
         {
             StringBuilder content = new StringBuilder();
-            content.AppendLine(@"SET @UNK_LEVEL := 9999;");
+            content.AppendLine(@"SET @BOSS_LEVEL := 9999;");
             return content.AppendLine().ToString();
         }
 

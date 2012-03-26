@@ -28,17 +28,17 @@ namespace WoWHeadParser
             foreach (Match item in find)
             {
                 string text = item.Value.Replace("data: ", "").Replace("});", "");
-                JArray ser = (JArray)JsonConvert.DeserializeObject(text);
+                JArray serialiation = (JArray)JsonConvert.DeserializeObject(text);
 
-                if (ser.Count > 0 && Locale > Locale.English)
+                if (serialiation.Count > 0)
                 {
-                    string locale = _tables[Locale];
-                    content.AppendFormat(@"INSERT IGNORE INTO `locales_quest` (`entry`, `title_{0}`) VALUES", locale).AppendLine();
+                    if (Locale > Locale.English)
+                        content.AppendFormat(@"INSERT IGNORE INTO `locales_quest` (`entry`, `title_{0}``) VALUES", _tables[Locale]).AppendLine();
                 }
 
-                for (int i = 0; i < ser.Count; ++i)
+                for (int i = 0; i < serialiation.Count; ++i)
                 {
-                    JObject jobj = (JObject)ser[i];
+                    JObject jobj = (JObject)serialiation[i];
 
                     string id = jobj["id"].ToString();
                     string name = string.Empty;
@@ -54,10 +54,11 @@ namespace WoWHeadParser
                     if (Locale == Locale.English)
                         content.AppendFormat("UPDATE `quest_template` SET `title` = '{0}' WHERE `entry` = {1};", name, id).AppendLine();
                     else
-                        content.AppendFormat("({0}, '{1}'){2}", id, name, (i < ser.Count - 1 ? "," : ";")).AppendLine();
+                        content.AppendFormat("({0}, '{1}'){2}", id, name, (i < serialiation.Count - 1 ? "," : ";")).AppendLine();
                 }
             }
-            return content.ToString();
+
+            return content.AppendLine().ToString();
         }
 
         public override string BeforParsing()
@@ -86,11 +87,11 @@ namespace WoWHeadParser
             foreach (Match item in find)
             {
                 string text = item.Value.Replace("data: ", "").Replace("});", "");
-                JArray ser = (JArray)JsonConvert.DeserializeObject(text);
+                JArray serialization = (JArray)JsonConvert.DeserializeObject(text);
 
-                for (int i = 0; i < ser.Count; ++i)
+                for (int i = 0; i < serialization.Count; ++i)
                 {
-                    JObject jobj = (JObject)ser[i];
+                    JObject jobj = (JObject)serialization[i];
 
                     string id = jobj["id"].ToString();
 
@@ -132,7 +133,7 @@ namespace WoWHeadParser
                 }
             }
 
-            return content.ToString();
+            return content.AppendLine().ToString();
         }
 
         public override string BeforParsing()

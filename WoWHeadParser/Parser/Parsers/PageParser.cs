@@ -30,7 +30,7 @@ namespace WoWHeadParser
 
                 content.AppendFormat(@"SET @ENTRY := (SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0});", block.Id).AppendLine();
 
-                if (Locale == Locale.English || Locale == Locale.Portugal)
+                if (Locale == Locale.English)
                 {
                     content.AppendLine(@"INSERT IGNORE INTO `page_text` (`entry`, `text`, `next_page`) VALUES");
 
@@ -52,10 +52,9 @@ namespace WoWHeadParser
                                              (i < pages.Length - 1 ? "," : ";")).AppendLine();
                     }
                 }
-                content.AppendLine();
             }
 
-            return content.ToString();
+            return content.AppendLine().ToString();
         }
 
         public override string BeforParsing()

@@ -51,7 +51,7 @@ namespace WoWHeadParser
 
             if (type == TrainerType.TypeNone)
             {
-                Console.WriteLine("-- Unknown trainer type, Id {0}", block.Id);
+                Console.WriteLine("-- Unsupported trainer type, Id {0}", block.Id);
                 return string.Empty;
             }
 
@@ -98,8 +98,7 @@ namespace WoWHeadParser
                 }
             }
 
-            content.AppendLine();
-            return content.ToString();
+            return content.AppendLine().ToString();
         }
 
         public override string BeforParsing()

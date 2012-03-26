@@ -73,7 +73,8 @@ namespace WoWHeadParser
 
             foreach (Locale locale in Enum.GetValues(typeof(Locale)))
             {
-                localeBox.Items.Add(locale);
+                if (locale != Locale.Portugal)
+                    localeBox.Items.Add(locale);
             }
 
             localeBox.SelectedItem = Locale.English;
@@ -184,12 +185,14 @@ namespace WoWHeadParser
                     {
                         stream.WriteLine(@"-- Dump of {0} ({1}), Total object count: {2}", now, now - _startTime, _worker.Pages.Count);
 
-                        stream.Write(_parser.BeforParsing());
+                        string beforParsing = _parser.BeforParsing().TrimStart();
+                        if (!string.IsNullOrEmpty(beforParsing))
+                            stream.Write(beforParsing);
 
                         while (!_worker.Empty)
                         {
                             Block block = _worker.Pages.Dequeue();
-                            string content = _parser.Parse(block);
+                            string content = _parser.Parse(block).TrimStart();
                             if (!string.IsNullOrEmpty(content))
                                 stream.Write(content);
                         }
