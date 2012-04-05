@@ -22,6 +22,17 @@ namespace WoWHeadParser
             Regex regex = new Regex(@"new Book\({ parent: '.+', pages: \['(?<page>.+)'\]}\)", RegexOptions.Multiline);
             MatchCollection matches = regex.Matches(block.Page);
 
+            if (Locale > Locale.English)
+            {
+                SqlBuilder.Initial("locales_page_text");
+                SqlBuilder.SetFieldsName(_tables[Locale]);
+            }
+            else
+            {
+                SqlBuilder.Initial("page_text");
+                SqlBuilder.SetFieldsName("text", "next_page");
+            }
+
             foreach (Match match in matches)
             {
                 GroupCollection groups = match.Groups;
@@ -32,29 +43,28 @@ namespace WoWHeadParser
 
                 if (Locale == Locale.English)
                 {
-                    content.AppendLine(@"INSERT IGNORE INTO `page_text` (`entry`, `text`, `next_page`) VALUES");
-
                     for (int i = 0; i < pages.Length; ++i)
                     {
-                        content.AppendFormat(@"({0}, '{1}', {2}){3}",
-                                             (i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i)), pages[i].HTMLEscapeSumbols(),
-                                             (i < pages.Length - 1) ? string.Format("@ENTRY + {0}", i + 1) : "0", (i < pages.Length - 1 ? "," : ";")).AppendLine();
+                        string key = (i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i));
+                        string next_page = (i < pages.Length - 1) ? string.Format("@ENTRY + {0}", i + 1) : "0";
+
+                        SqlBuilder.AppendKeyValue(key);
+                        SqlBuilder.AppendFieldsValue(pages[i].HTMLEscapeSumbols(), next_page);
                     }
                 }
                 else
                 {
-                    string locale = _tables[Locale];
-                    content.AppendFormat(@"INSERT IGNORE INTO `locales_page_text` (`entry`, `{0}`) VALUES", locale).AppendLine();
                     for (int i = 0; i < pages.Length; ++i)
                     {
-                        content.AppendFormat(@"({0}, '{1}'){2}",
-                                             (i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i)), pages[i].HTMLEscapeSumbols(),
-                                             (i < pages.Length - 1 ? "," : ";")).AppendLine();
+                        string key = (i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i));
+                        SqlBuilder.AppendKeyValue(key);
+                        SqlBuilder.AppendFieldsValue(pages[i].HTMLEscapeSumbols());
                     }
                 }
             }
 
-            return content.AppendLine().ToString();
+            content.Append(SqlBuilder.ToString());
+            return content.ToString();
         }
 
         public override string BeforParsing()
@@ -64,7 +74,7 @@ namespace WoWHeadParser
 
         public override string Address { get { return "wowhead.com/object="; } }
 
-        public override string Name { get { return "Page data parser"; } }
+        public override string Name { get { return "Book page data parser"; } }
 
         public override int MaxCount { get { return 0; } }
     }

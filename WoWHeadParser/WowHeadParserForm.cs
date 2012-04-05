@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using WoWHeadParser.Properties;
 
 namespace WoWHeadParser
 {
@@ -147,7 +148,7 @@ namespace WoWHeadParser
             abortButton.Enabled = true;
             settingsBox.Enabled = startButton.Enabled = false;
             numericUpDown.Value = progressBar.Value = 0;
-            progressLabel.Text = @"Downloading...";
+            SetLabelText(@"Downloading...");
 
             _startTime = DateTime.Now;
 
@@ -162,15 +163,8 @@ namespace WoWHeadParser
 
         private void WorkerPageDownloaded()
         {
-            if (progressBar.InvokeRequired)
-                progressBar.BeginInvoke(new Action(() => ++progressBar.Value));
-            else
-                ++progressBar.Value;
-
-            if (numericUpDown.InvokeRequired)
-                numericUpDown.BeginInvoke(new Action(() => ++numericUpDown.Value));
-            else
-                ++numericUpDown.Value;
+            progressBar.ThreadSafeBegin(x => ++x.Value);
+            numericUpDown.ThreadSafeBegin(x => ++x.Value);
         }
 
         private void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -211,7 +205,7 @@ namespace WoWHeadParser
                 return;
 
             _worker.Stop();
-            progressLabel.Text = @"Aborting...";
+            SetLabelText(@"Aborting...");
         }
 
         private void WorkerRunWorkerCompleted()
@@ -220,7 +214,7 @@ namespace WoWHeadParser
             abortButton.Enabled = false;
             settingsBox.Enabled = startButton.Enabled = true;
 
-            progressLabel.Text = @"Finished!";
+            SetLabelText(@"Finished!");
         }
 
         private void WelfBoxSelectedIndexChanged(object sender, EventArgs e)
@@ -258,7 +252,7 @@ namespace WoWHeadParser
 
         private void WELFCreatorMenuClick(object sender, EventArgs e)
         {
-            new WelfCreator().Show();
+            this.ThreadSafeBegin(x => new WelfCreator().Show());
         }
 
         private void ReloadWelfFilesMenuClick(object sender, EventArgs e)
@@ -275,6 +269,11 @@ namespace WoWHeadParser
         {
             DialogResult result = ShowMessageBox(MessageType.ExitQuestion);
             e.Cancel = (result == DialogResult.No);
+        }
+
+        private void SetLabelText(string text)
+        {
+            progressLabel.ThreadSafeBegin(x => x.Text = text);
         }
 
         private void LoadWelfFiles()
@@ -297,6 +296,11 @@ namespace WoWHeadParser
             Message message = _message[type];
             string msg = string.Format(CultureInfo.InvariantCulture, message.Text, args);
             return MessageBox.Show(msg, @"WoWHead Parser", message.Button, message.Icon);
+        }
+
+        private void OptionsMenuItemClick(object sender, EventArgs e)
+        {
+            this.ThreadSafeBegin(x => new SettingsForm().ShowDialog());
         }
     }
 }

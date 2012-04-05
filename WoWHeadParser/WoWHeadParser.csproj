@@ -103,6 +103,13 @@
     <Compile Include="Parser\Parsers\VendorParser.cs" />
     <Compile Include="ParsingType.cs" />
     <Compile Include="RichTextBoxWriter.cs" />
+    <Compile Include="SettingsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SettingsForm.Designer.cs">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SqlBuilder\SqlBuilder.cs" />
     <Compile Include="WebRequest.cs" />
     <Compile Include="WelfCreator.cs">
       <SubType>Form</SubType>
@@ -119,6 +126,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="WelfCreator.resx">
       <DependentUpon>WelfCreator.cs</DependentUpon>
     </EmbeddedResource>
@@ -188,6 +198,7 @@
   <ItemGroup>
     <Content Include="Lib\Newtonsoft.Json.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

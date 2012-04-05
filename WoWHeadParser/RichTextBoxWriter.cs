@@ -62,16 +62,11 @@ namespace WoWHeadParser
         {
             if (!OutputBox.IsDisposed)
             {
-                Action action = () =>
+                OutputBox.ThreadSafeBegin(x =>
                 {
-                    OutputBox.AppendText(text);
-                    OutputBox.ScrollToCaret();
-                };
-
-                if (OutputBox.InvokeRequired)
-                    OutputBox.BeginInvoke(action);
-                else
-                    action();
+                    x.AppendText(text);
+                    x.ScrollToCaret();
+                });
             }
 
             if (!string.IsNullOrWhiteSpace(text))

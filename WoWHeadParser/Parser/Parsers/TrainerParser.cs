@@ -18,9 +18,10 @@ namespace WoWHeadParser
         {
             StringBuilder content = new StringBuilder();
 
+            //string bpage = block.Page;
             string page = block.Page;
 
-            int npcflag = 16;
+            int npcflag = 0x10;
             TrainerType type = TrainerType.TypeNone;
 
             Regex regex = new Regex("template: 'spell', id: ('[a-z\\-]+'), name: ", RegexOptions.Multiline);
@@ -30,18 +31,20 @@ namespace WoWHeadParser
                 {
                     switch (item.Groups[1].Value)
                     {
+                        //case "\'teaches-other\'":
                         case "\'teaches-ability\'":
-                            npcflag = 48;
+                            npcflag = 0x30;
                             type = TrainerType.TypeClass;
                             break;
                         case "\'teaches-recipe\'":
-                            npcflag = 80;
+                            npcflag = 0x50;
                             type = TrainerType.TypeTradeskills;
                             break;
                         default:
                             continue;
                     }
 
+                    Console.WriteLine(page.Length);
                     int start = item.Index;
                     int end = page.IndexOf("});", start);
 
@@ -61,11 +64,10 @@ namespace WoWHeadParser
             MatchCollection find = Regex.Matches(page, pattern);
 
             if (find.Count > 0)
-            {
-                content.AppendFormat(@"SET @ENTRY := {0};", block.Id).AppendLine();
-                content.AppendFormat(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | {0}, `trainer_type` = {1} WHERE `entry` = @ENTRY;", npcflag, (int)type).AppendLine();
-                content.AppendLine(@"REPLACE INTO `npc_trainer` (`entry`, `spell`, `spellcost`, `reqlevel`, `reqSkill`, `reqSkillValue`) VALUES");
-            }
+                content.AppendFormat(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | '{0}', `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcflag, (int)type, block.Id).AppendLine();
+
+            SqlBuilder.Initial("npc_trainer");
+            SqlBuilder.SetFieldsName("spell", "spellcost", "reqlevel", "reqSkill", "reqSkillValue");
 
             foreach (Match item in find)
             {
@@ -75,29 +77,29 @@ namespace WoWHeadParser
                 {
                     GroupCollection groups = matches[i].Groups;
 
-                    string spell = groups[1].Value;
-                    string end = (i < matches.Count - 1 ? "," : ";");
+                    SqlBuilder.AppendKeyValue(block.Id);
+
+                    string spellCost = (type == TrainerType.TypeTradeskills) ? groups[5].Value : groups[4].Value; // TODO: support zero cost
                     switch (type)
                     {
                         case TrainerType.TypeTradeskills:
                             {
                                 string reqSkill = (string.IsNullOrEmpty(groups[4].Value) ? "0" : groups[4].Value);
                                 string reqSkillValue = (string.IsNullOrEmpty(groups[2].Value) ? "0" : groups[2].Value);
-
-                                content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}, {4}){5}", spell, groups[5].Value, groups[3].Value, reqSkill, reqSkillValue, end).AppendLine();
+                                SqlBuilder.AppendFieldsValue(groups[1].Value, spellCost, groups[3].Value, reqSkill, reqSkillValue);
                             }
                             break;
                         case TrainerType.TypeClass:
                             {
                                 string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? "0" : groups[3].Value);
-
-                                content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}, {4}){5}", spell, groups[4].Value, groups[2].Value, reqSkill, "0", end).AppendLine();
+                                SqlBuilder.AppendFieldsValue(groups[1].Value, spellCost, groups[2].Value, reqSkill, "0");
                             }
                             break;
                     }
                 }
             }
 
+            content.Append(SqlBuilder.ToString());
             return content.AppendLine().ToString();
         }
 

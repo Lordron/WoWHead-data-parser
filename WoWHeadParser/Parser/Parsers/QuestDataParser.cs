@@ -10,31 +10,34 @@ namespace WoWHeadParser
     {
         private Dictionary<Locale, string> _tables = new Dictionary<Locale, string>
         {
-            {Locale.Russia, "Text_loc8"},
-            {Locale.Germany, "Text_loc3"},
-            {Locale.France, "Text_loc2"},
-            {Locale.Spain, "Text_loc6"},
+            {Locale.Russia, "loc8"},
+            {Locale.Germany, "loc3"},
+            {Locale.France, "loc2"},
+            {Locale.Spain, "loc6"},
         };
 
         public override string Parse(Block block)
         {
-            StringBuilder content = new StringBuilder();
-
             string page = block.Page.Substring("\'quests\'");
 
             const string pattern = @"data: \[.*;";
+
+            if (Locale > Locale.English)
+            {
+                SqlBuilder.Initial("locales_quest");
+                SqlBuilder.SetFieldsName(string.Format("title_{0}", _tables[Locale]));
+            }
+            else
+            {
+                SqlBuilder.Initial("quest_template", "id");
+                SqlBuilder.SetFieldsName("title");
+            }
 
             MatchCollection find = Regex.Matches(page, pattern);
             foreach (Match item in find)
             {
                 string text = item.Value.Replace("data: ", "").Replace("});", "");
                 JArray serialiation = (JArray)JsonConvert.DeserializeObject(text);
-
-                if (serialiation.Count > 0)
-                {
-                    if (Locale > Locale.English)
-                        content.AppendFormat(@"INSERT IGNORE INTO `locales_quest` (`entry`, `title_{0}``) VALUES", _tables[Locale]).AppendLine();
-                }
 
                 for (int i = 0; i < serialiation.Count; ++i)
                 {
@@ -48,17 +51,12 @@ namespace WoWHeadParser
                     if (nameToken != null)
                         name = nameToken.ToString().HTMLEscapeSumbols();
 
-                    if (string.IsNullOrEmpty(name))
-                        continue;
-
-                    if (Locale == Locale.English)
-                        content.AppendFormat("UPDATE `quest_template` SET `title` = '{0}' WHERE `entry` = {1};", name, id).AppendLine();
-                    else
-                        content.AppendFormat("({0}, '{1}'){2}", id, name, (i < serialiation.Count - 1 ? "," : ";")).AppendLine();
+                    SqlBuilder.AppendKeyValue(id);
+                    SqlBuilder.AppendFieldsValue(name);
                 }
             }
 
-            return content.AppendLine().ToString();
+            return SqlBuilder.ToString();
         }
 
         public override string BeforParsing()
@@ -77,11 +75,12 @@ namespace WoWHeadParser
     {
         public override string Parse(Block block)
         {
-            StringBuilder content = new StringBuilder();
-
             string page = block.Page.Substring("\'quests\'");
 
             const string pattern = @"data: \[.*;";
+
+            SqlBuilder.Initial("quest_template", "id");
+            SqlBuilder.SetFieldsName("level", "minlevel", "zoneOrSort", "RewardOrRequiredMoney");
 
             MatchCollection find = Regex.Matches(page, pattern);
             foreach (Match item in find)
@@ -117,23 +116,12 @@ namespace WoWHeadParser
                     if (moneyToken != null)
                         money = moneyToken.ToString();
 
-                    if (string.IsNullOrEmpty(level))
-                        level = "`level`";
-
-                    if (string.IsNullOrEmpty(minLevel))
-                        minLevel = "`minlevel`";
-
-                    if (string.IsNullOrEmpty(zoneOrSort))
-                        zoneOrSort = "`zoneOrSort`";
-
-                    if (string.IsNullOrEmpty(money))
-                        money = "`RewardOrRequiredMoney`";
-
-                    content.AppendFormat("UPDATE `quest_template` SET `level` = {0}, `minlevel` = {1}, `zoneOrSort` = {2}, `RewardOrRequiredMoney` = {3} WHERE `id` = {4};", level, minLevel, zoneOrSort, money, id).AppendLine();
+                    SqlBuilder.AppendKeyValue(id);
+                    SqlBuilder.AppendFieldsValue(level, minLevel, zoneOrSort, money);
                 }
             }
 
-            return content.AppendLine().ToString();
+            return SqlBuilder.ToString();
         }
 
         public override string BeforParsing()
@@ -143,7 +131,7 @@ namespace WoWHeadParser
 
         public override string Address { get { return "wowhead.com/quests?filter=cr=30:30;crs=1:4;"; } }
 
-        public override string Name { get { return "Quest data (level, type and etc.) parser"; } }
+        public override string Name { get { return "Quest template data parser"; } }
 
         public override int MaxCount { get { return 32000; } }
     }

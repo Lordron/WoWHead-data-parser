@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -9,8 +10,6 @@ namespace WoWHeadParser
     {
         public override string Parse(Block block)
         {
-            StringBuilder content = new StringBuilder();
-
             string page = block.Page.Substring("\'sells\'");
 
             const string pattern = @"data: \[.*;";
@@ -18,13 +17,10 @@ namespace WoWHeadParser
             char[] anyOf = new[] {'[', ']', '{', '}'};
             string[] subPatterns = new[] {@"\[(\d+),(\d+)\]", @"\[\[(\d+),(\d+)\]\]"};
 
-            MatchCollection find = Regex.Matches(page, pattern);
+            SqlBuilder.Initial("npc_vendor");
+            SqlBuilder.SetFieldsName("item", "maxcount", "incrtime", "ExtendedCost");
 
-            if (find.Count > 0)
-            {
-                content.AppendFormat(@"SET @ENTRY := {0};", block.Id).AppendLine();
-                content.AppendLine(@"REPLACE INTO `npc_vendor` (`entry`, `item`, `maxcount`, `incrtime`, `ExtendedCost`) VALUES");
-            }
+            MatchCollection find = Regex.Matches(page, pattern);
 
             foreach (Match item in find)
             {
@@ -35,10 +31,15 @@ namespace WoWHeadParser
                 {
                     JObject jobj = (JObject)serialization[i];
 
+                    string id = jobj["id"].ToString();
+
                     string scost = string.Empty;
                     string scount = string.Empty;
-                    string id = jobj["id"].ToString();
-                    string maxcount = jobj["avail"].ToString();
+                    string maxcount = string.Empty;
+
+                    JToken maxcountToken = jobj["avail"];
+                    if (maxcountToken != null)
+                        maxcount = maxcountToken.ToString();
 
                     uint extendedCostEntry = 0;
 
@@ -71,7 +72,7 @@ namespace WoWHeadParser
                     }
 
                     maxcount = maxcount.Equals("-1") ? "0" : maxcount;
-                    int incrTime = maxcount.Equals("0") ? 0 : 3600;
+                    string incrTime = maxcount.Equals("0") ? "0" : "3600";
 
                     if (!string.IsNullOrWhiteSpace(scost) && !scost.Equals("0"))
                     {
@@ -85,14 +86,12 @@ namespace WoWHeadParser
                     else
                         extendedCostEntry = 9999999;
 
-                    if (extendedCostEntry == 9999999)
-                        content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, @UNK_COST){3}", id, maxcount, incrTime, (i < serialization.Count - 1 ? "," : ";")).AppendLine();
-                    else
-                        content.AppendFormat(@"(@ENTRY, {0}, {1}, {2}, {3}){4}", id, maxcount, incrTime, extendedCostEntry, (i < serialization.Count - 1 ? "," : ";")).AppendLine();
+                    SqlBuilder.AppendKeyValue(block.Id);
+                    SqlBuilder.AppendFieldsValue(id, maxcount, incrTime, (extendedCostEntry != 9999999) ? extendedCostEntry.ToString() : "@UNK_COST");
                 }
             }
 
-            return content.AppendLine().ToString();
+            return SqlBuilder.ToString();
         }
 
         public override string BeforParsing()

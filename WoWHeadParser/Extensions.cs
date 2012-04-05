@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Windows.Forms;
 
 namespace WoWHeadParser
 {
@@ -76,6 +78,34 @@ namespace WoWHeadParser
             T returnObject = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
             handle.Free();
             return returnObject;
+        }
+
+        public static void ThreadSafe<T>(this T control, Action<T> action) where T : Control
+        {
+            if (control == null)
+                throw new ArgumentNullException("control");
+
+            if (action == null)
+                throw new ArgumentNullException("action");
+
+            if (control.InvokeRequired)
+                control.Invoke(action, control);
+            else
+                action(control);
+        }
+
+        public static void ThreadSafeBegin<T>(this T control, Action<T> action) where T : Control
+        {
+            if (control == null)
+                throw new ArgumentNullException("control");
+
+            if (action == null)
+                throw new ArgumentNullException("action");
+
+            if (control.InvokeRequired)
+                control.BeginInvoke(action, control);
+            else
+                action(control);
         }
     }
 }

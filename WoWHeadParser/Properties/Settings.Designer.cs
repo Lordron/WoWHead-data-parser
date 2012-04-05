@@ -22,5 +22,41 @@ namespace WoWHeadParser.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int QueryType {
+            get {
+                return ((int)(this["QueryType"]));
+            }
+            set {
+                this["QueryType"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AppendDeleteQuery {
+            get {
+                return ((bool)(this["AppendDeleteQuery"]));
+            }
+            set {
+                this["AppendDeleteQuery"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool AllowEmptyValues {
+            get {
+                return ((bool)(this["AllowEmptyValues"]));
+            }
+            set {
+                this["AllowEmptyValues"] = value;
+            }
+        }
     }
 }

@@ -67,6 +67,8 @@ namespace WoWHeadParser
             this.editMenuItem = new System.Windows.Forms.MenuItem();
             this.reloadMenuItem = new System.Windows.Forms.MenuItem();
             this.launchMenuItem = new System.Windows.Forms.MenuItem();
+            this.optionsMenuItem = new System.Windows.Forms.MenuItem();
+            this.separatorMenuItem = new System.Windows.Forms.MenuItem();
             this.settingsBox.SuspendLayout();
             this.parsingControl.SuspendLayout();
             this.singleTab.SuspendLayout();
@@ -463,7 +465,9 @@ namespace WoWHeadParser
             this.editMenuItem.Index = 1;
             this.editMenuItem.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.reloadMenuItem,
-            this.launchMenuItem});
+            this.launchMenuItem,
+            this.separatorMenuItem,
+            this.optionsMenuItem});
             this.editMenuItem.Text = "Edit";
             // 
             // reloadMenuItem
@@ -477,6 +481,17 @@ namespace WoWHeadParser
             this.launchMenuItem.Index = 1;
             this.launchMenuItem.Text = "Launch .welf creator";
             this.launchMenuItem.Click += new System.EventHandler(this.WELFCreatorMenuClick);
+            // 
+            // optionsMenuItem
+            // 
+            this.optionsMenuItem.Index = 3;
+            this.optionsMenuItem.Text = "Options";
+            this.optionsMenuItem.Click += new System.EventHandler(this.OptionsMenuItemClick);
+            // 
+            // separatorMenuItem
+            // 
+            this.separatorMenuItem.Index = 2;
+            this.separatorMenuItem.Text = "-";
             // 
             // WoWHeadParserForm
             // 
@@ -558,6 +573,8 @@ namespace WoWHeadParser
         private RichTextBox consoleBox;
         private TabPage wowheadFilterTab;
         private Label notifyLabel;
+        private MenuItem optionsMenuItem;
+        private MenuItem separatorMenuItem;
     }
 }
 
