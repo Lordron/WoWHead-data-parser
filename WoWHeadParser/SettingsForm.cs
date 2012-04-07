@@ -12,17 +12,17 @@ namespace WoWHeadParser
 
             foreach (SqlQueryType type in Enum.GetValues(typeof(SqlQueryType)))
             {
-                string stype = type.ToString().Replace("Type", "");
-                sqlQueryTypeBox.Items.Add(stype);
+                if (type > SqlQueryType.None)
+                    sqlQueryTypeBox.Items.Add(type);
             }
-            sqlQueryTypeBox.SelectedItem = ((SqlQueryType)Settings.Default.QueryType).ToString().Replace("Type", "");
+            sqlQueryTypeBox.SelectedItem = ((SqlQueryType)Settings.Default.QueryType);
         }
 
         private void OkButtonClick(object sender, EventArgs e)
         {
             Settings.Default.AllowEmptyValues = allowNullValCheckBox.Checked;
             Settings.Default.AppendDeleteQuery = appendDeleteQueryCheckBox.Checked;
-            Settings.Default.QueryType = sqlQueryTypeBox.SelectedIndex;
+            Settings.Default.QueryType = sqlQueryTypeBox.SelectedIndex + 1;
             Settings.Default.Save();
 
             Close();

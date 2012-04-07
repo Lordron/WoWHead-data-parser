@@ -67,8 +67,8 @@ namespace WoWHeadParser
             this.editMenuItem = new System.Windows.Forms.MenuItem();
             this.reloadMenuItem = new System.Windows.Forms.MenuItem();
             this.launchMenuItem = new System.Windows.Forms.MenuItem();
-            this.optionsMenuItem = new System.Windows.Forms.MenuItem();
             this.separatorMenuItem = new System.Windows.Forms.MenuItem();
+            this.optionsMenuItem = new System.Windows.Forms.MenuItem();
             this.settingsBox.SuspendLayout();
             this.parsingControl.SuspendLayout();
             this.singleTab.SuspendLayout();
@@ -482,16 +482,16 @@ namespace WoWHeadParser
             this.launchMenuItem.Text = "Launch .welf creator";
             this.launchMenuItem.Click += new System.EventHandler(this.WELFCreatorMenuClick);
             // 
+            // separatorMenuItem
+            // 
+            this.separatorMenuItem.Index = 2;
+            this.separatorMenuItem.Text = "-";
+            // 
             // optionsMenuItem
             // 
             this.optionsMenuItem.Index = 3;
             this.optionsMenuItem.Text = "Options";
             this.optionsMenuItem.Click += new System.EventHandler(this.OptionsMenuItemClick);
-            // 
-            // separatorMenuItem
-            // 
-            this.separatorMenuItem.Index = 2;
-            this.separatorMenuItem.Text = "-";
             // 
             // WoWHeadParserForm
             // 

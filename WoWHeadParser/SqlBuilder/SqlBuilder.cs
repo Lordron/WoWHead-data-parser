@@ -7,10 +7,10 @@ namespace WoWHeadParser
 {
     public enum SqlQueryType
     {
-        TypeNone,
-        TypeUpdate,
-        TypeReplace,
-        TypeInsertIgnore,
+        None,
+        Update,
+        Replace,
+        InsertIgnore,
     }
 
     public static class SqlBuilder
@@ -53,6 +53,12 @@ namespace WoWHeadParser
         /// <param name="keyName">Key name (like entry, id, guid etc.)</param>
         public static void Initial(string tableName, string keyName = "entry")
         {
+            if (string.IsNullOrWhiteSpace(tableName))
+                throw new ArgumentNullException();
+
+            if (string.IsNullOrWhiteSpace(keyName))
+                throw new ArgumentNullException();
+
             TableName = tableName;
             KeyName = keyName;
 
@@ -60,9 +66,8 @@ namespace WoWHeadParser
             AllowNullValue = Settings.Default.AllowEmptyValues;
             QueryType = (SqlQueryType)Settings.Default.QueryType;
 
-            //QueryType = SqlQueryType.TypeInsertIgnore;
-
-            //AppendDeleteQuery = true;
+            if (QueryType == SqlQueryType.None)
+                throw new ArgumentOutOfRangeException();
         }
 
         /// <summary>
@@ -84,8 +89,8 @@ namespace WoWHeadParser
         /// <param name="key">Key value</param>
         public static void AppendKeyValue(object key)
         {
-            if (QueryType == SqlQueryType.TypeNone)
-                throw new ArgumentException();
+            if (key == null)
+                throw new ArgumentNullException();
 
             _keys.Add(key);
         }
@@ -119,9 +124,6 @@ namespace WoWHeadParser
             if (args == null)
                 throw new ArgumentNullException();
 
-            if (QueryType == SqlQueryType.TypeNone)
-                throw new ArgumentException();
-
             List<string> values = new List<string>(64);
             for (int i = 0; i < args.Length; ++i)
             {
@@ -136,34 +138,25 @@ namespace WoWHeadParser
         /// </summary>
         public static string ToString()
         {
-            if (QueryType == SqlQueryType.TypeNone)
-                throw new ArgumentException();
-
-            if (string.IsNullOrEmpty(TableName))
-                throw new ArgumentException();
-
-            if (string.IsNullOrEmpty(KeyName))
-                throw new ArgumentException();
-
             if (_listValues.Count != _keys.Count)
                 throw new ArgumentOutOfRangeException();
 
             switch (QueryType)
             {
-                case SqlQueryType.TypeUpdate:
+                case SqlQueryType.Update:
                     return BuildUpdateQuery();
-                case SqlQueryType.TypeReplace:
+                case SqlQueryType.Replace:
                     return BuildReplaceInsertQuery();
-                case SqlQueryType.TypeInsertIgnore:
+                case SqlQueryType.InsertIgnore:
                     return BuildReplaceInsertQuery(false);
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
-
-            return string.Empty;
         }
 
         private static string BuildUpdateQuery()
         {
-            StringBuilder content = new StringBuilder();
+            StringBuilder content = new StringBuilder(1024 * _listValues.Count);
 
             for (int i = 0; i < _listValues.Count; ++i)
             {
@@ -171,7 +164,7 @@ namespace WoWHeadParser
 
                 List<string> values = _listValues[i];
 
-                StringBuilder contentInternal = new StringBuilder();
+                StringBuilder contentInternal = new StringBuilder(1024);
                 {
                     contentInternal.AppendFormat("UPDATE `{0}` SET ", TableName);
                     for (int j = 0; j < values.Count; ++j)
@@ -196,7 +189,7 @@ namespace WoWHeadParser
 
         private static string BuildReplaceInsertQuery(bool replace = true)
         {
-            StringBuilder content = new StringBuilder();
+            StringBuilder content = new StringBuilder(1024);
 
             if (AppendDeleteQuery)
                 content.AppendFormat("DELETE FROM `{0}` WHERE `{1}` = '{2}';", TableName, KeyName, (_keys.Count > 0 ? _keys[0] : 0)).AppendLine();
