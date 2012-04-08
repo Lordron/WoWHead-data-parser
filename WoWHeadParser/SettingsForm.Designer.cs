@@ -44,6 +44,7 @@ namespace WoWHeadParser
             // allowNullValCheckBox
             // 
             this.allowNullValCheckBox.AutoSize = true;
+            this.allowNullValCheckBox.Checked = global::WoWHeadParser.Properties.Settings.Default.AllowEmptyValues;
             this.allowNullValCheckBox.Location = new System.Drawing.Point(13, 13);
             this.allowNullValCheckBox.Name = "allowNullValCheckBox";
             this.allowNullValCheckBox.Size = new System.Drawing.Size(104, 17);
@@ -54,6 +55,7 @@ namespace WoWHeadParser
             // appendDeleteQueryCheckBox
             // 
             this.appendDeleteQueryCheckBox.AutoSize = true;
+            this.appendDeleteQueryCheckBox.Checked = global::WoWHeadParser.Properties.Settings.Default.AppendDeleteQuery;
             this.appendDeleteQueryCheckBox.Location = new System.Drawing.Point(13, 37);
             this.appendDeleteQueryCheckBox.Name = "appendDeleteQueryCheckBox";
             this.appendDeleteQueryCheckBox.Size = new System.Drawing.Size(124, 17);
@@ -102,6 +104,7 @@ namespace WoWHeadParser
             // sortAscendingButton
             // 
             this.sortAscendingButton.AutoSize = true;
+            this.sortAscendingButton.Checked = !Settings.Default.SortDown;
             this.sortAscendingButton.Location = new System.Drawing.Point(6, 19);
             this.sortAscendingButton.Name = "sortAscendingButton";
             this.sortAscendingButton.Size = new System.Drawing.Size(75, 17);
@@ -113,6 +116,7 @@ namespace WoWHeadParser
             // sortDescendingButton
             // 
             this.sortDescendingButton.AutoSize = true;
+            this.sortDescendingButton.Checked = Settings.Default.SortDown;
             this.sortDescendingButton.Location = new System.Drawing.Point(6, 42);
             this.sortDescendingButton.Name = "sortDescendingButton";
             this.sortDescendingButton.Size = new System.Drawing.Size(82, 17);
