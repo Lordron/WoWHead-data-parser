@@ -48,8 +48,7 @@ namespace WoWHeadParser
                         string key = (i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i));
                         string next_page = (i < pages.Length - 1) ? string.Format("@ENTRY + {0}", i + 1) : "0";
 
-                        SqlBuilder.AppendKeyValue(key);
-                        SqlBuilder.AppendFieldsValue(pages[i].HTMLEscapeSumbols(), next_page);
+                        SqlBuilder.AppendFieldsValue(key, pages[i].HTMLEscapeSumbols(), next_page);
                     }
                 }
                 else
@@ -57,8 +56,7 @@ namespace WoWHeadParser
                     for (int i = 0; i < pages.Length; ++i)
                     {
                         string key = (i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i));
-                        SqlBuilder.AppendKeyValue(key);
-                        SqlBuilder.AppendFieldsValue(pages[i].HTMLEscapeSumbols());
+                        SqlBuilder.AppendFieldsValue(key, pages[i].HTMLEscapeSumbols());
                     }
                 }
             }

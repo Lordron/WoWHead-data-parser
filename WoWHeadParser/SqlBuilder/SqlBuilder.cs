@@ -40,11 +40,9 @@ namespace WoWHeadParser
         /// </summary>
         public static bool AppendDeleteQuery { get; private set; }
 
-        private static List<object> _keys = new List<object>(64);
-
         private static List<string> _names = new List<string>(64);
 
-        private static List<List<string>> _listValues = new List<List<string>>(64);
+        private static List<SqlItem> _items = new List<SqlItem>(64);
 
         /// <summary>
         /// Initial Sql builder
@@ -75,24 +73,11 @@ namespace WoWHeadParser
         /// </summary>
         public static void Reset()
         {
-            _keys.Clear();
             _names.Clear();
-            _listValues.Clear();
+            _items.Clear();
 
             KeyName = string.Empty;
             TableName = string.Empty;
-        }
-
-        /// <summary>
-        /// Append key value
-        /// </summary>
-        /// <param name="key">Key value</param>
-        public static void AppendKeyValue(object key)
-        {
-            if (key == null)
-                throw new ArgumentNullException();
-
-            _keys.Add(key);
         }
 
         /// <summary>
@@ -115,12 +100,15 @@ namespace WoWHeadParser
         }
 
         /// <summary>
-        /// Append fields value
+        /// Append key and fields value 
         /// </summary>
         /// <param name="key">key value</param>
         /// <param name="args">fields value array</param>
-        public static void AppendFieldsValue(params string[] args)
+        public static void AppendFieldsValue(object key, params string[] args)
         {
+            if (key == null)
+                throw new ArgumentNullException();
+
             if (args == null)
                 throw new ArgumentNullException();
 
@@ -130,7 +118,7 @@ namespace WoWHeadParser
                 values.Add(args[i]);
             }
 
-            _listValues.Add(values);
+            _items.Add(new SqlItem(key, values));
         }
 
         /// <summary>
@@ -138,9 +126,6 @@ namespace WoWHeadParser
         /// </summary>
         public static string ToString()
         {
-            if (_listValues.Count != _keys.Count)
-                throw new ArgumentOutOfRangeException();
-
             switch (QueryType)
             {
                 case SqlQueryType.Update:
@@ -156,27 +141,27 @@ namespace WoWHeadParser
 
         private static string BuildUpdateQuery()
         {
-            StringBuilder content = new StringBuilder(1024 * _listValues.Count);
+            StringBuilder content = new StringBuilder(1024 * _items.Count);
 
-            for (int i = 0; i < _listValues.Count; ++i)
+            for (int i = 0; i < _items.Count; ++i)
             {
                 bool notEmpty = false;
 
-                List<string> values = _listValues[i];
+                SqlItem item = _items[i];
 
                 StringBuilder contentInternal = new StringBuilder(1024);
                 {
                     contentInternal.AppendFormat("UPDATE `{0}` SET ", TableName);
-                    for (int j = 0; j < values.Count; ++j)
+                    for (int j = 0; j < item.Count; ++j)
                     {
-                        if (string.IsNullOrWhiteSpace(values[j]) && !AllowNullValue)
+                        if (string.IsNullOrWhiteSpace(item[j]) && !AllowNullValue)
                             continue;
 
-                        contentInternal.AppendFormat("`{0}` = '{1}', ", _names[j], values[j]);
+                        contentInternal.AppendFormat("`{0}` = '{1}', ", _names[j], item[j]);
                         notEmpty = true;
                     }
                     contentInternal.Remove(contentInternal.Length - 2, 2);
-                    contentInternal.AppendFormat(" WHERE `{0}` = {1};", KeyName, _keys[i]).AppendLine();
+                    contentInternal.AppendFormat(" WHERE `{0}` = {1};", KeyName, item.Key).AppendLine();
 
                     if (notEmpty)
                         content.Append(contentInternal.ToString());
@@ -192,7 +177,7 @@ namespace WoWHeadParser
             StringBuilder content = new StringBuilder(1024);
 
             if (AppendDeleteQuery)
-                content.AppendFormat("DELETE FROM `{0}` WHERE `{1}` = '{2}';", TableName, KeyName, (_keys.Count > 0 ? _keys[0] : 0)).AppendLine();
+                content.AppendFormat("DELETE FROM `{0}` WHERE `{1}` = '{2}';", TableName, KeyName, (_items.Count > 0 ? _items[0].Key : 0)).AppendLine();
 
             if (replace)
                 content.AppendFormat("REPLACE INTO `{0}` (`{1}`, ", TableName, KeyName);
@@ -207,17 +192,17 @@ namespace WoWHeadParser
 
             bool notEmpty = false;
 
-            for (int i = 0; i < _listValues.Count; ++i)
+            for (int i = 0; i < _items.Count; ++i)
             {
-                List<string> values = _listValues[i];
+                SqlItem item = _items[i];
 
-                content.AppendFormat("('{0}', ", _keys[i]);
-                for (int j = 0; j < values.Count; ++j)
+                content.AppendFormat("('{0}', ", item.Key);
+                for (int j = 0; j < item.Count; ++j)
                 {
-                    content.AppendFormat("'{0}', ", values[j]);
+                    content.AppendFormat("'{0}', ", item[j]);
                 }
                 content.Remove(content.Length - 2, 2);
-                content.AppendFormat("){0}", i < _listValues.Count - 1 ? "," : ";").AppendLine();
+                content.AppendFormat("){0}", i < _items.Count - 1 ? "," : ";").AppendLine();
 
                 notEmpty = true;
             }

@@ -35,12 +35,15 @@ namespace WoWHeadParser
             this.sqlQueryTypeBox = new System.Windows.Forms.ComboBox();
             this.okButton = new System.Windows.Forms.Button();
             this.cancleButton = new System.Windows.Forms.Button();
+            this.sortAscendingButton = new System.Windows.Forms.RadioButton();
+            this.sortDescendingButton = new System.Windows.Forms.RadioButton();
+            this.sortGroupBox = new System.Windows.Forms.GroupBox();
+            this.sortGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // allowNullValCheckBox
             // 
             this.allowNullValCheckBox.AutoSize = true;
-            this.allowNullValCheckBox.Checked = global::WoWHeadParser.Properties.Settings.Default.AllowEmptyValues;
             this.allowNullValCheckBox.Location = new System.Drawing.Point(13, 13);
             this.allowNullValCheckBox.Name = "allowNullValCheckBox";
             this.allowNullValCheckBox.Size = new System.Drawing.Size(104, 17);
@@ -51,7 +54,6 @@ namespace WoWHeadParser
             // appendDeleteQueryCheckBox
             // 
             this.appendDeleteQueryCheckBox.AutoSize = true;
-            this.appendDeleteQueryCheckBox.Checked = global::WoWHeadParser.Properties.Settings.Default.AppendDeleteQuery;
             this.appendDeleteQueryCheckBox.Location = new System.Drawing.Point(13, 37);
             this.appendDeleteQueryCheckBox.Name = "appendDeleteQueryCheckBox";
             this.appendDeleteQueryCheckBox.Size = new System.Drawing.Size(124, 17);
@@ -62,7 +64,7 @@ namespace WoWHeadParser
             // quertTypelabel
             // 
             this.quertTypelabel.AutoSize = true;
-            this.quertTypelabel.Location = new System.Drawing.Point(10, 68);
+            this.quertTypelabel.Location = new System.Drawing.Point(10, 157);
             this.quertTypelabel.Name = "quertTypelabel";
             this.quertTypelabel.Size = new System.Drawing.Size(76, 13);
             this.quertTypelabel.TabIndex = 2;
@@ -71,14 +73,14 @@ namespace WoWHeadParser
             // sqlQueryTypeBox
             // 
             this.sqlQueryTypeBox.FormattingEnabled = true;
-            this.sqlQueryTypeBox.Location = new System.Drawing.Point(92, 65);
+            this.sqlQueryTypeBox.Location = new System.Drawing.Point(92, 154);
             this.sqlQueryTypeBox.Name = "sqlQueryTypeBox";
-            this.sqlQueryTypeBox.Size = new System.Drawing.Size(121, 21);
+            this.sqlQueryTypeBox.Size = new System.Drawing.Size(113, 21);
             this.sqlQueryTypeBox.TabIndex = 3;
             // 
             // okButton
             // 
-            this.okButton.Location = new System.Drawing.Point(11, 104);
+            this.okButton.Location = new System.Drawing.Point(11, 190);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 4;
@@ -89,7 +91,7 @@ namespace WoWHeadParser
             // cancleButton
             // 
             this.cancleButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancleButton.Location = new System.Drawing.Point(141, 104);
+            this.cancleButton.Location = new System.Drawing.Point(130, 190);
             this.cancleButton.Name = "cancleButton";
             this.cancleButton.Size = new System.Drawing.Size(75, 23);
             this.cancleButton.TabIndex = 5;
@@ -97,13 +99,47 @@ namespace WoWHeadParser
             this.cancleButton.UseVisualStyleBackColor = true;
             this.cancleButton.Click += new System.EventHandler(this.CancleButtonClick);
             // 
+            // sortAscendingButton
+            // 
+            this.sortAscendingButton.AutoSize = true;
+            this.sortAscendingButton.Location = new System.Drawing.Point(6, 19);
+            this.sortAscendingButton.Name = "sortAscendingButton";
+            this.sortAscendingButton.Size = new System.Drawing.Size(75, 17);
+            this.sortAscendingButton.TabIndex = 6;
+            this.sortAscendingButton.TabStop = true;
+            this.sortAscendingButton.Text = "Ascending";
+            this.sortAscendingButton.UseVisualStyleBackColor = true;
+            // 
+            // sortDescendingButton
+            // 
+            this.sortDescendingButton.AutoSize = true;
+            this.sortDescendingButton.Location = new System.Drawing.Point(6, 42);
+            this.sortDescendingButton.Name = "sortDescendingButton";
+            this.sortDescendingButton.Size = new System.Drawing.Size(82, 17);
+            this.sortDescendingButton.TabIndex = 7;
+            this.sortDescendingButton.TabStop = true;
+            this.sortDescendingButton.Text = "Descending";
+            this.sortDescendingButton.UseVisualStyleBackColor = true;
+            // 
+            // sortGroupBox
+            // 
+            this.sortGroupBox.Controls.Add(this.sortAscendingButton);
+            this.sortGroupBox.Controls.Add(this.sortDescendingButton);
+            this.sortGroupBox.Location = new System.Drawing.Point(13, 60);
+            this.sortGroupBox.Name = "sortGroupBox";
+            this.sortGroupBox.Size = new System.Drawing.Size(192, 73);
+            this.sortGroupBox.TabIndex = 8;
+            this.sortGroupBox.TabStop = false;
+            this.sortGroupBox.Text = "Sort";
+            // 
             // SettingsForm
             // 
             this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancleButton;
-            this.ClientSize = new System.Drawing.Size(229, 139);
+            this.ClientSize = new System.Drawing.Size(220, 230);
+            this.Controls.Add(this.sortGroupBox);
             this.Controls.Add(this.cancleButton);
             this.Controls.Add(this.okButton);
             this.Controls.Add(this.sqlQueryTypeBox);
@@ -113,6 +149,8 @@ namespace WoWHeadParser
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "SettingsForm";
             this.Text = "Settings";
+            this.sortGroupBox.ResumeLayout(false);
+            this.sortGroupBox.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -126,6 +164,9 @@ namespace WoWHeadParser
         private System.Windows.Forms.ComboBox sqlQueryTypeBox;
         private System.Windows.Forms.Button okButton;
         private System.Windows.Forms.Button cancleButton;
+        private System.Windows.Forms.RadioButton sortAscendingButton;
+        private System.Windows.Forms.RadioButton sortDescendingButton;
+        private System.Windows.Forms.GroupBox sortGroupBox;
 
     }
 }

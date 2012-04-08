@@ -1,5 +1,4 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -86,8 +85,7 @@ namespace WoWHeadParser
                     else
                         extendedCostEntry = 9999999;
 
-                    SqlBuilder.AppendKeyValue(block.Id);
-                    SqlBuilder.AppendFieldsValue(id, maxcount, incrTime, (extendedCostEntry != 9999999) ? extendedCostEntry.ToString() : "@UNK_COST");
+                    SqlBuilder.AppendFieldsValue(block.Id, id, maxcount, incrTime, (extendedCostEntry != 9999999) ? extendedCostEntry.ToString() : "@UNK_COST");
                 }
             }
 

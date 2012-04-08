@@ -86,7 +86,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Block.cs" />
+    <Compile Include="Block\Block.cs" />
+    <Compile Include="Block\BlockComparer.cs" />
     <Compile Include="DB2Reader\Db2Dictionary.cs" />
     <Compile Include="DB2Reader\Db2Header.cs" />
     <Compile Include="DB2Reader\Db2Loader.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SqlBuilder\SqlItem.cs" />
     <Compile Include="SqlBuilder\SqlBuilder.cs" />
     <Compile Include="WebRequest.cs" />
     <Compile Include="WelfCreator.cs">

@@ -6,7 +6,6 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using WoWHeadParser.Properties;
 
 namespace WoWHeadParser
 {
@@ -183,9 +182,9 @@ namespace WoWHeadParser
                         if (!string.IsNullOrEmpty(beforParsing))
                             stream.Write(beforParsing);
 
-                        while (!_worker.Empty)
+                        for (int i = 0; i < _worker.Pages.Count; ++i)
                         {
-                            Block block = _worker.Pages.Dequeue();
+                            Block block = _worker.Pages[i];
                             string content = _parser.Parse(block).TrimStart();
                             if (!string.IsNullOrEmpty(content))
                                 stream.Write(content);

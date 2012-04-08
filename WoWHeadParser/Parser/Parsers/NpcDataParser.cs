@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -56,8 +55,7 @@ namespace WoWHeadParser
                     if (subNameToken != null)
                         subName = subNameToken.ToString().HTMLEscapeSumbols();
 
-                    SqlBuilder.AppendKeyValue(id);
-                    SqlBuilder.AppendFieldsValue(name, subName);
+                    SqlBuilder.AppendFieldsValue(id, name, subName);
                 }
             }
 
@@ -116,8 +114,7 @@ namespace WoWHeadParser
                     if (maxLevel.Equals("9999"))
                         maxLevel = "@BOSS_LEVEL";
 
-                    SqlBuilder.AppendKeyValue(id);
-                    SqlBuilder.AppendFieldsValue(minLevel, maxLevel, type);
+                    SqlBuilder.AppendFieldsValue(id, minLevel, maxLevel, type);
                 }
             }
 

@@ -58,5 +58,17 @@ namespace WoWHeadParser.Properties {
                 this["AllowEmptyValues"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool SortDown {
+            get {
+                return ((bool)(this["SortDown"]));
+            }
+            set {
+                this["SortDown"] = value;
+            }
+        }
     }
 }

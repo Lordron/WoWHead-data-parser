@@ -18,7 +18,7 @@ namespace WoWHeadParser
         {
             StringBuilder content = new StringBuilder();
 
-            //string bpage = block.Page;
+            //string bpage = item.Page;
             string page = block.Page;
 
             int npcflag = 0x10;
@@ -44,7 +44,6 @@ namespace WoWHeadParser
                             continue;
                     }
 
-                    Console.WriteLine(page.Length);
                     int start = item.Index;
                     int end = page.IndexOf("});", start);
 
@@ -77,8 +76,6 @@ namespace WoWHeadParser
                 {
                     GroupCollection groups = matches[i].Groups;
 
-                    SqlBuilder.AppendKeyValue(block.Id);
-
                     string spellCost = (type == TrainerType.TypeTradeskills) ? groups[5].Value : groups[4].Value; // TODO: support zero cost
                     switch (type)
                     {
@@ -86,13 +83,13 @@ namespace WoWHeadParser
                             {
                                 string reqSkill = (string.IsNullOrEmpty(groups[4].Value) ? "0" : groups[4].Value);
                                 string reqSkillValue = (string.IsNullOrEmpty(groups[2].Value) ? "0" : groups[2].Value);
-                                SqlBuilder.AppendFieldsValue(groups[1].Value, spellCost, groups[3].Value, reqSkill, reqSkillValue);
+                                SqlBuilder.AppendFieldsValue(block.Id, groups[1].Value, spellCost, groups[3].Value, reqSkill, reqSkillValue);
                             }
                             break;
                         case TrainerType.TypeClass:
                             {
                                 string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? "0" : groups[3].Value);
-                                SqlBuilder.AppendFieldsValue(groups[1].Value, spellCost, groups[2].Value, reqSkill, "0");
+                                SqlBuilder.AppendFieldsValue(block.Id, groups[1].Value, spellCost, groups[2].Value, reqSkill, "0");
                             }
                             break;
                     }

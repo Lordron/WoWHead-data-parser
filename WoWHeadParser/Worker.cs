@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
+using WoWHeadParser.Properties;
 
 namespace WoWHeadParser
 {
@@ -16,7 +17,7 @@ namespace WoWHeadParser
 
         private object _threadLock = new object();
 
-        public Queue<Block> Pages { get; private set; }
+        public List<Block> Pages { get; private set; }
 
         public bool Empty { get { return Pages.Count <= 0; } }
 
@@ -24,7 +25,7 @@ namespace WoWHeadParser
 
         public Worker()
         {
-            Pages = new Queue<Block>();
+            Pages = new List<Block>();
             _entries = new List<uint>();
             _semaphore = new SemaphoreSlim(SemaphoreCount, SemaphoreCount);
         }
@@ -110,6 +111,8 @@ namespace WoWHeadParser
             {
                 continue;
             }
+
+            Pages.Sort(new BlockComparer(Settings.Default.SortDown));
         }
 
         private void RespCallback(IAsyncResult iar)
@@ -130,7 +133,7 @@ namespace WoWHeadParser
                 lock(_threadLock)
                 {
                     if (Pages != null)
-                        Pages.Enqueue(new Block(text, request.Id));
+                        Pages.Add(new Block(text, request.Id));
                 }
             }
 

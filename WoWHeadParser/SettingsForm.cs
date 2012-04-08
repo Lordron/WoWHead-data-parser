@@ -23,6 +23,7 @@ namespace WoWHeadParser
             Settings.Default.AllowEmptyValues = allowNullValCheckBox.Checked;
             Settings.Default.AppendDeleteQuery = appendDeleteQueryCheckBox.Checked;
             Settings.Default.QueryType = sqlQueryTypeBox.SelectedIndex + 1;
+            Settings.Default.SortDown = sortDescendingButton.Checked;
             Settings.Default.Save();
 
             Close();

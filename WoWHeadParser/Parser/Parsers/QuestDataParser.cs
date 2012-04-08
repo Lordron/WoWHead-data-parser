@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -51,8 +50,7 @@ namespace WoWHeadParser
                     if (nameToken != null)
                         name = nameToken.ToString().HTMLEscapeSumbols();
 
-                    SqlBuilder.AppendKeyValue(id);
-                    SqlBuilder.AppendFieldsValue(name);
+                    SqlBuilder.AppendFieldsValue(id, name);
                 }
             }
 
@@ -116,8 +114,7 @@ namespace WoWHeadParser
                     if (moneyToken != null)
                         money = moneyToken.ToString();
 
-                    SqlBuilder.AppendKeyValue(id);
-                    SqlBuilder.AppendFieldsValue(level, minLevel, zoneOrSort, money);
+                    SqlBuilder.AppendFieldsValue(id, level, minLevel, zoneOrSort, money);
                 }
             }
 
