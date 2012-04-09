@@ -35,7 +35,7 @@ namespace WoWHeadParser
 
         public static string Substring(this string input, string check)
         {
-            string pattern = string.Format("template: '.+', id: ('[a-z\\-]+'), data: ");
+            const string pattern = "template: '.+', id: ('[a-z\\-]+'), data: ";
             Regex regex = new Regex(pattern, RegexOptions.Multiline);
             {
                 MatchCollection matches = regex.Matches(input);

@@ -6,7 +6,7 @@ using System.Windows.Forms;
 
 namespace WoWHeadParser
 {
-    internal class RichTextBoxWriter : StreamWriter
+    public class RichTextBoxWriter : StreamWriter
     {
         public static RichTextBoxWriter Instance = new RichTextBoxWriter();
 

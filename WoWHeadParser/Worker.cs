@@ -12,14 +12,14 @@ namespace WoWHeadParser
         private uint _end;
         private bool _working;
         private string _address;
-        private IList<uint> _entries;
+        private List<uint> _entries;
         private SemaphoreSlim _semaphore;
 
         private object _threadLock = new object();
 
         public List<Block> Pages { get; private set; }
 
-        public bool Empty { get { return Pages.Count <= 0; } }
+        public int Count { get { return Pages.Count; } }
 
         private const int SemaphoreCount = 10;
 
@@ -43,7 +43,7 @@ namespace WoWHeadParser
             _address = address;
         }
 
-        public void SetValue(IList<uint> entries, string address)
+        public void SetValue(List<uint> entries, string address)
         {
             _entries = entries;
             _address = address;
@@ -131,10 +131,7 @@ namespace WoWHeadParser
             if (!string.IsNullOrWhiteSpace(text))
             {
                 lock(_threadLock)
-                {
-                    if (Pages != null)
-                        Pages.Add(new Block(text, request.Id));
-                }
+                    Pages.Add(new Block(text, request.Id));
             }
 
             request.Dispose();

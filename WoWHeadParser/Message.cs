@@ -2,7 +2,7 @@
 
 namespace WoWHeadParser
 {
-    public enum MessageType
+    public enum MessageType : byte
     {
         None,
         MultipleTypeBigger,
@@ -15,11 +15,11 @@ namespace WoWHeadParser
         Max,
     }
 
-    public class Message
+    public struct Message
     {
+        public string Text;
         public MessageBoxButtons Button;
         public MessageBoxIcon Icon;
-        public string Text;
 
         public Message(string message, MessageBoxButtons button = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.Exclamation)
         {

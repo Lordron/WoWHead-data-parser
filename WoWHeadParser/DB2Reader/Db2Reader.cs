@@ -26,12 +26,16 @@ namespace WoWHeadParser
                 int size = Marshal.SizeOf(typeof(T));
 
                 if (!header.IsDb2)
-                    throw new Exception(fileName + " is not DBC files");
+                {
+                    Console.WriteLine("{0} is not db2 file, skip", fileName);
+                    return new Dictionary<uint, T>();
+                }
 
                 if (header.RecordSize != size)
-                    throw new Exception(
-                            string.Format("Size of row in DB2 file ({0}) != size of DB2 struct ({1}) in DB2: {2}",
-                                          header.RecordSize, size, path));
+                {
+                    Console.WriteLine("File {0}, size of row in db2 file != size of struct ({1}, {2}), skip", fileName, header.RecordSize, size);
+                    return new Dictionary<uint, T>();
+                }
 
                 // WDB2 specific fields
                 uint tableHash = reader.ReadUInt32(); // new field in WDB2
@@ -70,13 +74,6 @@ namespace WoWHeadParser
                 }
             }
             return dict;
-        }
-
-        public static T GetValue<T>(this Dictionary<uint, T> dictionary, uint key)
-        {
-            T value;
-            dictionary.TryGetValue(key, out value);
-            return value;
         }
 
         public static uint GetExtendedCost(uint cost, uint count)

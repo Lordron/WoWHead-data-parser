@@ -1,7 +1,6 @@
-﻿
-namespace WoWHeadParser
+﻿namespace WoWHeadParser
 {
-    public enum Locale
+    public enum Locale : byte
     {
         English,
         Russia,

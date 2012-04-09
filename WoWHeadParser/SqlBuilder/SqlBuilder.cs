@@ -5,11 +5,12 @@ using WoWHeadParser.Properties;
 
 namespace WoWHeadParser
 {
-    public enum SqlQueryType
+    public enum SqlQueryType : byte
     {
         None,
         Update,
         Replace,
+        Insert,
         InsertIgnore,
     }
 
@@ -40,7 +41,7 @@ namespace WoWHeadParser
         /// </summary>
         public static bool AppendDeleteQuery { get; private set; }
 
-        private static List<string> _names = new List<string>(64);
+        private static List<string> _fields = new List<string>(64);
 
         private static List<SqlItem> _items = new List<SqlItem>(64);
 
@@ -73,7 +74,7 @@ namespace WoWHeadParser
         /// </summary>
         public static void Reset()
         {
-            _names.Clear();
+            _fields.Clear();
             _items.Clear();
 
             KeyName = string.Empty;
@@ -91,11 +92,7 @@ namespace WoWHeadParser
 
             for (int i = 0; i < args.Length; ++i)
             {
-                string name = args[i];
-                if (string.IsNullOrWhiteSpace(name))
-                    throw new ArgumentException();
-
-                _names.Add(name);
+                _fields.Add(args[i]);
             }
         }
 
@@ -112,7 +109,7 @@ namespace WoWHeadParser
             if (args == null)
                 throw new ArgumentNullException();
 
-            List<string> values = new List<string>(64);
+            List<string> values = new List<string>(args.Length);
             for (int i = 0; i < args.Length; ++i)
             {
                 values.Add(args[i]);
@@ -131,9 +128,9 @@ namespace WoWHeadParser
                 case SqlQueryType.Update:
                     return BuildUpdateQuery();
                 case SqlQueryType.Replace:
-                    return BuildReplaceInsertQuery();
+                case SqlQueryType.Insert:
                 case SqlQueryType.InsertIgnore:
-                    return BuildReplaceInsertQuery(false);
+                    return BuildReplaceInsertQuery();
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -157,7 +154,7 @@ namespace WoWHeadParser
                         if (string.IsNullOrWhiteSpace(item[j]) && !AllowNullValue)
                             continue;
 
-                        contentInternal.AppendFormat("`{0}` = '{1}', ", _names[j], item[j]);
+                        contentInternal.AppendFormat("`{0}` = '{1}', ", _fields[j], item[j]);
                         notEmpty = true;
                     }
                     contentInternal.Remove(contentInternal.Length - 2, 2);
@@ -172,20 +169,28 @@ namespace WoWHeadParser
             return content.ToString();
         }
 
-        private static string BuildReplaceInsertQuery(bool replace = true)
+        private static string BuildReplaceInsertQuery()
         {
             StringBuilder content = new StringBuilder(1024);
 
             if (AppendDeleteQuery)
                 content.AppendFormat("DELETE FROM `{0}` WHERE `{1}` = '{2}';", TableName, KeyName, (_items.Count > 0 ? _items[0].Key : 0)).AppendLine();
 
-            if (replace)
-                content.AppendFormat("REPLACE INTO `{0}` (`{1}`, ", TableName, KeyName);
-            else
-                content.AppendFormat("INSERT IGNORE INTO `{0}` (`{1}`, ", TableName, KeyName);
+            switch (QueryType)
+            {
+                case SqlQueryType.Insert:
+                    content.AppendFormat("INSERT INTO `{0}` (`{1}`, ", TableName, KeyName);
+                    break;
+                case SqlQueryType.InsertIgnore:
+                    content.AppendFormat("INSERT IGNORE INTO `{0}` (`{1}`, ", TableName, KeyName);
+                    break;
+                case SqlQueryType.Replace:
+                    content.AppendFormat("REPLACE INTO `{0}` (`{1}`, ", TableName, KeyName);
+                    break;
+            }
 
-            for (int i = 0; i < _names.Count; ++i)
-                content.AppendFormat("`{0}`, ", _names[i]);
+            for (int i = 0; i < _fields.Count; ++i)
+                content.AppendFormat("`{0}`, ", _fields[i]);
 
             content.Remove(content.Length - 2, 2);
             content.AppendLine(") VALUES");

@@ -170,7 +170,7 @@ namespace WoWHeadParser
         {
             DateTime now = DateTime.Now;
 
-            if (!_worker.Empty)
+            if (_worker.Count > 0)
             {
                 if (saveDialog.ShowDialog(this) == DialogResult.OK)
                 {
@@ -182,7 +182,7 @@ namespace WoWHeadParser
                         if (!string.IsNullOrEmpty(beforParsing))
                             stream.Write(beforParsing);
 
-                        for (int i = 0; i < _worker.Pages.Count; ++i)
+                        for (int i = 0; i < _worker.Count; ++i)
                         {
                             Block block = _worker.Pages[i];
                             string content = _parser.Parse(block).TrimStart();

@@ -1,6 +1,6 @@
 ﻿namespace WoWHeadParser
 {
-    public enum ParsingType
+    public enum ParsingType : byte
     {
         TypeSingle = 0,
         TypeMultiple = 1,
