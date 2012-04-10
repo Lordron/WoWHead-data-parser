@@ -15,7 +15,13 @@ namespace WoWHeadParser
                 if (type > SqlQueryType.None)
                     sqlQueryTypeBox.Items.Add(type);
             }
-            sqlQueryTypeBox.SelectedItem = ((SqlQueryType)Settings.Default.QueryType);
+            sqlQueryTypeBox.SelectedItem = (SqlQueryType) Settings.Default.QueryType;
+
+            foreach (SortOrder sort in Enum.GetValues(typeof(SortOrder)))
+            {
+                sortDirectionBox.Items.Add(sort);
+            }
+            sortDirectionBox.SelectedItem = (SortOrder) Settings.Default.SortOrder;
         }
 
         private void OkButtonClick(object sender, EventArgs e)
@@ -23,7 +29,7 @@ namespace WoWHeadParser
             Settings.Default.AllowEmptyValues = allowNullValCheckBox.Checked;
             Settings.Default.AppendDeleteQuery = appendDeleteQueryCheckBox.Checked;
             Settings.Default.QueryType = sqlQueryTypeBox.SelectedIndex + 1;
-            Settings.Default.SortDown = sortDescendingButton.Checked;
+            Settings.Default.SortOrder = sortDirectionBox.SelectedIndex;
             Settings.Default.Save();
 
             Close();

@@ -2,6 +2,7 @@
 {
     public enum Locale : byte
     {
+        Old,
         English,
         Russia,
         Germany,

@@ -61,13 +61,13 @@ namespace WoWHeadParser.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool SortDown {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int SortOrder {
             get {
-                return ((bool)(this["SortDown"]));
+                return ((int)(this["SortOrder"]));
             }
             set {
-                this["SortDown"] = value;
+                this["SortOrder"] = value;
             }
         }
     }

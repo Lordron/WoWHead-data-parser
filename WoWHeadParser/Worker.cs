@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading;
+using System.Windows.Forms;
 using WoWHeadParser.Properties;
 
 namespace WoWHeadParser
@@ -112,7 +113,10 @@ namespace WoWHeadParser
                 continue;
             }
 
-            Pages.Sort(new PageItemComparer(Settings.Default.SortDown));
+            SortOrder order = (SortOrder)Settings.Default.SortOrder;
+
+            if (order > SortOrder.None)
+                Pages.Sort(new PageItemComparer(order));
         }
 
         private void RespCallback(IAsyncResult iar)

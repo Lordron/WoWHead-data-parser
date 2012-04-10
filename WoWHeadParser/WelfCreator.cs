@@ -15,6 +15,7 @@ namespace WoWHeadParser
 
         private Dictionary<Locale, string> _locales = new Dictionary<Locale, string>
         {
+            {Locale.Old, "old"},
             {Locale.English, "www"},
             {Locale.Russia, "ru"},
             {Locale.Germany, "de"},

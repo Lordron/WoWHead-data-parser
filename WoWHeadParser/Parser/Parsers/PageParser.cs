@@ -41,14 +41,12 @@ namespace WoWHeadParser
 
                 content.AppendFormat(@"SET @ENTRY := (SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0});", block.Id).AppendLine();
 
-                if (Locale == Locale.English)
+                if (Locale > Locale.English)
                 {
                     for (int i = 0; i < pages.Length; ++i)
                     {
                         string key = (i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i));
-                        string next_page = (i < pages.Length - 1) ? string.Format("@ENTRY + {0}", i + 1) : "0";
-
-                        SqlBuilder.AppendFieldsValue(key, pages[i].HTMLEscapeSumbols(), next_page);
+                        SqlBuilder.AppendFieldsValue(key, pages[i].HTMLEscapeSumbols());
                     }
                 }
                 else
@@ -56,7 +54,9 @@ namespace WoWHeadParser
                     for (int i = 0; i < pages.Length; ++i)
                     {
                         string key = (i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i));
-                        SqlBuilder.AppendFieldsValue(key, pages[i].HTMLEscapeSumbols());
+                        string next_page = (i < pages.Length - 1) ? string.Format("@ENTRY + {0}", i + 1) : "0";
+
+                        SqlBuilder.AppendFieldsValue(key, pages[i].HTMLEscapeSumbols(), next_page);
                     }
                 }
             }

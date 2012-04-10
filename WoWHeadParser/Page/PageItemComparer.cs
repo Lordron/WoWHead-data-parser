@@ -1,22 +1,28 @@
 ﻿using System.Collections.Generic;
+using System.Windows.Forms;
 
 namespace WoWHeadParser
 {
     public struct PageItemComparer : IComparer<PageItem>
     {
-        private bool _sortDown;
+        private SortOrder _order;
 
-        public PageItemComparer(bool sortDown)
+        public PageItemComparer(SortOrder order)
         {
-            _sortDown = sortDown;
+            _order = order;
         }
 
         public int Compare(PageItem x, PageItem y)
         {
-            if (_sortDown)
-                return x.Id.CompareTo(y.Id);
-            else
-                return y.Id.CompareTo(x.Id);
+            switch (_order)
+            {
+                case SortOrder.Ascending:
+                    return x.Id.CompareTo(y.Id);
+                case SortOrder.Descending:
+                    return y.Id.CompareTo(x.Id);
+            }
+
+            return 0;
         }
     }
 }
