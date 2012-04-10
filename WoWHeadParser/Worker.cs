@@ -17,7 +17,7 @@ namespace WoWHeadParser
 
         private object _threadLock = new object();
 
-        public List<Block> Pages { get; private set; }
+        public List<PageItem> Pages { get; private set; }
 
         public int Count { get { return Pages.Count; } }
 
@@ -25,7 +25,7 @@ namespace WoWHeadParser
 
         public Worker()
         {
-            Pages = new List<Block>();
+            Pages = new List<PageItem>();
             _entries = new List<uint>();
             _semaphore = new SemaphoreSlim(SemaphoreCount, SemaphoreCount);
         }
@@ -112,7 +112,7 @@ namespace WoWHeadParser
                 continue;
             }
 
-            Pages.Sort(new BlockComparer(Settings.Default.SortDown));
+            Pages.Sort(new PageItemComparer(Settings.Default.SortDown));
         }
 
         private void RespCallback(IAsyncResult iar)
@@ -131,7 +131,7 @@ namespace WoWHeadParser
             if (!string.IsNullOrWhiteSpace(text))
             {
                 lock(_threadLock)
-                    Pages.Add(new Block(text, request.Id));
+                    Pages.Add(new PageItem(request.Id, text));
             }
 
             request.Dispose();

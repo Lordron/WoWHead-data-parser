@@ -6,7 +6,7 @@
 
         public abstract string BeforParsing();
 
-        public abstract string Parse(Block block);
+        public abstract string Parse(PageItem block);
 
         public abstract string Address { get; }
 

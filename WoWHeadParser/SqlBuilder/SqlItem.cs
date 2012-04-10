@@ -18,7 +18,7 @@ namespace WoWHeadParser
         {
             get
             {
-                if (x >= _values.Count)
+                if (x >= Count)
                     throw new IndexOutOfRangeException();
 
                 return _values[x];

@@ -2,16 +2,16 @@
 
 namespace WoWHeadParser
 {
-    public struct BlockComparer : IComparer<Block>
+    public struct PageItemComparer : IComparer<PageItem>
     {
         private bool _sortDown;
 
-        public BlockComparer(bool sortDown)
+        public PageItemComparer(bool sortDown)
         {
             _sortDown = sortDown;
         }
 
-        public int Compare(Block x, Block y)
+        public int Compare(PageItem x, PageItem y)
         {
             if (_sortDown)
                 return x.Id.CompareTo(y.Id);

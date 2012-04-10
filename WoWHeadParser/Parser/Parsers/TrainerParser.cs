@@ -14,7 +14,7 @@ namespace WoWHeadParser
             {TrainerType.TypeTradeskills, "{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*"},
         };
 
-        public override string Parse(Block block)
+        public override string Parse(PageItem block)
         {
             StringBuilder content = new StringBuilder();
 

@@ -15,7 +15,7 @@ namespace WoWHeadParser
             {Locale.Spain, "Text_loc6"},
         };
 
-        public override string Parse(Block block)
+        public override string Parse(PageItem block)
         {
             StringBuilder content = new StringBuilder();
 

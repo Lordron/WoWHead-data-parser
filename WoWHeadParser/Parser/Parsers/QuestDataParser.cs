@@ -15,7 +15,7 @@ namespace WoWHeadParser
             {Locale.Spain, "loc6"},
         };
 
-        public override string Parse(Block block)
+        public override string Parse(PageItem block)
         {
             string page = block.Page.Substring("\'quests\'");
 
@@ -71,7 +71,7 @@ namespace WoWHeadParser
 
     internal class QuestDataParser : Parser
     {
-        public override string Parse(Block block)
+        public override string Parse(PageItem block)
         {
             string page = block.Page.Substring("\'quests\'");
 

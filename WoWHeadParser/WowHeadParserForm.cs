@@ -184,7 +184,7 @@ namespace WoWHeadParser
 
                         for (int i = 0; i < _worker.Count; ++i)
                         {
-                            Block block = _worker.Pages[i];
+                            PageItem block = _worker.Pages[i];
                             string content = _parser.Parse(block).TrimStart();
                             if (!string.IsNullOrEmpty(content))
                                 stream.Write(content);

@@ -86,8 +86,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Block\Block.cs" />
-    <Compile Include="Block\BlockComparer.cs" />
+    <Compile Include="Page\PageItem.cs" />
+    <Compile Include="Page\PageItemComparer.cs" />
     <Compile Include="DB2Reader\Db2Dictionary.cs" />
     <Compile Include="DB2Reader\Db2Header.cs" />
     <Compile Include="DB2Reader\Db2Loader.cs" />

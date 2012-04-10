@@ -7,7 +7,7 @@ namespace WoWHeadParser
 {
     internal class VendorParser : Parser
     {
-        public override string Parse(Block block)
+        public override string Parse(PageItem block)
         {
             string page = block.Page.Substring("\'sells\'");
 
