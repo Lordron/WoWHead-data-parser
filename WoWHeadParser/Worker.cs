@@ -114,7 +114,6 @@ namespace WoWHeadParser
             }
 
             SortOrder order = (SortOrder)Settings.Default.SortOrder;
-
             if (order > SortOrder.None)
                 Pages.Sort(new PageItemComparer(order));
         }

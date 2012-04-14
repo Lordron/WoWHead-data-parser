@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Text;
 using WoWHeadParser.Properties;
 
@@ -154,7 +155,7 @@ namespace WoWHeadParser
                         if (string.IsNullOrWhiteSpace(item[j]) && !AllowNullValue)
                             continue;
 
-                        contentInternal.AppendFormat("`{0}` = '{1}', ", _fields[j], item[j]);
+                        contentInternal.AppendFormat(NumberFormatInfo.InvariantInfo, "`{0}` = '{1}', ", _fields[j], item[j]);
                         notEmpty = true;
                     }
                     contentInternal.Remove(contentInternal.Length - 2, 2);
@@ -195,8 +196,6 @@ namespace WoWHeadParser
             content.Remove(content.Length - 2, 2);
             content.AppendLine(") VALUES");
 
-            bool notEmpty = false;
-
             for (int i = 0; i < _items.Count; ++i)
             {
                 SqlItem item = _items[i];
@@ -204,16 +203,14 @@ namespace WoWHeadParser
                 content.AppendFormat("('{0}', ", item.Key);
                 for (int j = 0; j < item.Count; ++j)
                 {
-                    content.AppendFormat("'{0}', ", item[j]);
+                    content.AppendFormat(NumberFormatInfo.InvariantInfo, "'{0}', ", item[j]);
                 }
                 content.Remove(content.Length - 2, 2);
                 content.AppendFormat("){0}", i < _items.Count - 1 ? "," : ";").AppendLine();
-
-                notEmpty = true;
             }
 
             Reset();
-            return notEmpty ? content.AppendLine().ToString() : string.Empty;
+            return _items.Count > 0 ? content.AppendLine().ToString() : string.Empty;
         }
     }
 }
