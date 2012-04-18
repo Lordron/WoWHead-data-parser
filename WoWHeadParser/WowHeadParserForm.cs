@@ -11,24 +11,23 @@ namespace WoWHeadParser
 {
     public partial class WoWHeadParserForm : Form
     {
-        private Parser _parser;
         private Worker _worker;
-        private DateTime _startTime;
         private List<uint> _entries;
-
         private List<Parser> _parsers;
 
+        #region Messages
         private Dictionary<MessageType, Message> _message = new Dictionary<MessageType, Message>
         {
             {MessageType.MultipleTypeBigger, new Message(@"Starting value can not be bigger than ending value!")},
             {MessageType.MultipleTypeEqual, new Message(@"Starting value can not be equal ending value!")},
             {MessageType.WelfListEmpty, new Message(@"Entries list is empty!")},
             {MessageType.WelfFileNotFound, new Message(@"File {0} not found!")},
-            {MessageType.PagesListIsEmpty, new Message(@"Downloaded pages list is empty!")},
             {MessageType.AbortQuestion, new Message(@"Do you really want to stop ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
             {MessageType.ExitQuestion, new Message(@"Do you really want to quit WoWHead Parser ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
         };
+        #endregion
 
+        #region Locales
         private Dictionary<Locale, string> _locales = new Dictionary<Locale, string>
         {
             {Locale.Old, "old."},
@@ -39,6 +38,7 @@ namespace WoWHeadParser
             {Locale.Spain, "es."},
             {Locale.Portugal, "pt."},
         };
+        #endregion
 
         public WoWHeadParserForm()
         {
@@ -46,14 +46,11 @@ namespace WoWHeadParser
 
             RichTextBoxWriter.Instance.OutputBox = consoleBox;
 
-            _worker = new Worker();
-            {
-                _worker.PageDownloadingComplete += WorkerPageDownloaded;
-                _worker.RunWorkerCompleted += WorkerRunWorkerCompleted;
-            }
-
             _entries = new List<uint>();
             _parsers = new List<Parser>();
+
+            _worker = new Worker();
+            _worker.PageDownloadingComplete += WorkerPageDownloaded;
 
             new DB2Loader();
         }
@@ -78,26 +75,23 @@ namespace WoWHeadParser
                     localeBox.Items.Add(locale);
             }
 
+            parserBox.SelectedIndex = 0;
             localeBox.SelectedItem = Locale.English;
 
             LoadWelfFiles();
         }
 
-        public void ParserIndexChanged(object sender, EventArgs e)
-        {
-            startButton.Enabled = true;
-
-            _parser = _parsers[parserBox.SelectedIndex];
-        }
-
         public void StartButtonClick(object sender, EventArgs e)
         {
-            _parser.Locale = (Locale)localeBox.SelectedItem;
+            Parser parser = _parsers[parserBox.SelectedIndex];
+            parser.Locale = (Locale)localeBox.SelectedItem;
 
-            string locale = _locales[_parser.Locale];
-            string address = string.Format("http://{0}{1}", locale, _parser.Address);
+            string locale = _locales[parser.Locale];
+            string address = string.Format("http://{0}{1}", locale, parser.Address);
 
             ParsingType type = (ParsingType)parsingControl.SelectedIndex;
+
+            _worker.Parser(parser);
 
             switch (type)
             {
@@ -136,7 +130,7 @@ namespace WoWHeadParser
                     }
                 case ParsingType.TypeWoWHead:
                     {
-                        int maxValue = (_parser.MaxCount / 200);
+                        int maxValue = (parser.MaxCount / 200);
                         _worker.SetValue((uint)maxValue, address);
                         numericUpDown.Maximum = progressBar.Maximum = maxValue + 1;
                         break;
@@ -149,8 +143,6 @@ namespace WoWHeadParser
             settingsBox.Enabled = startButton.Enabled = false;
             numericUpDown.Value = progressBar.Value = 0;
             SetLabelText(@"Downloading...");
-
-            _startTime = DateTime.Now;
 
             backgroundWorker.RunWorkerAsync(type);
         }
@@ -169,34 +161,20 @@ namespace WoWHeadParser
 
         private void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            DateTime now = DateTime.Now;
-
-            if (_worker.Count > 0)
+            if (saveDialog.ShowDialog(this) == DialogResult.OK)
             {
-                if (saveDialog.ShowDialog(this) == DialogResult.OK)
+                using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile(), Encoding.UTF8))
                 {
-                    using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile(), Encoding.UTF8))
-                    {
-                        stream.WriteLine(@"-- Dump of {0} ({1}), Total object count: {2}", now, now - _startTime, _worker.Pages.Count);
-
-                        string beforParsing = _parser.BeforParsing().TrimStart();
-                        if (!string.IsNullOrEmpty(beforParsing))
-                            stream.Write(beforParsing);
-
-                        for (int i = 0; i < _worker.Count; ++i)
-                        {
-                            PageItem block = _worker.Pages[i];
-                            string content = _parser.Parse(block).TrimStart();
-                            if (!string.IsNullOrEmpty(content))
-                                stream.Write(content);
-                        }
-                    }
+                    stream.Write(_worker.ToString());
                 }
             }
-            else
-                ShowMessageBox(MessageType.PagesListIsEmpty);
 
-            _worker.Finish();
+            abortButton.Enabled = false;
+            settingsBox.Enabled = startButton.Enabled = true;
+            numericUpDown.Value = progressBar.Value = 0;
+
+            SetLabelText(@"Finished!");
+            _worker.Reset();
         }
 
         private void AbortButtonClick(object sender, EventArgs e)
@@ -206,15 +184,6 @@ namespace WoWHeadParser
 
             _worker.Stop();
             SetLabelText(@"Aborting...");
-        }
-
-        private void WorkerRunWorkerCompleted()
-        {
-            numericUpDown.Value = progressBar.Value = 0;
-            abortButton.Enabled = false;
-            settingsBox.Enabled = startButton.Enabled = true;
-
-            SetLabelText(@"Finished!");
         }
 
         private void WelfBoxSelectedIndexChanged(object sender, EventArgs e)
@@ -286,6 +255,9 @@ namespace WoWHeadParser
             {
                 welfBox.Items.Add(file.Name);
             }
+
+            if (welfBox.Items.Count > 0)
+                welfBox.SelectedIndex = 0;
         }
 
         private DialogResult ShowMessageBox(MessageType type, params object[] args)

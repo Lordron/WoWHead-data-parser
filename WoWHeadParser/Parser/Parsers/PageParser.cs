@@ -22,16 +22,11 @@ namespace WoWHeadParser
             Regex regex = new Regex(@"new Book\({ parent: '.+', pages: \['(?<page>.+)'\]}\)", RegexOptions.Multiline);
             MatchCollection matches = regex.Matches(block.Page);
 
+            SqlBuilder builder = new SqlBuilder(Locale > Locale.English ? "locales_page_text" : "page_text");
             if (Locale > Locale.English)
-            {
-                SqlBuilder.Initial("locales_page_text");
-                SqlBuilder.SetFieldsName(_tables[Locale]);
-            }
+                builder.SetFieldsName(_tables[Locale]);
             else
-            {
-                SqlBuilder.Initial("page_text");
-                SqlBuilder.SetFieldsName("text", "next_page");
-            }
+                builder.SetFieldsName("text", "next_page");
 
             foreach (Match match in matches)
             {
@@ -46,7 +41,7 @@ namespace WoWHeadParser
                     for (int i = 0; i < pages.Length; ++i)
                     {
                         string key = (i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i));
-                        SqlBuilder.AppendFieldsValue(key, pages[i].HTMLEscapeSumbols());
+                        builder.AppendFieldsValue(key, pages[i].HTMLEscapeSumbols());
                     }
                 }
                 else
@@ -56,12 +51,12 @@ namespace WoWHeadParser
                         string key = (i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i));
                         string next_page = (i < pages.Length - 1) ? string.Format("@ENTRY + {0}", i + 1) : "0";
 
-                        SqlBuilder.AppendFieldsValue(key, pages[i].HTMLEscapeSumbols(), next_page);
+                        builder.AppendFieldsValue(key, pages[i].HTMLEscapeSumbols(), next_page);
                     }
                 }
             }
 
-            content.Append(SqlBuilder.ToString());
+            content.Append(builder.ToString());
             return content.ToString();
         }
 

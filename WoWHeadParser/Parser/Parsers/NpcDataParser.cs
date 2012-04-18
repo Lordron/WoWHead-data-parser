@@ -21,16 +21,12 @@ namespace WoWHeadParser
 
             const string pattern = @"data: \[.*;";
 
+            SqlBuilder builder = new SqlBuilder(Locale > Locale.English ? "locales_creature" : "creature_template");
+
             if (Locale > Locale.English)
-            {
-                SqlBuilder.Initial("locales_creature");
-                SqlBuilder.SetFieldsName(string.Format("name_{0}", _tables[Locale]), string.Format("subname_{0}", _tables[Locale]));
-            }
+                builder.SetFieldsName(string.Format("name_{0}", _tables[Locale]), string.Format("subname_{0}", _tables[Locale]));
             else
-            {
-                SqlBuilder.Initial("creature_template");
-                SqlBuilder.SetFieldsName("name", "subname");
-            }
+                builder.SetFieldsName("name", "subname");
 
             MatchCollection find = Regex.Matches(page, pattern);
             foreach (Match item in find)
@@ -55,11 +51,11 @@ namespace WoWHeadParser
                     if (subNameToken != null)
                         subName = subNameToken.ToString().HTMLEscapeSumbols();
 
-                    SqlBuilder.AppendFieldsValue(id, name, subName);
+                    builder.AppendFieldsValue(id, name, subName);
                 }
             }
 
-            return SqlBuilder.ToString();
+            return builder.ToString();
         }
 
         public override string BeforParsing()
@@ -82,8 +78,8 @@ namespace WoWHeadParser
 
             const string pattern = @"data: \[.*;";
 
-            SqlBuilder.Initial("creature_template");
-            SqlBuilder.SetFieldsName("minlevel", "maxlevel", "type");
+            SqlBuilder builder = new SqlBuilder("creature_template");
+            builder.SetFieldsName("minlevel", "maxlevel", "type");
 
             MatchCollection find = Regex.Matches(page, pattern);
             foreach (Match item in find)
@@ -114,11 +110,11 @@ namespace WoWHeadParser
                     if (maxLevel.Equals("9999"))
                         maxLevel = "@BOSS_LEVEL";
 
-                    SqlBuilder.AppendFieldsValue(id, minLevel, maxLevel, type);
+                    builder.AppendFieldsValue(id, minLevel, maxLevel, type);
                 }
             }
 
-            return SqlBuilder.ToString();
+            return builder.ToString();
         }
 
         public override string BeforParsing()

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using WoWHeadParser.Properties;
@@ -13,22 +14,28 @@ namespace WoWHeadParser
         private uint _end;
         private bool _working;
         private string _address;
+        private DateTime _timeStart;
+        private DateTime _timeEnd;
         private List<uint> _entries;
+        private List<PageItem> _pages;
         private SemaphoreSlim _semaphore;
 
         private object _threadLock = new object();
 
-        public List<PageItem> Pages { get; private set; }
-
-        public int Count { get { return Pages.Count; } }
-
         private const int SemaphoreCount = 10;
+
+        private Parser _parser;
 
         public Worker()
         {
-            Pages = new List<PageItem>();
             _entries = new List<uint>();
+            _pages = new List<PageItem>();
             _semaphore = new SemaphoreSlim(SemaphoreCount, SemaphoreCount);
+        }
+
+        public void Parser(Parser parser)
+        {
+            _parser = parser;
         }
 
         public void SetValue(uint value, string address)
@@ -52,7 +59,11 @@ namespace WoWHeadParser
 
         public void Start(ParsingType type)
         {
+            if (_working)
+                throw new InvalidOperationException();
+
             _working = true;
+            _timeStart = DateTime.Now;
 
             switch (type)
             {
@@ -113,9 +124,11 @@ namespace WoWHeadParser
                 continue;
             }
 
+            _timeEnd = DateTime.Now;
+
             SortOrder order = (SortOrder)Settings.Default.SortOrder;
             if (order > SortOrder.None)
-                Pages.Sort(new PageItemComparer(order));
+                _pages.Sort(new PageItemComparer(order));
         }
 
         private void RespCallback(IAsyncResult iar)
@@ -130,20 +143,23 @@ namespace WoWHeadParser
                 Console.WriteLine("Cannot get response from {0}", request.Uri);
             }
 
-            string text = request.ToString();
-            if (!string.IsNullOrWhiteSpace(text))
+            string page = request.ToString();
             {
-                lock(_threadLock)
-                    Pages.Add(new PageItem(request.Id, text));
+                if (!string.IsNullOrWhiteSpace(page))
+                {
+                    lock (_threadLock)
+                    {
+                        PageItem item = new PageItem(request.Id, page);
+                        item.Page = _parser.Parse(item);
+                        if (!string.IsNullOrEmpty(item.Page))
+                            _pages.Add(item);
+
+                        _semaphore.Release();
+                    }
+                }
             }
 
             request.Dispose();
-
-            lock(_threadLock)
-            {
-                if (_semaphore != null)
-                    _semaphore.Release();
-            }
 
             if (PageDownloadingComplete != null)
                 PageDownloadingComplete();
@@ -151,56 +167,46 @@ namespace WoWHeadParser
 
         public void Stop()
         {
-            if (_working)
-                _working = false;
+            if (!_working)
+                throw new InvalidOperationException();
+
+            _working = false;
         }
 
-        public void Finish()
+        public void Reset()
         {
-            Stop();
-            Pages.Clear();
-
-            if (RunWorkerCompleted != null)
-                RunWorkerCompleted();
-        }
-
-        ~Worker()
-        {
-            Dispose();
+            _working = false;
+            _pages.Clear();
         }
 
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            _semaphore.Dispose();
         }
 
-        protected virtual void Dispose(bool disposing)
+        public override string ToString()
         {
-            if (!disposing)
-                return;
+            StringBuilder content = new StringBuilder(_pages.Count * 4096);
 
-            Stop();
+            content.AppendFormat(@"-- Dump of {0} ({1}), Total object count: {2}", _timeEnd, _timeEnd - _timeStart, _pages.Count).AppendLine();
 
-            Pages.Clear();
-            _semaphore.Dispose();
+            string beforParsing = _parser.BeforParsing().TrimStart();
+            if (!string.IsNullOrEmpty(beforParsing))
+                content.AppendLine(beforParsing);
 
-            Pages = null;
-            _semaphore = null;
+            for (int i = 0; i < _pages.Count; ++i)
+            {
+                content.AppendLine(_pages[i].ToString());
+            }
+
+            return content.ToString();
         }
 
         public delegate void OnPageDownloadingComplete();
-
-        public delegate void OnRunWorkerCompleted();
 
         /// <summary>
         /// Occurs when a page is downloaded.
         /// </summary>
         public event OnPageDownloadingComplete PageDownloadingComplete;
-
-        /// <summary>
-        /// Occurs when the working is completed or has been canceled
-        /// </summary>
-        public event OnRunWorkerCompleted RunWorkerCompleted;
     }
 }

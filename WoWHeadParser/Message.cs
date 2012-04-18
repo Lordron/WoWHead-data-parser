@@ -11,7 +11,6 @@ namespace WoWHeadParser
         ExitQuestion,
         WelfListEmpty,
         WelfFileNotFound,
-        PagesListIsEmpty,
         Max,
     }
 

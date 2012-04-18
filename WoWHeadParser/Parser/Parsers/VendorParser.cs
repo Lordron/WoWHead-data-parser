@@ -16,8 +16,8 @@ namespace WoWHeadParser
             char[] anyOf = new[] {'[', ']', '{', '}'};
             string[] subPatterns = new[] {@"\[(\d+),(\d+)\]", @"\[\[(\d+),(\d+)\]\]"};
 
-            SqlBuilder.Initial("npc_vendor");
-            SqlBuilder.SetFieldsName("item", "maxcount", "incrtime", "ExtendedCost");
+            SqlBuilder builder = new SqlBuilder("npc_vendor");
+            builder.SetFieldsName("item", "maxcount", "incrtime", "ExtendedCost");
 
             MatchCollection find = Regex.Matches(page, pattern);
 
@@ -85,11 +85,11 @@ namespace WoWHeadParser
                     else
                         extendedCostEntry = 9999999;
 
-                    SqlBuilder.AppendFieldsValue(block.Id, id, maxcount, incrTime, (extendedCostEntry != 9999999) ? extendedCostEntry.ToString() : "@UNK_COST");
+                    builder.AppendFieldsValue(block.Id, id, maxcount, incrTime, (extendedCostEntry != 9999999) ? extendedCostEntry.ToString() : "@UNK_COST");
                 }
             }
 
-            return SqlBuilder.ToString();
+            return builder.ToString();
         }
 
         public override string BeforParsing()

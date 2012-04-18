@@ -7,9 +7,9 @@ namespace WoWHeadParser
     public class Requests : IDisposable
     {
         public Uri Uri { get; private set; }
-        public HttpWebRequest Request { get; set; }
+        public HttpWebRequest Request { get; private set; }
         public HttpWebResponse Response { get; set; }
-        public uint Id { get; set; }
+        public uint Id { get; private set; }
 
         public Requests(string address, uint id)
         {
@@ -39,27 +39,10 @@ namespace WoWHeadParser
             return string.Empty;
         }
 
-        ~Requests()
-        {
-            Dispose();
-        }
-
         public void Dispose()
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (Request != null)
-                    Request.Abort();
-
-                if (Response != null)
-                    Response.Close();
-            }
+            Request.Abort();
+            Response.Close();
         }
     }
 }

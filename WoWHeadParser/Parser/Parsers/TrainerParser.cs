@@ -65,8 +65,8 @@ namespace WoWHeadParser
             if (find.Count > 0)
                 content.AppendFormat(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | '{0}', `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcflag, (int)type, block.Id).AppendLine();
 
-            SqlBuilder.Initial("npc_trainer");
-            SqlBuilder.SetFieldsName("spell", "spellcost", "reqlevel", "reqSkill", "reqSkillValue");
+            SqlBuilder builder = new SqlBuilder("npc_trainer");
+            builder.SetFieldsName("spell", "spellcost", "reqlevel", "reqSkill", "reqSkillValue");
 
             foreach (Match item in find)
             {
@@ -83,20 +83,20 @@ namespace WoWHeadParser
                             {
                                 string reqSkill = (string.IsNullOrEmpty(groups[4].Value) ? "0" : groups[4].Value);
                                 string reqSkillValue = (string.IsNullOrEmpty(groups[2].Value) ? "0" : groups[2].Value);
-                                SqlBuilder.AppendFieldsValue(block.Id, groups[1].Value, spellCost, groups[3].Value, reqSkill, reqSkillValue);
+                                builder.AppendFieldsValue(block.Id, groups[1].Value, spellCost, groups[3].Value, reqSkill, reqSkillValue);
                             }
                             break;
                         case TrainerType.TypeClass:
                             {
                                 string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? "0" : groups[3].Value);
-                                SqlBuilder.AppendFieldsValue(block.Id, groups[1].Value, spellCost, groups[2].Value, reqSkill, "0");
+                                builder.AppendFieldsValue(block.Id, groups[1].Value, spellCost, groups[2].Value, reqSkill, "0");
                             }
                             break;
                     }
                 }
             }
 
-            content.Append(SqlBuilder.ToString());
+            content.Append(builder.ToString());
             return content.AppendLine().ToString();
         }
 

@@ -15,43 +15,38 @@ namespace WoWHeadParser
         InsertIgnore,
     }
 
-    public static class SqlBuilder
+    public class SqlBuilder
     {
         /// <summary>
         /// Gets a sql query type
         /// </summary>
-        public static SqlQueryType QueryType { get; private set; }
-
-        /// <summary>
-        /// Gets a table name
-        /// </summary>
-        public static string TableName { get; private set; }
-
-        /// <summary>
-        /// Gets a key name
-        /// </summary>
-        public static string KeyName { get; private set; }
+        public SqlQueryType QueryType { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether to allow null values
         /// </summary>
-        public static bool AllowNullValue { get; private set; }
+        public bool AllowNullValue { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether to allow append delete query
         /// </summary>
-        public static bool AppendDeleteQuery { get; private set; }
+        public bool AppendDeleteQuery { get; private set; }
 
-        private static List<string> _fields = new List<string>(64);
 
-        private static List<SqlItem> _items = new List<SqlItem>(64);
+        private string TableName = string.Empty;
+
+        private string KeyName = string.Empty;
+
+        private List<string> _fields = new List<string>(64);
+
+        private List<SqlItem> _items = new List<SqlItem>(64);
 
         /// <summary>
         /// Initial Sql builder
         /// </summary>
         /// <param name="tableName">Table name (like creature_template, creature etc.)</param>
         /// <param name="keyName">Key name (like entry, id, guid etc.)</param>
-        public static void Initial(string tableName, string keyName = "entry")
+        public SqlBuilder(string tableName, string keyName = "entry")
         {
             if (string.IsNullOrWhiteSpace(tableName))
                 throw new ArgumentNullException();
@@ -71,22 +66,10 @@ namespace WoWHeadParser
         }
 
         /// <summary>
-        /// Reset Sql builder datas
-        /// </summary>
-        public static void Reset()
-        {
-            _fields.Clear();
-            _items.Clear();
-
-            KeyName = string.Empty;
-            TableName = string.Empty;
-        }
-
-        /// <summary>
         /// Append fields name
         /// </summary>
         /// <param name="args">fields name array</param>
-        public static void SetFieldsName(params string[] args)
+        public void SetFieldsName(params string[] args)
         {
             if (args == null)
                 throw new ArgumentNullException();
@@ -102,7 +85,7 @@ namespace WoWHeadParser
         /// </summary>
         /// <param name="key">key value</param>
         /// <param name="args">fields value array</param>
-        public static void AppendFieldsValue(object key, params string[] args)
+        public void AppendFieldsValue(object key, params string[] args)
         {
             if (key == null)
                 throw new ArgumentNullException();
@@ -122,7 +105,7 @@ namespace WoWHeadParser
         /// <summary>
         /// Build sql query
         /// </summary>
-        public static string ToString()
+        public override string ToString()
         {
             switch (QueryType)
             {
@@ -137,7 +120,7 @@ namespace WoWHeadParser
             }
         }
 
-        private static string BuildUpdateQuery()
+        private string BuildUpdateQuery()
         {
             StringBuilder content = new StringBuilder(1024 * _items.Count);
 
@@ -166,11 +149,10 @@ namespace WoWHeadParser
                 }
             }
 
-            Reset();
             return content.ToString();
         }
 
-        private static string BuildReplaceInsertQuery()
+        private string BuildReplaceInsertQuery()
         {
             StringBuilder content = new StringBuilder(1024);
 
@@ -209,7 +191,6 @@ namespace WoWHeadParser
                 content.AppendFormat("){0}", i < _items.Count - 1 ? "," : ";").AppendLine();
             }
 
-            Reset();
             return _items.Count > 0 ? content.AppendLine().ToString() : string.Empty;
         }
     }

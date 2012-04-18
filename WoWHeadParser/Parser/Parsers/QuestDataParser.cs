@@ -21,15 +21,16 @@ namespace WoWHeadParser
 
             const string pattern = @"data: \[.*;";
 
+            SqlBuilder builder;
             if (Locale > Locale.English)
             {
-                SqlBuilder.Initial("locales_quest");
-                SqlBuilder.SetFieldsName(string.Format("title_{0}", _tables[Locale]));
+                builder = new SqlBuilder("locales_quest");
+                builder.SetFieldsName(string.Format("title_{0}", _tables[Locale]));
             }
             else
             {
-                SqlBuilder.Initial("quest_template", "id");
-                SqlBuilder.SetFieldsName("title");
+                builder = new SqlBuilder("quest_template", "id");
+                builder.SetFieldsName("title");
             }
 
             MatchCollection find = Regex.Matches(page, pattern);
@@ -50,11 +51,11 @@ namespace WoWHeadParser
                     if (nameToken != null)
                         name = nameToken.ToString().HTMLEscapeSumbols();
 
-                    SqlBuilder.AppendFieldsValue(id, name);
+                    builder.AppendFieldsValue(id, name);
                 }
             }
 
-            return SqlBuilder.ToString();
+            return builder.ToString();
         }
 
         public override string BeforParsing()
@@ -77,8 +78,8 @@ namespace WoWHeadParser
 
             const string pattern = @"data: \[.*;";
 
-            SqlBuilder.Initial("quest_template", "id");
-            SqlBuilder.SetFieldsName("level", "minlevel", "zoneOrSort", "RewardOrRequiredMoney");
+            SqlBuilder builder = new SqlBuilder("quest_template", "id");
+            builder.SetFieldsName("level", "minlevel", "zoneOrSort", "RewardOrRequiredMoney");
 
             MatchCollection find = Regex.Matches(page, pattern);
             foreach (Match item in find)
@@ -114,11 +115,11 @@ namespace WoWHeadParser
                     if (moneyToken != null)
                         money = moneyToken.ToString();
 
-                    SqlBuilder.AppendFieldsValue(id, level, minLevel, zoneOrSort, money);
+                    builder.AppendFieldsValue(id, level, minLevel, zoneOrSort, money);
                 }
             }
 
-            return SqlBuilder.ToString();
+            return builder.ToString();
         }
 
         public override string BeforParsing()
