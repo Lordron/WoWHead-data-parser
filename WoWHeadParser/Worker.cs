@@ -147,16 +147,17 @@ namespace WoWHeadParser
             {
                 if (!string.IsNullOrWhiteSpace(page))
                 {
+                    PageItem item = new PageItem(request.Id, page);
                     lock (_threadLock)
                     {
-                        PageItem item = new PageItem(request.Id, page);
                         item.Page = _parser.Parse(item);
                         if (!string.IsNullOrEmpty(item.Page))
                             _pages.Add(item);
-
-                        _semaphore.Release();
                     }
                 }
+
+                lock (_threadLock)
+                    _semaphore.Release();
             }
 
             request.Dispose();
@@ -186,13 +187,14 @@ namespace WoWHeadParser
 
         public override string ToString()
         {
+
             StringBuilder content = new StringBuilder(_pages.Count * 4096);
 
             content.AppendFormat(@"-- Dump of {0} ({1}), Total object count: {2}", _timeEnd, _timeEnd - _timeStart, _pages.Count).AppendLine();
 
             string beforParsing = _parser.BeforParsing().TrimStart();
             if (!string.IsNullOrEmpty(beforParsing))
-                content.AppendLine(beforParsing);
+                content.Append(beforParsing);
 
             for (int i = 0; i < _pages.Count; ++i)
             {

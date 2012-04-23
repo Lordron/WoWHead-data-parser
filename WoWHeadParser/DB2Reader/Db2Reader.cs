@@ -17,7 +17,7 @@ namespace WoWHeadParser
             string path = Path.Combine(Application.StartupPath, "db2", fileName);
 
             if (!File.Exists(path))
-                return new Dictionary<uint, T>();
+                return dict;
 
             using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
             using (BinaryReader reader = new BinaryReader(stream, Encoding.UTF8))
@@ -28,13 +28,13 @@ namespace WoWHeadParser
                 if (!header.IsDb2)
                 {
                     Console.WriteLine("{0} is not db2 file, skip", fileName);
-                    return new Dictionary<uint, T>();
+                    return dict;
                 }
 
                 if (header.RecordSize != size)
                 {
                     Console.WriteLine("File {0}, size of row in db2 file != size of struct ({1}, {2}), skip", fileName, header.RecordSize, size);
-                    return new Dictionary<uint, T>();
+                    return dict;
                 }
 
                 // WDB2 specific fields

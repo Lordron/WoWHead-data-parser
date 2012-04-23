@@ -173,8 +173,9 @@ namespace WoWHeadParser
             settingsBox.Enabled = startButton.Enabled = true;
             numericUpDown.Value = progressBar.Value = 0;
 
-            SetLabelText(@"Finished!");
             _worker.Reset();
+
+            SetLabelText(@"Finished!");
         }
 
         private void AbortButtonClick(object sender, EventArgs e)
