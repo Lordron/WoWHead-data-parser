@@ -32,7 +32,6 @@ namespace WoWHeadParser
         /// </summary>
         public bool AppendDeleteQuery { get; private set; }
 
-
         private string TableName = string.Empty;
 
         private string KeyName = string.Empty;
@@ -40,6 +39,8 @@ namespace WoWHeadParser
         private List<string> _fields = new List<string>(64);
 
         private List<SqlItem> _items = new List<SqlItem>(64);
+
+        private StringBuilder _content = new StringBuilder(8196);
 
         /// <summary>
         /// Initial Sql builder
@@ -87,10 +88,7 @@ namespace WoWHeadParser
         /// <param name="args">fields value array</param>
         public void AppendFieldsValue(object key, params string[] args)
         {
-            if (key == null)
-                throw new ArgumentNullException();
-
-            if (args == null)
+            if (key == null || args == null)
                 throw new ArgumentNullException();
 
             List<string> values = new List<string>(args.Length);
@@ -100,6 +98,18 @@ namespace WoWHeadParser
             }
 
             _items.Add(new SqlItem(key, values));
+        }
+
+        /// <summary>
+        /// Append sql query
+        /// </summary>
+        /// <param name="query"></param>
+        public void AppendSqlQuery(string query)
+        {
+            if (string.IsNullOrWhiteSpace(query))
+                throw new ArgumentNullException();
+
+            _content.AppendLine(query);
         }
 
         /// <summary>
@@ -122,7 +132,7 @@ namespace WoWHeadParser
 
         private string BuildUpdateQuery()
         {
-            StringBuilder content = new StringBuilder(1024 * _items.Count);
+            _content.Capacity = 1024 * _items.Count;
 
             for (int i = 0; i < _items.Count; ++i)
             {
@@ -135,7 +145,7 @@ namespace WoWHeadParser
                     contentInternal.AppendFormat("UPDATE `{0}` SET ", TableName);
                     for (int j = 0; j < item.Count; ++j)
                     {
-                        if (string.IsNullOrWhiteSpace(item[j]) && !AllowNullValue)
+                        if (!AllowNullValue && string.IsNullOrWhiteSpace(item[j]))
                             continue;
 
                         contentInternal.AppendFormat(NumberFormatInfo.InvariantInfo, "`{0}` = '{1}', ", _fields[j], item[j]);
@@ -145,53 +155,51 @@ namespace WoWHeadParser
                     contentInternal.AppendFormat(" WHERE `{0}` = {1};", KeyName, item.Key).AppendLine();
 
                     if (notEmpty)
-                        content.Append(contentInternal.ToString());
+                        _content.Append(contentInternal.ToString());
                 }
             }
 
-            return content.ToString();
+            return _content.ToString();
         }
 
         private string BuildReplaceInsertQuery()
         {
-            StringBuilder content = new StringBuilder(1024);
-
             if (AppendDeleteQuery)
-                content.AppendFormat("DELETE FROM `{0}` WHERE `{1}` = '{2}';", TableName, KeyName, (_items.Count > 0 ? _items[0].Key : 0)).AppendLine();
+                _content.AppendFormat("DELETE FROM `{0}` WHERE `{1}` = '{2}';", TableName, KeyName, (_items.Count > 0 ? _items[0].Key : 0)).AppendLine();
 
             switch (QueryType)
             {
                 case SqlQueryType.Insert:
-                    content.AppendFormat("INSERT INTO `{0}` (`{1}`, ", TableName, KeyName);
+                    _content.AppendFormat("INSERT INTO `{0}` (`{1}`, ", TableName, KeyName);
                     break;
                 case SqlQueryType.InsertIgnore:
-                    content.AppendFormat("INSERT IGNORE INTO `{0}` (`{1}`, ", TableName, KeyName);
+                    _content.AppendFormat("INSERT IGNORE INTO `{0}` (`{1}`, ", TableName, KeyName);
                     break;
                 case SqlQueryType.Replace:
-                    content.AppendFormat("REPLACE INTO `{0}` (`{1}`, ", TableName, KeyName);
+                    _content.AppendFormat("REPLACE INTO `{0}` (`{1}`, ", TableName, KeyName);
                     break;
             }
 
             for (int i = 0; i < _fields.Count; ++i)
-                content.AppendFormat("`{0}`, ", _fields[i]);
+                _content.AppendFormat("`{0}`, ", _fields[i]);
 
-            content.Remove(content.Length - 2, 2);
-            content.AppendLine(") VALUES");
+            _content.Remove(_content.Length - 2, 2);
+            _content.AppendLine(") VALUES");
 
             for (int i = 0; i < _items.Count; ++i)
             {
                 SqlItem item = _items[i];
 
-                content.AppendFormat("('{0}', ", item.Key);
+                _content.AppendFormat("('{0}', ", item.Key);
                 for (int j = 0; j < item.Count; ++j)
                 {
-                    content.AppendFormat(NumberFormatInfo.InvariantInfo, "'{0}', ", item[j]);
+                    _content.AppendFormat(NumberFormatInfo.InvariantInfo, "'{0}', ", item[j]);
                 }
-                content.Remove(content.Length - 2, 2);
-                content.AppendFormat("){0}", i < _items.Count - 1 ? "," : ";").AppendLine();
+                _content.Remove(_content.Length - 2, 2);
+                _content.AppendFormat("){0}", i < _items.Count - 1 ? "," : ";").AppendLine();
             }
 
-            return _items.Count > 0 ? content.AppendLine().ToString() : string.Empty;
+            return _items.Count > 0 ? _content.ToString() : string.Empty;
         }
     }
 }

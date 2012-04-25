@@ -13,18 +13,31 @@ namespace WoWHeadParser
         private uint _start;
         private uint _end;
         private bool _working;
-        private string _address;
+        private Uri _address;
+        private Parser _parser;
         private DateTime _timeStart;
         private DateTime _timeEnd;
+        private ParsingType _type;
         private List<uint> _entries;
         private List<PageItem> _pages;
         private SemaphoreSlim _semaphore;
 
         private object _threadLock = new object();
 
-        private const int SemaphoreCount = 10;
+        private const int SemaphoreCount = 100;
 
-        private Parser _parser;
+        #region Locales
+        private Dictionary<Locale, string> _locales = new Dictionary<Locale, string>
+        {
+            {Locale.Old, "old."},
+            {Locale.English, "www."},
+            {Locale.Russia, "ru."},
+            {Locale.Germany, "de."},
+            {Locale.France, "fr."},
+            {Locale.Spain, "es."},
+            {Locale.Portugal, "pt."},
+        };
+        #endregion
 
         public Worker()
         {
@@ -36,25 +49,23 @@ namespace WoWHeadParser
         public void Parser(Parser parser)
         {
             _parser = parser;
+            _address = new Uri(string.Format("http://{0}{1}", _locales[parser.Locale], parser.Address));
         }
 
-        public void SetValue(uint value, string address)
+        public void SetValue(uint value)
         {
             _start = value;
-            _address = address;
         }
 
-        public void SetValue(uint start, uint end, string address)
+        public void SetValue(uint start, uint end)
         {
             _end = end;
             _start = start;
-            _address = address;
         }
 
-        public void SetValue(List<uint> entries, string address)
+        public void SetValue(List<uint> entries)
         {
             _entries = entries;
-            _address = address;
         }
 
         public void Start(ParsingType type)
@@ -62,8 +73,15 @@ namespace WoWHeadParser
             if (_working)
                 throw new InvalidOperationException();
 
+            _type = type;
             _working = true;
             _timeStart = DateTime.Now;
+
+            ServicePoint servicePoint = ServicePointManager.FindServicePoint(_address);
+            {
+                servicePoint.ConnectionLimit = 1000;
+                servicePoint.SetTcpKeepAlive(true, 100000, 100000);
+            }
 
             switch (type)
             {
@@ -140,7 +158,8 @@ namespace WoWHeadParser
             }
             catch
             {
-                Console.WriteLine("Cannot get response from {0}", request.Uri);
+                if (_type != ParsingType.TypeMultiple)
+                    Console.WriteLine("Cannot get response from {0}", request.Uri);
             }
 
             string page = request.ToString();
@@ -187,7 +206,6 @@ namespace WoWHeadParser
 
         public override string ToString()
         {
-
             StringBuilder content = new StringBuilder(_pages.Count * 4096);
 
             content.AppendFormat(@"-- Dump of {0} ({1}), Total object count: {2}", _timeEnd, _timeEnd - _timeStart, _pages.Count).AppendLine();

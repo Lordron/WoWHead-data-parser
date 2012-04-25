@@ -27,19 +27,6 @@ namespace WoWHeadParser
         };
         #endregion
 
-        #region Locales
-        private Dictionary<Locale, string> _locales = new Dictionary<Locale, string>
-        {
-            {Locale.Old, "old."},
-            {Locale.English, "www."},
-            {Locale.Russia, "ru."},
-            {Locale.Germany, "de."},
-            {Locale.France, "fr."},
-            {Locale.Spain, "es."},
-            {Locale.Portugal, "pt."},
-        };
-        #endregion
-
         public WoWHeadParserForm()
         {
             InitializeComponent();
@@ -86,25 +73,22 @@ namespace WoWHeadParser
             Parser parser = _parsers[parserBox.SelectedIndex];
             parser.Locale = (Locale)localeBox.SelectedItem;
 
-            string locale = _locales[parser.Locale];
-            string address = string.Format("http://{0}{1}", locale, parser.Address);
+            _worker.Parser(parser);
 
             ParsingType type = (ParsingType)parsingControl.SelectedIndex;
-
-            _worker.Parser(parser);
 
             switch (type)
             {
                 case ParsingType.TypeSingle:
                     {
                         uint value = (uint)valueBox.Value;
-                        _worker.SetValue(value, address);
+                        _worker.SetValue(value);
                         break;
                     }
                 case ParsingType.TypeList:
                     {
                         numericUpDown.Maximum = progressBar.Maximum = _entries.Count;
-                        _worker.SetValue(_entries, address);
+                        _worker.SetValue(_entries);
                         break;
                     }
                 case ParsingType.TypeMultiple:
@@ -125,14 +109,14 @@ namespace WoWHeadParser
                         }
 
                         numericUpDown.Maximum = progressBar.Maximum = (int)(endValue - startValue) + 1;
-                        _worker.SetValue(startValue, endValue, address);
+                        _worker.SetValue(startValue, endValue);
                         break;
                     }
                 case ParsingType.TypeWoWHead:
                     {
                         int maxValue = (parser.MaxCount / 200);
-                        _worker.SetValue((uint)maxValue, address);
                         numericUpDown.Maximum = progressBar.Maximum = maxValue + 1;
+                        _worker.SetValue((uint)maxValue);
                         break;
                     }
                 default:
@@ -227,7 +211,7 @@ namespace WoWHeadParser
 
         private void ReloadWelfFilesMenuClick(object sender, EventArgs e)
         {
-            LoadWelfFiles();
+            this.ThreadSafeBegin(x => LoadWelfFiles());
         }
 
         private void ExitMenuClick(object sender, EventArgs e)

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -16,9 +15,6 @@ namespace WoWHeadParser
 
         public override string Parse(PageItem block)
         {
-            StringBuilder content = new StringBuilder();
-
-            //string bpage = item.Page;
             string page = block.Page;
 
             int npcflag = 0x10;
@@ -52,21 +48,21 @@ namespace WoWHeadParser
             }
 
             if (type == TrainerType.TypeNone)
-            {
-                Console.WriteLine("-- Unsupported trainer type, Id {0}", block.Id);
                 return string.Empty;
-            }
 
             const string pattern = @"data: \[.*;";
             string subPattern = _patterns[type];
 
             MatchCollection find = Regex.Matches(page, pattern);
-
-            if (find.Count > 0)
-                content.AppendFormat(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | '{0}', `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcflag, (int)type, block.Id).AppendLine();
-
+            
             SqlBuilder builder = new SqlBuilder("npc_trainer");
             builder.SetFieldsName("spell", "spellcost", "reqlevel", "reqSkill", "reqSkillValue");
+
+            if (find.Count > 0)
+            {
+                string query = string.Format(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | '{0}', `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcflag, (int)type, block.Id);
+                builder.AppendSqlQuery(query);
+            }
 
             foreach (Match item in find)
             {
@@ -96,8 +92,7 @@ namespace WoWHeadParser
                 }
             }
 
-            content.Append(builder.ToString());
-            return content.AppendLine().ToString();
+            return builder.ToString();
         }
 
         public override string BeforParsing()

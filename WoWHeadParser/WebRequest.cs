@@ -12,7 +12,7 @@ namespace WoWHeadParser
         public HttpWebResponse Response { get; set; }
         public uint Id { get; private set; }
 
-        public Requests(string address, uint id)
+        public Requests(Uri address, uint id)
         {
             Uri = new Uri(string.Format("{0}{1}", address, id));
             Id = id;
@@ -24,7 +24,7 @@ namespace WoWHeadParser
             Request.KeepAlive = true;
         }
 
-        public Requests(string address, uint ids, uint ide)
+        public Requests(Uri address, uint ids, uint ide)
         {
             Uri = new Uri(string.Format("{0}crv={1}:{2}", address, ids, ide));
             Id = ids;
@@ -38,8 +38,10 @@ namespace WoWHeadParser
 
         public void Dispose()
         {
-            Request.Abort();
-            Response.Close();
+            if (Request != null)
+                Request.Abort();
+            if (Response != null)
+                Response.Close();
         }
 
         public override string ToString()

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace WoWHeadParser
@@ -17,8 +16,6 @@ namespace WoWHeadParser
 
         public override string Parse(PageItem block)
         {
-            StringBuilder content = new StringBuilder();
-
             Regex regex = new Regex(@"new Book\({ parent: '.+', pages: \['(?<page>.+)'\]}\)", RegexOptions.Multiline);
             MatchCollection matches = regex.Matches(block.Page);
 
@@ -34,7 +31,8 @@ namespace WoWHeadParser
                 string typeStr = groups["page"].Value ?? string.Empty;
                 string[] pages = typeStr.Split(new[] {@"','"}, StringSplitOptions.RemoveEmptyEntries);
 
-                content.AppendFormat(@"SET @ENTRY := (SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0});", block.Id).AppendLine();
+                string query = string.Format(@"SET @ENTRY := (SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0});", block.Id);
+                builder.AppendSqlQuery(query);
 
                 if (Locale > Locale.English)
                 {
@@ -56,8 +54,7 @@ namespace WoWHeadParser
                 }
             }
 
-            content.Append(builder.ToString());
-            return content.ToString();
+            return builder.ToString();
         }
 
         public override string BeforParsing()
