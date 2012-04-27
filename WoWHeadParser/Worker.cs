@@ -12,7 +12,7 @@ namespace WoWHeadParser
     {
         private uint _start;
         private uint _end;
-        private bool _working;
+        private bool _isWorking;
         private Uri _address;
         private Parser _parser;
         private DateTime _timeStart;
@@ -69,10 +69,10 @@ namespace WoWHeadParser
 
         public void Start(ParsingType type)
         {
-            if (_working)
+            if (_isWorking)
                 throw new InvalidOperationException();
 
-            _working = true;
+            _isWorking = true;
             _timeStart = DateTime.Now;
 
             ServicePoint servicePoint = ServicePointManager.FindServicePoint(_address);
@@ -95,7 +95,7 @@ namespace WoWHeadParser
                     {
                         for (uint entry = _start; entry <= _end; ++entry)
                         {
-                            if (!_working)
+                            if (!_isWorking)
                                 break;
 
                             _semaphore.Wait();
@@ -109,7 +109,7 @@ namespace WoWHeadParser
                     {
                         for (int i = 0; i < _entries.Count; ++i)
                         {
-                            if (!_working)
+                            if (!_isWorking)
                                 break;
 
                             _semaphore.Wait();
@@ -123,7 +123,7 @@ namespace WoWHeadParser
                     {
                         for (uint entry = 0; entry <= _start; ++entry)
                         {
-                            if (!_working)
+                            if (!_isWorking)
                                 break;
 
                             _semaphore.Wait();
@@ -153,8 +153,7 @@ namespace WoWHeadParser
             bool ok = request.EndGetResponse(iar);
             if (ok)
             {
-                string page = request.ToString();
-                PageItem item = new PageItem(request.Id, page);
+                PageItem item = new PageItem(request);
                 lock (_threadLock)
                 {
                     item.Page = _parser.Parse(item);
@@ -173,15 +172,15 @@ namespace WoWHeadParser
 
         public void Stop()
         {
-            if (!_working)
+            if (!_isWorking)
                 throw new InvalidOperationException();
 
-            _working = false;
+            _isWorking = false;
         }
 
         public void Reset()
         {
-            _working = false;
+            _isWorking = false;
             _pages.Clear();
         }
 

@@ -13,6 +13,11 @@
         {
         }
 
+        public PageItem(Requests requests)
+            : this(requests.Id, requests.ToString())
+        {
+        }
+
         public string Page { get; set; }
 
         public uint Id { get; private set; }
