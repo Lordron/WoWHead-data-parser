@@ -36,6 +36,20 @@ namespace WoWHeadParser
             Request.KeepAlive = true;
         }
 
+        public bool EndGetResponse(IAsyncResult asyncResult)
+        {
+            try
+            {
+                Response = (HttpWebResponse)Request.EndGetResponse(asyncResult);
+                return true;
+            }
+            catch
+            {
+                Console.WriteLine("Cannot get response from {0}", Uri);
+                return false;
+            }
+        }
+
         public void Dispose()
         {
             if (Request != null)

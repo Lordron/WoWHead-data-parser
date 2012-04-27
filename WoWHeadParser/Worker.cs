@@ -17,7 +17,6 @@ namespace WoWHeadParser
         private Parser _parser;
         private DateTime _timeStart;
         private DateTime _timeEnd;
-        private ParsingType _type;
         private List<uint> _entries;
         private List<PageItem> _pages;
         private SemaphoreSlim _semaphore;
@@ -73,7 +72,6 @@ namespace WoWHeadParser
             if (_working)
                 throw new InvalidOperationException();
 
-            _type = type;
             _working = true;
             _timeStart = DateTime.Now;
 
@@ -152,31 +150,19 @@ namespace WoWHeadParser
         private void RespCallback(IAsyncResult iar)
         {
             Requests request = (Requests)iar.AsyncState;
-            try
+            bool ok = request.EndGetResponse(iar);
+            if (ok)
             {
-                request.Response = (HttpWebResponse)request.Request.EndGetResponse(iar);
-            }
-            catch
-            {
-                if (_type != ParsingType.TypeMultiple)
-                    Console.WriteLine("Cannot get response from {0}", request.Uri);
-            }
-
-            string page = request.ToString();
-            {
-                if (!string.IsNullOrWhiteSpace(page))
-                {
-                    PageItem item = new PageItem(request.Id, page);
-                    lock (_threadLock)
-                    {
-                        item.Page = _parser.Parse(item);
-                        if (!string.IsNullOrEmpty(item.Page))
-                            _pages.Add(item);
-                    }
-                }
-
+                string page = request.ToString();
+                PageItem item = new PageItem(request.Id, page);
                 lock (_threadLock)
+                {
+                    item.Page = _parser.Parse(item);
+                    if (!string.IsNullOrEmpty(item.Page))
+                        _pages.Add(item);
+
                     _semaphore.Release();
+                }
             }
 
             request.Dispose();
