@@ -47,14 +47,8 @@ namespace WoWHeadParser
         /// </summary>
         /// <param name="tableName">Table name (like creature_template, creature etc.)</param>
         /// <param name="keyName">Key name (like entry, id, guid etc.)</param>
-        public SqlBuilder(string tableName, string keyName = "entry")
+        public SqlBuilder(string tableName, string keyName)
         {
-            if (string.IsNullOrWhiteSpace(tableName))
-                throw new ArgumentNullException();
-
-            if (string.IsNullOrWhiteSpace(keyName))
-                throw new ArgumentNullException();
-
             TableName = tableName;
             KeyName = keyName;
 
@@ -64,6 +58,14 @@ namespace WoWHeadParser
 
             if (QueryType == SqlQueryType.None)
                 throw new ArgumentOutOfRangeException();
+        }
+
+        /// <summary>
+        /// Initial Sql builder
+        /// </summary>
+        public SqlBuilder(string tableName)
+            : this(tableName, "entry")
+        {
         }
 
         /// <summary>

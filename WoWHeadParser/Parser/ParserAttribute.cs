@@ -5,16 +5,16 @@ namespace WoWHeadParser
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class ParserAttribute : Attribute
     {
-        public ParserAttribute(string name, int max = 0)
+        public ParserAttribute(string name, string address)
         {
             Name = name;
-            MaxValue = max;
+            Address = address;
         }
 
-        internal string Name { get; private set; }
+        public string Name { get; private set; }
 
-        internal int MaxValue { get; private set; }
+        public string Address { get; private set; }
 
-        internal Parser Parser { get; set; }
+        public Parser Parser { get; set; }
     }
 }

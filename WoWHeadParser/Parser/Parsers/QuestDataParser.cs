@@ -34,22 +34,19 @@ namespace WoWHeadParser
             }
 
             MatchCollection find = Regex.Matches(page, pattern);
-            foreach (Match item in find)
+            for (int i = 0; i < find.Count; ++i)
             {
+                Match item = find[i];
                 string text = item.Value.Replace("data: ", "").Replace("});", "");
                 JArray serialiation = (JArray)JsonConvert.DeserializeObject(text);
 
-                for (int i = 0; i < serialiation.Count; ++i)
+                for (int j = 0; j < serialiation.Count; ++j)
                 {
-                    JObject jobj = (JObject)serialiation[i];
-
-                    string id = jobj["id"].ToString();
-                    string name = string.Empty;
-
+                    JObject jobj = (JObject)serialiation[j];
                     JToken nameToken = jobj["name"];
 
-                    if (nameToken != null)
-                        name = nameToken.ToString().HTMLEscapeSumbols();
+                    string id = jobj["id"].ToString();
+                    string name = nameToken == null ? string.Empty : nameToken.ToString().HTMLEscapeSumbols();
 
                     builder.AppendFieldsValue(id, name);
                 }
@@ -82,14 +79,15 @@ namespace WoWHeadParser
             builder.SetFieldsName("level", "minlevel", "zoneOrSort", "RewardOrRequiredMoney");
 
             MatchCollection find = Regex.Matches(page, pattern);
-            foreach (Match item in find)
+            for (int i = 0; i < find.Count; ++i)
             {
+                Match item = find[i];
                 string text = item.Value.Replace("data: ", "").Replace("});", "");
                 JArray serialization = (JArray)JsonConvert.DeserializeObject(text);
 
-                for (int i = 0; i < serialization.Count; ++i)
+                for (int j = 0; j < serialization.Count; ++j)
                 {
-                    JObject jobj = (JObject)serialization[i];
+                    JObject jobj = (JObject)serialization[j];
 
                     string id = jobj["id"].ToString();
 
@@ -98,22 +96,10 @@ namespace WoWHeadParser
                     JToken minLevelToken = jobj["reqlevel"];
                     JToken moneyToken = jobj["money"];
 
-                    string level = string.Empty;
-                    string minLevel = string.Empty;
-                    string zoneOrSort = string.Empty;
-                    string money = string.Empty;
-
-                    if (zoneOrSortToken != null)
-                        zoneOrSort = zoneOrSortToken.ToString();
-
-                    if (levelToken != null)
-                        level = levelToken.ToString();
-
-                    if (minLevelToken != null)
-                        minLevel = minLevelToken.ToString();
-
-                    if (moneyToken != null)
-                        money = moneyToken.ToString();
+                    string level = levelToken == null ? string.Empty : levelToken.ToString();
+                    string minLevel = minLevelToken == null ? string.Empty : minLevelToken.ToString();
+                    string zoneOrSort = zoneOrSortToken == null ? string.Empty : zoneOrSortToken.ToString();
+                    string money = moneyToken == null ? string.Empty : moneyToken.ToString();
 
                     builder.AppendFieldsValue(id, level, minLevel, zoneOrSort, money);
                 }

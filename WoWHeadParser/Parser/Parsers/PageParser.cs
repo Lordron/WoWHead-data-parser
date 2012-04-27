@@ -25,9 +25,10 @@ namespace WoWHeadParser
             else
                 builder.SetFieldsName("text", "next_page");
 
-            foreach (Match match in matches)
+            for (int i = 0; i < matches.Count; ++i)
             {
-                GroupCollection groups = match.Groups;
+                Match item = matches[i];
+                GroupCollection groups = item.Groups;
                 string typeStr = groups["page"].Value ?? string.Empty;
                 string[] pages = typeStr.Split(new[] {@"','"}, StringSplitOptions.RemoveEmptyEntries);
 
@@ -36,20 +37,20 @@ namespace WoWHeadParser
 
                 if (Locale > Locale.English)
                 {
-                    for (int i = 0; i < pages.Length; ++i)
+                    for (int j = 0; j < pages.Length; ++j)
                     {
-                        string key = (i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i));
-                        builder.AppendFieldsValue(key, pages[i].HTMLEscapeSumbols());
+                        string key = string.Format("@ENTRY + {0}", j);
+                        builder.AppendFieldsValue(key, pages[j].HTMLEscapeSumbols());
                     }
                 }
                 else
                 {
-                    for (int i = 0; i < pages.Length; ++i)
+                    for (int j = 0; j < pages.Length; ++j)
                     {
-                        string key = (i == 0 ? "@ENTRY" : string.Format("@ENTRY + {0}", i));
-                        string next_page = (i < pages.Length - 1) ? string.Format("@ENTRY + {0}", i + 1) : "0";
+                        string key = string.Format("@ENTRY + {0}", j);
+                        string next_page = (j < pages.Length - 1) ? string.Format("@ENTRY + {0}", j + 1) : "0";
 
-                        builder.AppendFieldsValue(key, pages[i].HTMLEscapeSumbols(), next_page);
+                        builder.AppendFieldsValue(key, pages[j].HTMLEscapeSumbols(), next_page);
                     }
                 }
             }

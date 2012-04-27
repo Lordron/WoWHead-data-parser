@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿using System;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -21,24 +21,23 @@ namespace WoWHeadParser
 
             MatchCollection find = Regex.Matches(page, pattern);
 
-            foreach (Match item in find)
+            for (int i = 0; i < find.Count; ++i)
             {
+                Match item = find[i];
+
                 string text = item.Value.Replace("data: ", "").Replace("});", "");
                 JArray serialization = (JArray)JsonConvert.DeserializeObject(text);
 
-                for (int i = 0; i < serialization.Count; ++i)
+                for (int j = 0; j < serialization.Count; ++j)
                 {
-                    JObject jobj = (JObject)serialization[i];
+                    JObject jobj = (JObject)serialization[j];
+                    JToken maxcountToken = jobj["avail"];
 
                     string id = jobj["id"].ToString();
 
                     string scost = string.Empty;
                     string scount = string.Empty;
-                    string maxcount = string.Empty;
-
-                    JToken maxcountToken = jobj["avail"];
-                    if (maxcountToken != null)
-                        maxcount = maxcountToken.ToString();
+                    string maxcount = maxcountToken == null ? string.Empty : maxcountToken.ToString();
 
                     uint extendedCostEntry = 0;
 
@@ -94,14 +93,7 @@ namespace WoWHeadParser
 
         public override string BeforParsing()
         {
-            StringBuilder content = new StringBuilder();
-
-            content.AppendLine("-- Uncomment");
-            content.AppendLine("-- DELETE FROM `npc_vendor`; -- Delete all data");
-            content.AppendLine();
-            content.AppendLine(@"SET @UNK_COST := 9999999;");
-
-            return content.AppendLine().ToString();
+            return @"SET @UNK_COST := 9999999;" + Environment.NewLine;
         }
 
         public override string Address { get { return "wowhead.com/npc="; } }

@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace WoWHeadParser
@@ -64,13 +63,14 @@ namespace WoWHeadParser
                 builder.AppendSqlQuery(query);
             }
 
-            foreach (Match item in find)
+            for (int i = 0; i < find.Count; ++i)
             {
+                Match item = find[i];
                 MatchCollection matches = Regex.Matches(item.Value, subPattern);
 
-                for (int i = 0; i < matches.Count; ++i)
+                for (int j = 0; j < matches.Count; ++j)
                 {
-                    GroupCollection groups = matches[i].Groups;
+                    GroupCollection groups = matches[j].Groups;
 
                     string spellCost = (type == TrainerType.TypeTradeskills) ? groups[5].Value : groups[4].Value; // TODO: support zero cost
                     switch (type)
@@ -97,12 +97,7 @@ namespace WoWHeadParser
 
         public override string BeforParsing()
         {
-            StringBuilder content = new StringBuilder();
-
-            content.AppendLine("-- Uncomment");
-            content.AppendLine("-- DELETE FROM `npc_trainer`; -- Delete all data");
-
-            return content.AppendLine().ToString();
+            return string.Empty;
         }
 
         public override string Address { get { return "wowhead.com/npc="; } }

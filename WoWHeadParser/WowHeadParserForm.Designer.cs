@@ -48,6 +48,7 @@ namespace WoWHeadParser
             this.rangeEnd = new System.Windows.Forms.NumericUpDown();
             this.listTab = new System.Windows.Forms.TabPage();
             this.listBox = new System.Windows.Forms.GroupBox();
+            this.reloadButton = new System.Windows.Forms.Button();
             this.welfBox = new System.Windows.Forms.ComboBox();
             this.entryCountLabel = new System.Windows.Forms.Label();
             this.wowheadFilterTab = new System.Windows.Forms.TabPage();
@@ -65,7 +66,6 @@ namespace WoWHeadParser
             this.fileMenuItem = new System.Windows.Forms.MenuItem();
             this.exitMenuItem = new System.Windows.Forms.MenuItem();
             this.editMenuItem = new System.Windows.Forms.MenuItem();
-            this.reloadMenuItem = new System.Windows.Forms.MenuItem();
             this.launchMenuItem = new System.Windows.Forms.MenuItem();
             this.separatorMenuItem = new System.Windows.Forms.MenuItem();
             this.optionsMenuItem = new System.Windows.Forms.MenuItem();
@@ -300,6 +300,7 @@ namespace WoWHeadParser
             // 
             // listBox
             // 
+            this.listBox.Controls.Add(this.reloadButton);
             this.listBox.Controls.Add(this.welfBox);
             this.listBox.Controls.Add(this.entryCountLabel);
             this.listBox.Location = new System.Drawing.Point(6, 6);
@@ -309,6 +310,16 @@ namespace WoWHeadParser
             this.listBox.TabStop = false;
             this.listBox.Text = "Settings";
             // 
+            // reloadButton
+            // 
+            this.reloadButton.Location = new System.Drawing.Point(150, 19);
+            this.reloadButton.Name = "reloadButton";
+            this.reloadButton.Size = new System.Drawing.Size(75, 21);
+            this.reloadButton.TabIndex = 3;
+            this.reloadButton.Text = "Reload";
+            this.reloadButton.UseVisualStyleBackColor = true;
+            this.reloadButton.Click += new System.EventHandler(this.ReloadWelfFilesButtonClick);
+            // 
             // welfBox
             // 
             this.welfBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -317,14 +328,14 @@ namespace WoWHeadParser
             this.welfBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.welfBox.Location = new System.Drawing.Point(16, 19);
             this.welfBox.Name = "welfBox";
-            this.welfBox.Size = new System.Drawing.Size(187, 21);
+            this.welfBox.Size = new System.Drawing.Size(128, 21);
             this.welfBox.TabIndex = 2;
             this.welfBox.SelectedIndexChanged += new System.EventHandler(this.WelfBoxSelectedIndexChanged);
             // 
             // entryCountLabel
             // 
             this.entryCountLabel.AutoSize = true;
-            this.entryCountLabel.Location = new System.Drawing.Point(230, 27);
+            this.entryCountLabel.Location = new System.Drawing.Point(231, 27);
             this.entryCountLabel.Name = "entryCountLabel";
             this.entryCountLabel.Size = new System.Drawing.Size(13, 13);
             this.entryCountLabel.TabIndex = 1;
@@ -462,32 +473,25 @@ namespace WoWHeadParser
             // 
             this.editMenuItem.Index = 1;
             this.editMenuItem.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.reloadMenuItem,
             this.launchMenuItem,
             this.separatorMenuItem,
             this.optionsMenuItem});
             this.editMenuItem.Text = "Edit";
             // 
-            // reloadMenuItem
-            // 
-            this.reloadMenuItem.Index = 0;
-            this.reloadMenuItem.Text = "Reload .welf files";
-            this.reloadMenuItem.Click += new System.EventHandler(this.ReloadWelfFilesMenuClick);
-            // 
             // launchMenuItem
             // 
-            this.launchMenuItem.Index = 1;
+            this.launchMenuItem.Index = 0;
             this.launchMenuItem.Text = "Launch .welf creator";
             this.launchMenuItem.Click += new System.EventHandler(this.WELFCreatorMenuClick);
             // 
             // separatorMenuItem
             // 
-            this.separatorMenuItem.Index = 2;
+            this.separatorMenuItem.Index = 1;
             this.separatorMenuItem.Text = "-";
             // 
             // optionsMenuItem
             // 
-            this.optionsMenuItem.Index = 3;
+            this.optionsMenuItem.Index = 2;
             this.optionsMenuItem.Text = "Options";
             this.optionsMenuItem.Click += new System.EventHandler(this.OptionsMenuItemClick);
             // 
@@ -565,7 +569,6 @@ namespace WoWHeadParser
         private MenuItem fileMenuItem;
         private MenuItem exitMenuItem;
         private MenuItem editMenuItem;
-        private MenuItem reloadMenuItem;
         private MenuItem launchMenuItem;
         private GroupBox consoleGroupBox;
         private RichTextBox consoleBox;
@@ -573,6 +576,7 @@ namespace WoWHeadParser
         private Label notifyLabel;
         private MenuItem optionsMenuItem;
         private MenuItem separatorMenuItem;
+        private Button reloadButton;
     }
 }
 

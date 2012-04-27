@@ -149,7 +149,7 @@ namespace WoWHeadParser
             {
                 using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile(), Encoding.UTF8))
                 {
-                    stream.Write(_worker.ToString());
+                    stream.Write(_worker);
                 }
             }
 
@@ -185,11 +185,13 @@ namespace WoWHeadParser
             {
                 _entries.Clear();
 
-                string str = reader.ReadToEnd();
-                string[] values = str.Split(',');
-                foreach (string value in values)
+                string text = reader.ReadToEnd();
+                string[] values = text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                for (int i = 0; i < values.Length; ++i)
                 {
-                    uint val;
+                    string value = values[i];
+
+                    uint val = uint.Parse(value);
                     if (!uint.TryParse(value, out val))
                         continue;
 
@@ -209,7 +211,7 @@ namespace WoWHeadParser
             this.ThreadSafeBegin(x => new WelfCreator().Show());
         }
 
-        private void ReloadWelfFilesMenuClick(object sender, EventArgs e)
+        private void ReloadWelfFilesButtonClick(object sender, EventArgs e)
         {
             this.ThreadSafeBegin(x => LoadWelfFiles());
         }
