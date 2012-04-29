@@ -62,6 +62,7 @@ namespace WoWHeadParser
 
         /// <summary>
         /// Initial Sql builder
+        /// <param name="tableName">Table name (like creature_template, creature etc.)</param>
         /// </summary>
         public SqlBuilder(string tableName)
             : this(tableName, "entry")
@@ -119,6 +120,11 @@ namespace WoWHeadParser
         /// </summary>
         public override string ToString()
         {
+            if (_items.Count <= 0)
+                return string.Empty;
+
+            _content.Capacity = 2048 * _items.Count;
+
             switch (QueryType)
             {
                 case SqlQueryType.Update:
@@ -134,8 +140,6 @@ namespace WoWHeadParser
 
         private string BuildUpdateQuery()
         {
-            _content.Capacity = 1024 * _items.Count;
-
             for (int i = 0; i < _items.Count; ++i)
             {
                 bool notEmpty = false;
@@ -167,7 +171,7 @@ namespace WoWHeadParser
         private string BuildReplaceInsertQuery()
         {
             if (AppendDeleteQuery)
-                _content.AppendFormat("DELETE FROM `{0}` WHERE `{1}` = '{2}';", TableName, KeyName, (_items.Count > 0 ? _items[0].Key : 0)).AppendLine();
+                _content.AppendFormat("DELETE FROM `{0}` WHERE `{1}` = '{2}';", TableName, KeyName, _items[0].Key).AppendLine();
 
             switch (QueryType)
             {
@@ -201,7 +205,7 @@ namespace WoWHeadParser
                 _content.AppendFormat("){0}", i < _items.Count - 1 ? "," : ";").AppendLine();
             }
 
-            return _items.Count > 0 ? _content.ToString() : string.Empty;
+            return _content.ToString();
         }
     }
 }

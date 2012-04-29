@@ -5,12 +5,18 @@ namespace WoWHeadParser
 {
     public class SqlItem
     {
-        private object _key = new object();
         private List<string> _values = new List<string>(64);
+
+        public object Key { get; private set; }
+
+        /// <summary>
+        /// Gets the number of elements actually contained in the list
+        /// </summary>
+        public int Count { get { return _values.Count; } }
 
         public SqlItem(object key, List<string> values)
         {
-            _key = key;
+            Key = key;
             _values = values;
         }
 
@@ -24,15 +30,5 @@ namespace WoWHeadParser
                 return _values[x];
             }
         }
-
-        /// <summary>
-        /// Gets a key
-        /// </summary>
-        public object Key { get { return _key; } }
-
-        /// <summary>
-        /// Gets the number of elements actually contained in the list
-        /// </summary>
-        public int Count { get { return _values.Count; } }
     }
 }
