@@ -18,10 +18,10 @@ namespace WoWHeadParser
         #region Messages
         private Dictionary<MessageType, Message> _message = new Dictionary<MessageType, Message>
         {
-            {MessageType.MultipleTypeBigger, new Message(@"Starting value can not be bigger than ending value!")},
-            {MessageType.MultipleTypeEqual, new Message(@"Starting value can not be equal ending value!")},
-            {MessageType.WelfListEmpty, new Message(@"Entries list is empty!")},
             {MessageType.WelfFileNotFound, new Message(@"File {0} not found!")},
+            {MessageType.WelfListEmpty, new Message(@"Entries list ({0}) is empty!")},
+            {MessageType.MultipleTypeEqual, new Message(@"Starting value can not be equal ending value!")},
+            {MessageType.MultipleTypeBigger, new Message(@"Starting value can not be bigger than ending value!")},
             {MessageType.AbortQuestion, new Message(@"Do you really want to stop ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
             {MessageType.ExitQuestion, new Message(@"Do you really want to quit WoWHead Parser ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
         };
@@ -44,17 +44,21 @@ namespace WoWHeadParser
 
         protected override void OnLoad(EventArgs e)
         {
+            #region Parsers loading
+            Type typofParser = typeof(Parser);
             Type[] types = Assembly.GetExecutingAssembly().GetTypes();
-            foreach (Type type in types)
+            for (int i = 0; i < types.Length; ++i)
             {
-                if (!type.IsSubclassOf(typeof(Parser)))
+                Type type = types[i];
+                if (!type.IsSubclassOf(typofParser))
                     continue;
 
-                Parser parser = (Parser)Activator.CreateInstance(type);
+                Parser parser = Activator.CreateInstance(type) as Parser;
                 parserBox.Items.Add(parser.Name);
 
                 _parsers.Add(parser);
             }
+            #endregion
 
             foreach (Locale locale in Enum.GetValues(typeof(Locale)))
             {
@@ -139,8 +143,11 @@ namespace WoWHeadParser
 
         private void WorkerPageDownloaded()
         {
-            progressBar.ThreadSafeBegin(x => ++x.Value);
-            numericUpDown.ThreadSafeBegin(x => ++x.Value);
+            this.ThreadSafeBegin(_ =>
+                {
+                    ++progressBar.Value;
+                    ++numericUpDown.Value;
+                });
         }
 
         private void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -191,7 +198,7 @@ namespace WoWHeadParser
                 {
                     string value = values[i];
 
-                    uint val = uint.Parse(value);
+                    uint val;
                     if (!uint.TryParse(value, out val))
                         continue;
 
@@ -200,10 +207,10 @@ namespace WoWHeadParser
                 }
             }
 
-            entryCountLabel.Text = string.Format("Entries count: {0}", _entries.Count);
-
             if (_entries.Count == -1)
-                ShowMessageBox(MessageType.WelfListEmpty);
+                ShowMessageBox(MessageType.WelfListEmpty, fileName);
+
+            entryCountLabel.Text = string.Format("Entries count: {0}", _entries.Count);
         }
 
         private void WELFCreatorMenuClick(object sender, EventArgs e)

@@ -96,9 +96,9 @@ namespace WoWHeadParser
             return @"SET @UNK_COST := 9999999;" + Environment.NewLine;
         }
 
-        public override string Address { get { return "wowhead.com/npc="; } }
-
         public override string Name { get { return "Vendor data parser"; } }
+
+        public override string Address { get { return "npc="; } }
 
         public override int MaxCount{ get { return 0; } }
     }

@@ -48,7 +48,7 @@ namespace WoWHeadParser
         public void Parser(Parser parser)
         {
             _parser = parser;
-            _address = new Uri(string.Format("http://{0}{1}", _locales[parser.Locale], parser.Address));
+            _address = new Uri(string.Format("http://{0}wowhead.com/{1}", _locales[parser.Locale], parser.Address));
         }
 
         public void SetValue(uint value)
@@ -137,21 +137,20 @@ namespace WoWHeadParser
 
             while (_semaphore.CurrentCount != SemaphoreCount)
             {
-                continue;
+                Application.DoEvents();
             }
 
             _timeEnd = DateTime.Now;
 
-            SortOrder order = (SortOrder)Settings.Default.SortOrder;
-            if (order > SortOrder.None)
-                _pages.Sort(new PageItemComparer(order));
+            SortOrder sortOrder = (SortOrder)Settings.Default.SortOrder;
+            if (sortOrder > SortOrder.None)
+                _pages.Sort(new PageItemComparer(sortOrder));
         }
 
         private void RespCallback(IAsyncResult iar)
         {
             Requests request = (Requests)iar.AsyncState;
-            bool ok = request.EndGetResponse(iar);
-            if (ok)
+            if (request.EndGetResponse(iar))
             {
                 PageItem item = new PageItem(request);
                 lock (_threadLock)

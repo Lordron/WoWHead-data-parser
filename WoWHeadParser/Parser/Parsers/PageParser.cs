@@ -1,27 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace WoWHeadParser
 {
     internal class PageParser : Parser
     {
-        private Dictionary<Locale, string> _tables = new Dictionary<Locale, string>
-        {
-            {Locale.Russia, "Text_loc8"},
-            {Locale.Germany, "Text_loc3"},
-            {Locale.France, "Text_loc2"},
-            {Locale.Spain, "Text_loc6"},
-        };
-
         public override string Parse(PageItem block)
         {
             Regex regex = new Regex(@"new Book\({ parent: '.+', pages: \['(?<page>.+)'\]}\)", RegexOptions.Multiline);
             MatchCollection matches = regex.Matches(block.Page);
 
-            SqlBuilder builder = new SqlBuilder(Locale > Locale.English ? "locales_page_text" : "page_text");
-            if (Locale > Locale.English)
-                builder.SetFieldsName(_tables[Locale]);
+            SqlBuilder builder = new SqlBuilder(HasLocales ? "locales_page_text" : "page_text");
+            if (HasLocales)
+                builder.SetFieldsName(string.Format("Text_{0}", Locales[Locale]));
             else
                 builder.SetFieldsName("text", "next_page");
 
@@ -35,7 +26,7 @@ namespace WoWHeadParser
                 string query = string.Format(@"SET @ENTRY := (SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0});", block.Id);
                 builder.AppendSqlQuery(query);
 
-                if (Locale > Locale.English)
+                if (HasLocales)
                 {
                     for (int j = 0; j < pages.Length; ++j)
                     {
@@ -63,9 +54,9 @@ namespace WoWHeadParser
             return string.Empty;
         }
 
-        public override string Address { get { return "wowhead.com/object="; } }
-
         public override string Name { get { return "Book page data parser"; } }
+
+        public override string Address { get { return "object="; } }
 
         public override int MaxCount { get { return 0; } }
     }

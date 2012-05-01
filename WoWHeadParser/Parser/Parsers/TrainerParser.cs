@@ -100,9 +100,9 @@ namespace WoWHeadParser
             return string.Empty;
         }
 
-        public override string Address { get { return "wowhead.com/npc="; } }
-
         public override string Name { get { return "Professions & Class Trainer data parser"; } }
+
+        public override string Address { get { return "npc="; } }
 
         public override int MaxCount { get { return 0; } }
 

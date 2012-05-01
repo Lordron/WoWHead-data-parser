@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -7,14 +6,6 @@ namespace WoWHeadParser
 {
     internal class QuestLocaleParser : Parser
     {
-        private Dictionary<Locale, string> _tables = new Dictionary<Locale, string>
-        {
-            {Locale.Russia, "loc8"},
-            {Locale.Germany, "loc3"},
-            {Locale.France, "loc2"},
-            {Locale.Spain, "loc6"},
-        };
-
         public override string Parse(PageItem block)
         {
             string page = block.Page.Substring("\'quests\'");
@@ -22,10 +13,10 @@ namespace WoWHeadParser
             const string pattern = @"data: \[.*;";
 
             SqlBuilder builder;
-            if (Locale > Locale.English)
+            if (HasLocales)
             {
                 builder = new SqlBuilder("locales_quest");
-                builder.SetFieldsName(string.Format("title_{0}", _tables[Locale]));
+                builder.SetFieldsName(string.Format("title_{0}", Locales[Locale]));
             }
             else
             {
@@ -60,9 +51,9 @@ namespace WoWHeadParser
             return string.Empty;
         }
 
-        public override string Address { get { return "wowhead.com/quests?filter=cr=30:30;crs=1:4;"; } }
-
         public override string Name { get { return "Quest locale data parser"; } }
+
+        public override string Address { get { return "quests?filter=cr=30:30;crs=1:4;"; } }
 
         public override int MaxCount { get { return 32000; } }
     }
@@ -113,9 +104,9 @@ namespace WoWHeadParser
             return string.Empty;
         }
 
-        public override string Address { get { return "wowhead.com/quests?filter=cr=30:30;crs=1:4;"; } }
-
         public override string Name { get { return "Quest template data parser"; } }
+
+        public override string Address { get { return "quests?filter=cr=30:30;crs=1:4;"; } }
 
         public override int MaxCount { get { return 32000; } }
     }
