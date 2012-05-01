@@ -70,5 +70,17 @@ namespace WoWHeadParser.Properties {
                 this["SortOrder"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool Append {
+            get {
+                return ((bool)(this["Append"]));
+            }
+            set {
+                this["Append"] = value;
+            }
+        }
     }
 }

@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using WoWHeadParser.Properties;
 
 namespace WoWHeadParser
 {
@@ -154,7 +155,7 @@ namespace WoWHeadParser
         {
             if (saveDialog.ShowDialog(this) == DialogResult.OK)
             {
-                using (StreamWriter stream = new StreamWriter(saveDialog.OpenFile(), Encoding.UTF8))
+                using (StreamWriter stream = new StreamWriter(saveDialog.FileName, Settings.Default.Append, Encoding.UTF8))
                 {
                     stream.Write(_worker);
                 }

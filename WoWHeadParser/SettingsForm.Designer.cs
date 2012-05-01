@@ -35,6 +35,7 @@ namespace WoWHeadParser
             this.cancleButton = new System.Windows.Forms.Button();
             this.dirLabel = new System.Windows.Forms.Label();
             this.sortDirectionBox = new System.Windows.Forms.ComboBox();
+            this.appendSqlCheckBox = new System.Windows.Forms.CheckBox();
             this.appendDeleteQueryCheckBox = new System.Windows.Forms.CheckBox();
             this.allowNullValCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
@@ -42,7 +43,7 @@ namespace WoWHeadParser
             // quertTypelabel
             // 
             this.quertTypelabel.AutoSize = true;
-            this.quertTypelabel.Location = new System.Drawing.Point(10, 97);
+            this.quertTypelabel.Location = new System.Drawing.Point(12, 125);
             this.quertTypelabel.Name = "quertTypelabel";
             this.quertTypelabel.Size = new System.Drawing.Size(76, 13);
             this.quertTypelabel.TabIndex = 2;
@@ -51,14 +52,14 @@ namespace WoWHeadParser
             // sqlQueryTypeBox
             // 
             this.sqlQueryTypeBox.FormattingEnabled = true;
-            this.sqlQueryTypeBox.Location = new System.Drawing.Point(95, 94);
+            this.sqlQueryTypeBox.Location = new System.Drawing.Point(95, 122);
             this.sqlQueryTypeBox.Name = "sqlQueryTypeBox";
             this.sqlQueryTypeBox.Size = new System.Drawing.Size(113, 21);
             this.sqlQueryTypeBox.TabIndex = 3;
             // 
             // okButton
             // 
-            this.okButton.Location = new System.Drawing.Point(13, 126);
+            this.okButton.Location = new System.Drawing.Point(13, 163);
             this.okButton.Name = "okButton";
             this.okButton.Size = new System.Drawing.Size(75, 23);
             this.okButton.TabIndex = 4;
@@ -69,7 +70,7 @@ namespace WoWHeadParser
             // cancleButton
             // 
             this.cancleButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.cancleButton.Location = new System.Drawing.Point(133, 126);
+            this.cancleButton.Location = new System.Drawing.Point(133, 163);
             this.cancleButton.Name = "cancleButton";
             this.cancleButton.Size = new System.Drawing.Size(75, 23);
             this.cancleButton.TabIndex = 5;
@@ -80,7 +81,7 @@ namespace WoWHeadParser
             // dirLabel
             // 
             this.dirLabel.AutoSize = true;
-            this.dirLabel.Location = new System.Drawing.Point(10, 70);
+            this.dirLabel.Location = new System.Drawing.Point(12, 98);
             this.dirLabel.Name = "dirLabel";
             this.dirLabel.Size = new System.Drawing.Size(69, 13);
             this.dirLabel.TabIndex = 6;
@@ -89,15 +90,26 @@ namespace WoWHeadParser
             // sortDirectionBox
             // 
             this.sortDirectionBox.FormattingEnabled = true;
-            this.sortDirectionBox.Location = new System.Drawing.Point(95, 67);
+            this.sortDirectionBox.Location = new System.Drawing.Point(95, 95);
             this.sortDirectionBox.Name = "sortDirectionBox";
             this.sortDirectionBox.Size = new System.Drawing.Size(113, 21);
             this.sortDirectionBox.TabIndex = 7;
             // 
+            // appendSqlCheckBox
+            // 
+            this.appendSqlCheckBox.AutoSize = true;
+            this.appendSqlCheckBox.Checked = global::WoWHeadParser.Properties.Settings.Default.Append;
+            this.appendSqlCheckBox.Location = new System.Drawing.Point(12, 60);
+            this.appendSqlCheckBox.Name = "appendSqlCheckBox";
+            this.appendSqlCheckBox.Size = new System.Drawing.Size(136, 17);
+            this.appendSqlCheckBox.TabIndex = 8;
+            this.appendSqlCheckBox.Text = "Append sql query to file";
+            this.appendSqlCheckBox.UseVisualStyleBackColor = true;
+            // 
             // appendDeleteQueryCheckBox
             // 
             this.appendDeleteQueryCheckBox.AutoSize = true;
-            this.appendDeleteQueryCheckBox.Checked = Settings.Default.AppendDeleteQuery;
+            this.appendDeleteQueryCheckBox.Checked = global::WoWHeadParser.Properties.Settings.Default.AppendDeleteQuery;
             this.appendDeleteQueryCheckBox.Location = new System.Drawing.Point(13, 37);
             this.appendDeleteQueryCheckBox.Name = "appendDeleteQueryCheckBox";
             this.appendDeleteQueryCheckBox.Size = new System.Drawing.Size(124, 17);
@@ -108,7 +120,7 @@ namespace WoWHeadParser
             // allowNullValCheckBox
             // 
             this.allowNullValCheckBox.AutoSize = true;
-            this.allowNullValCheckBox.Checked = Settings.Default.AllowEmptyValues;
+            this.allowNullValCheckBox.Checked = global::WoWHeadParser.Properties.Settings.Default.AllowEmptyValues;
             this.allowNullValCheckBox.Location = new System.Drawing.Point(13, 13);
             this.allowNullValCheckBox.Name = "allowNullValCheckBox";
             this.allowNullValCheckBox.Size = new System.Drawing.Size(104, 17);
@@ -122,7 +134,8 @@ namespace WoWHeadParser
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancleButton;
-            this.ClientSize = new System.Drawing.Size(220, 163);
+            this.ClientSize = new System.Drawing.Size(224, 198);
+            this.Controls.Add(this.appendSqlCheckBox);
             this.Controls.Add(this.sortDirectionBox);
             this.Controls.Add(this.dirLabel);
             this.Controls.Add(this.cancleButton);
@@ -149,6 +162,7 @@ namespace WoWHeadParser
         private System.Windows.Forms.Button cancleButton;
         private System.Windows.Forms.Label dirLabel;
         private System.Windows.Forms.ComboBox sortDirectionBox;
+        private System.Windows.Forms.CheckBox appendSqlCheckBox;
 
     }
 }
