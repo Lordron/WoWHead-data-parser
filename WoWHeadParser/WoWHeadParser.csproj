@@ -110,6 +110,7 @@
     <Compile Include="SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="SqlBuilder\SqlBuilderException.cs" />
     <Compile Include="SqlBuilder\SqlItem.cs" />
     <Compile Include="SqlBuilder\SqlBuilder.cs" />
     <Compile Include="WebRequest.cs" />

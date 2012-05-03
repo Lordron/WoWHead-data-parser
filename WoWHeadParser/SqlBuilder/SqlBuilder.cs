@@ -13,6 +13,7 @@ namespace WoWHeadParser
         Replace,
         Insert,
         InsertIgnore,
+        Max,
     }
 
     public class SqlBuilder
@@ -56,8 +57,8 @@ namespace WoWHeadParser
             AllowNullValue = Settings.Default.AllowEmptyValues;
             QueryType = (SqlQueryType)Settings.Default.QueryType;
 
-            if (QueryType == SqlQueryType.None)
-                throw new ArgumentOutOfRangeException();
+            if (QueryType <= SqlQueryType.None || QueryType >= SqlQueryType.Max)
+                throw new InvalidQueryTypeException(QueryType);
         }
 
         /// <summary>
@@ -134,7 +135,7 @@ namespace WoWHeadParser
                 case SqlQueryType.InsertIgnore:
                     return BuildReplaceInsertQuery();
                 default:
-                    throw new ArgumentOutOfRangeException();
+                    return string.Empty;
             }
         }
 

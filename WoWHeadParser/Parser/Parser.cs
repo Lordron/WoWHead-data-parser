@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 namespace WoWHeadParser
 {
     public abstract class Parser
     {
-        public abstract string BeforParsing();
+        public abstract string PreParse();
 
         public abstract string Parse(PageItem block);
 
@@ -12,6 +13,19 @@ namespace WoWHeadParser
         public abstract string Name { get; }
 
         public abstract int MaxCount { get; }
+
+        public string SafeParser(PageItem item)
+        {
+            try
+            {
+                return Parse(item);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+                return string.Empty;
+            }
+        }
 
         #region Locales
 

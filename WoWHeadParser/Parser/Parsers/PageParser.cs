@@ -49,7 +49,7 @@ namespace WoWHeadParser
             return builder.ToString();
         }
 
-        public override string BeforParsing()
+        public override string PreParse()
         {
             return string.Empty;
         }

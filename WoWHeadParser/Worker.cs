@@ -155,15 +155,14 @@ namespace WoWHeadParser
                 PageItem item = new PageItem(request);
                 lock (_threadLock)
                 {
-                    item.Page = _parser.Parse(item);
+                    item.Page = _parser.SafeParser(item);
                     if (!string.IsNullOrEmpty(item.Page))
                         _pages.Add(item);
-
-                    _semaphore.Release();
                 }
             }
 
             request.Dispose();
+            _semaphore.Release();
 
             if (PageDownloadingComplete != null)
                 PageDownloadingComplete();
@@ -194,9 +193,9 @@ namespace WoWHeadParser
 
             content.AppendFormat(@"-- Dump of {0} ({1}), Total object count: {2}", _timeEnd, _timeEnd - _timeStart, _pages.Count).AppendLine();
 
-            string beforParsing = _parser.BeforParsing().TrimStart();
-            if (!string.IsNullOrEmpty(beforParsing))
-                content.Append(beforParsing);
+            string preParse = _parser.PreParse().TrimStart();
+            if (!string.IsNullOrEmpty(preParse))
+                content.Append(preParse);
 
             for (int i = 0; i < _pages.Count; ++i)
             {

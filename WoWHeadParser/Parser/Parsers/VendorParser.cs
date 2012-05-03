@@ -91,7 +91,7 @@ namespace WoWHeadParser
             return builder.ToString();
         }
 
-        public override string BeforParsing()
+        public override string PreParse()
         {
             return @"SET @UNK_COST := 9999999;" + Environment.NewLine;
         }

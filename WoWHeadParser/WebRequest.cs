@@ -39,8 +39,8 @@ namespace WoWHeadParser
 
         public Requests(Uri address, uint id)
         {
-            Uri = new Uri(string.Format("{0}{1}", address, id));
             Id = id;
+            Uri = new Uri(string.Format("{0}{1}", address, id));
             Request = (HttpWebRequest)WebRequest.Create(Uri);
             Request.UserAgent = GetRandomUserAgent();
             Request.Method = "POST";
@@ -50,9 +50,8 @@ namespace WoWHeadParser
 
         public Requests(Uri address, uint ids, uint ide)
         {
-            Uri = new Uri(string.Format("{0}crv={1}:{2}", address, ids, ide));
             Id = ids;
-
+            Uri = new Uri(string.Format("{0}crv={1}:{2}", address, ids, ide));
             Request = (HttpWebRequest)WebRequest.Create(Uri);
             Request.UserAgent = GetRandomUserAgent();
             Request.Method = "POST";

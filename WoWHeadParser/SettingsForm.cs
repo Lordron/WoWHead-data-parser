@@ -12,7 +12,7 @@ namespace WoWHeadParser
 
             foreach (SqlQueryType type in Enum.GetValues(typeof(SqlQueryType)))
             {
-                if (type > SqlQueryType.None)
+                if (type > SqlQueryType.None && type < SqlQueryType.Max)
                     sqlQueryTypeBox.Items.Add(type);
             }
             sqlQueryTypeBox.SelectedItem = (SqlQueryType) Settings.Default.QueryType;
