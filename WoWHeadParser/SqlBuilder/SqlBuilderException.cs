@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WoWHeadParser
+namespace Sql
 {
     class InvalidQueryTypeException : Exception
     {

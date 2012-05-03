@@ -4,7 +4,7 @@ using System.Globalization;
 using System.Text;
 using WoWHeadParser.Properties;
 
-namespace WoWHeadParser
+namespace Sql
 {
     public enum SqlQueryType : byte
     {

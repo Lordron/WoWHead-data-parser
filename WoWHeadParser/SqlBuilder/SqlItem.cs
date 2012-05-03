@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WoWHeadParser
+namespace Sql
 {
     public class SqlItem
     {
