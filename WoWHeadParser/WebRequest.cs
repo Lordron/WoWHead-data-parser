@@ -37,10 +37,11 @@ namespace WoWHeadParser
         };
         #endregion
 
-        public Requests(Uri address, uint id)
+        public Requests(string address, uint id)
         {
             Id = id;
-            Uri = new Uri(string.Format("{0}{1}", address, id));
+            Uri = new Uri(string.Format(address, id));
+
             Request = (HttpWebRequest)WebRequest.Create(Uri);
             Request.UserAgent = GetRandomUserAgent();
             Request.Method = "POST";
@@ -48,10 +49,11 @@ namespace WoWHeadParser
             Request.KeepAlive = true;
         }
 
-        public Requests(Uri address, uint ids, uint ide)
+        public Requests(string address, uint ids, uint ide)
         {
             Id = ids;
-            Uri = new Uri(string.Format("{0}crv={1}:{2}", address, ids, ide));
+            Uri = new Uri(string.Format(address, ids, ide));
+
             Request = (HttpWebRequest)WebRequest.Create(Uri);
             Request.UserAgent = GetRandomUserAgent();
             Request.Method = "POST";

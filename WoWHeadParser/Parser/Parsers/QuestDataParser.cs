@@ -49,7 +49,7 @@ namespace WoWHeadParser
 
         public override string Name { get { return "Quest locale data parser"; } }
 
-        public override string Address { get { return "quests?filter=cr=30:30;crs=1:4;"; } }
+        public override string Address { get { return "quests?filter=cr=30:30;crs=1:4;crv={0}:{1}"; } }
 
         public override int MaxCount { get { return 32000; } }
     }
@@ -97,7 +97,7 @@ namespace WoWHeadParser
 
         public override string Name { get { return "Quest template data parser"; } }
 
-        public override string Address { get { return "quests?filter=cr=30:30;crs=1:4;"; } }
+        public override string Address { get { return "quests?filter=cr=30:30;crs=1:4;crv={0}:{1}"; } }
 
         public override int MaxCount { get { return 32000; } }
     }

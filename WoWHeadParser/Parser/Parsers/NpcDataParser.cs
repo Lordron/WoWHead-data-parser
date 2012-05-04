@@ -49,7 +49,7 @@ namespace WoWHeadParser
 
         public override string Name { get { return "NPC locale data parser"; } }
 
-        public override string Address { get { return "npcs?filter=cr=37:37;crs=1:4;"; } }
+        public override string Address { get { return "npcs?filter=cr=37:37;crs=1:4;crv={0}:{1}"; } }
 
         public override int MaxCount { get { return 59000; } }
     }
@@ -105,7 +105,7 @@ namespace WoWHeadParser
 
         public override string Name { get { return "NPC template data parser"; } }
 
-        public override string Address { get { return "npcs?filter=cr=37:37;crs=1:4;"; } }
+        public override string Address { get { return "npcs?filter=cr=37:37;crs=1:4;crv={0}:{1}"; } }
 
         public override int MaxCount { get { return 59000; } }
     }

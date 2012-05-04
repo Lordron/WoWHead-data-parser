@@ -98,7 +98,7 @@ namespace WoWHeadParser
 
         public override string Name { get { return "Professions & Class Trainer data parser"; } }
 
-        public override string Address { get { return "npc="; } }
+        public override string Address { get { return "npc={0}"; } }
 
         public enum TrainerType
         {
