@@ -89,7 +89,7 @@ namespace Sql
         /// Append key and fields value 
         /// </summary>
         /// <param name="key">key value</param>
-        /// <param name="args">fields value array</param>
+        /// <param name="args">string fields values array</param>
         public void AppendFieldsValue(object key, params string[] args)
         {
             if (key == null || args == null)
@@ -99,6 +99,25 @@ namespace Sql
             for (int i = 0; i < args.Length; ++i)
             {
                 values.Add(args[i]);
+            }
+
+            _items.Add(new SqlItem(key, values));
+        }
+
+        /// <summary>
+        /// Append key and fields value 
+        /// </summary>
+        /// <param name="key">key value</param>
+        /// <param name="args">object fields values array</param>
+        public void AppendFieldsValue(object key, params object[] args)
+        {
+            if (key == null || args == null)
+                throw new ArgumentNullException();
+
+            List<string> values = new List<string>(args.Length);
+            for (int i = 0; i < args.Length; ++i)
+            {
+                values.Add(args[i].ToString());
             }
 
             _items.Add(new SqlItem(key, values));
