@@ -2,17 +2,23 @@
 using System.Collections.Generic;
 namespace WoWHeadParser
 {
-    public abstract class Parser
+    public class Parser
     {
-        public abstract string PreParse();
+        public virtual string PreParse()
+        {
+            return string.Empty;
+        }
 
-        public abstract string Parse(PageItem block);
+        public virtual string Parse(PageItem block)
+        {
+            return string.Empty;
+        }
 
-        public abstract string Address { get; }
+        public virtual string Address { get { return string.Empty; } }
 
-        public abstract string Name { get; }
+        public virtual string Name { get { return string.Empty; } }
 
-        public abstract int MaxCount { get; }
+        public virtual int MaxCount { get { return 0; } }
 
         public string SafeParser(PageItem item)
         {

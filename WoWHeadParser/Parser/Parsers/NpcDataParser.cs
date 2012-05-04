@@ -47,11 +47,6 @@ namespace WoWHeadParser
             return builder.ToString();
         }
 
-        public override string PreParse()
-        {
-            return string.Empty;
-        }
-
         public override string Name { get { return "NPC locale data parser"; } }
 
         public override string Address { get { return "npcs?filter=cr=37:37;crs=1:4;"; } }

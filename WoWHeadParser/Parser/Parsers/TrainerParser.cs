@@ -96,16 +96,9 @@ namespace WoWHeadParser
             return builder.ToString();
         }
 
-        public override string PreParse()
-        {
-            return string.Empty;
-        }
-
         public override string Name { get { return "Professions & Class Trainer data parser"; } }
 
         public override string Address { get { return "npc="; } }
-
-        public override int MaxCount { get { return 0; } }
 
         public enum TrainerType
         {

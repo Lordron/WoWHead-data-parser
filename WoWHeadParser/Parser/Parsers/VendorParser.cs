@@ -100,7 +100,5 @@ namespace WoWHeadParser
         public override string Name { get { return "Vendor data parser"; } }
 
         public override string Address { get { return "npc="; } }
-
-        public override int MaxCount{ get { return 0; } }
     }
 }

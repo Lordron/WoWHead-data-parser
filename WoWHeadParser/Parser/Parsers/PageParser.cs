@@ -50,15 +50,8 @@ namespace WoWHeadParser
             return builder.ToString();
         }
 
-        public override string PreParse()
-        {
-            return string.Empty;
-        }
-
         public override string Name { get { return "Book page data parser"; } }
 
         public override string Address { get { return "object="; } }
-
-        public override int MaxCount { get { return 0; } }
     }
 }

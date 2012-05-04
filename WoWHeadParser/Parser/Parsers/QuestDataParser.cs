@@ -47,11 +47,6 @@ namespace WoWHeadParser
             return builder.ToString();
         }
 
-        public override string PreParse()
-        {
-            return string.Empty;
-        }
-
         public override string Name { get { return "Quest locale data parser"; } }
 
         public override string Address { get { return "quests?filter=cr=30:30;crs=1:4;"; } }
@@ -98,11 +93,6 @@ namespace WoWHeadParser
             }
 
             return builder.ToString();
-        }
-
-        public override string PreParse()
-        {
-            return string.Empty;
         }
 
         public override string Name { get { return "Quest template data parser"; } }
