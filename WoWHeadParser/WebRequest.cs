@@ -44,7 +44,6 @@ namespace WoWHeadParser
 
             Request = (HttpWebRequest)WebRequest.Create(Uri);
             Request.UserAgent = GetRandomUserAgent();
-            Request.Method = "POST";
             Request.Headers.Add("Accept-Encoding", "gzip,deflate");
             Request.KeepAlive = true;
         }
@@ -56,7 +55,6 @@ namespace WoWHeadParser
 
             Request = (HttpWebRequest)WebRequest.Create(Uri);
             Request.UserAgent = GetRandomUserAgent();
-            Request.Method = "POST";
             Request.Headers.Add("Accept-Encoding", "gzip,deflate");
             Request.KeepAlive = true;
         }
