@@ -131,7 +131,7 @@ namespace WoWHeadParser
             abortButton.Enabled = true;
             settingsBox.Enabled = startButton.Enabled = false;
             numericUpDown.Value = progressBar.Value = 0;
-            SetLabelText(@"Downloading...");
+            SetLabelText(@"Parsing...");
 
             backgroundWorker.RunWorkerAsync(type);
         }
@@ -167,7 +167,7 @@ namespace WoWHeadParser
 
             _worker.Reset();
 
-            SetLabelText(@"Finished!");
+            SetLabelText(@"Complete!");
         }
 
         private void AbortButtonClick(object sender, EventArgs e)
