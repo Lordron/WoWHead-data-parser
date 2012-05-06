@@ -3,10 +3,11 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sql;
+using WoWHeadParser.Page;
 
-namespace WoWHeadParser
+namespace WoWHeadParser.Parser.Parsers
 {
-    internal class NpcLocaleParser : Parser
+    internal class NpcLocaleParser : DataParser
     {
         public override string Parse(PageItem block)
         {
@@ -54,7 +55,7 @@ namespace WoWHeadParser
         public override int MaxCount { get { return 59000; } }
     }
 
-    internal class NpcDataParser : Parser
+    internal class NpcDataParser : DataParser
     {
         public override string Parse(PageItem block)
         {

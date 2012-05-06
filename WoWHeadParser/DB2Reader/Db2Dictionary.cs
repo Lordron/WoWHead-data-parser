@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace WoWHeadParser
+namespace WoWHeadParser.DB2Reader
 {
     public static class DB2
     {

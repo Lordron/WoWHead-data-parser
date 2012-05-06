@@ -1,4 +1,4 @@
-﻿namespace WoWHeadParser
+﻿namespace WoWHeadParser.Page
 {
     public class PageItem
     {

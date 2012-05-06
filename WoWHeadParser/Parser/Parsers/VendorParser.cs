@@ -3,10 +3,12 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sql;
+using WoWHeadParser.DB2Reader;
+using WoWHeadParser.Page;
 
-namespace WoWHeadParser
+namespace WoWHeadParser.Parser.Parsers
 {
-    internal class VendorParser : Parser
+    internal class VendorParser : DataParser
     {
         public override string Parse(PageItem block)
         {
@@ -79,7 +81,7 @@ namespace WoWHeadParser
                         {
                             uint cost = uint.Parse(scost);
                             uint count = uint.Parse(scount);
-                            extendedCostEntry = DB2Reader.GetExtendedCost(cost, count);
+                            extendedCostEntry = DBFileReader.GetExtendedCost(cost, count);
                         }
                     }
                     else

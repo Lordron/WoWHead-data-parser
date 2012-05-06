@@ -33,9 +33,9 @@ namespace Sql
         /// </summary>
         public bool AppendDeleteQuery { get; private set; }
 
-        private string TableName = string.Empty;
+        private string _tableName = string.Empty;
 
-        private string KeyName = string.Empty;
+        private string _keyName = string.Empty;
 
         private List<string> _fields = new List<string>(64);
 
@@ -50,8 +50,8 @@ namespace Sql
         /// <param name="keyName">Key name (like entry, id, guid etc.)</param>
         public SqlBuilder(string tableName, string keyName)
         {
-            TableName = tableName;
-            KeyName = keyName;
+            _tableName = tableName;
+            _keyName = keyName;
 
             AppendDeleteQuery = Settings.Default.AppendDeleteQuery;
             AllowNullValue = Settings.Default.AllowEmptyValues;
@@ -168,7 +168,7 @@ namespace Sql
 
                 StringBuilder contentInternal = new StringBuilder(1024);
                 {
-                    contentInternal.AppendFormat("UPDATE `{0}` SET ", TableName);
+                    contentInternal.AppendFormat("UPDATE `{0}` SET ", _tableName);
                     for (int j = 0; j < item.Count; ++j)
                     {
                         if (!AllowNullValue && string.IsNullOrWhiteSpace(item[j]))
@@ -178,7 +178,7 @@ namespace Sql
                         notEmpty = true;
                     }
                     contentInternal.Remove(contentInternal.Length - 2, 2);
-                    contentInternal.AppendFormat(" WHERE `{0}` = {1};", KeyName, item.Key).AppendLine();
+                    contentInternal.AppendFormat(" WHERE `{0}` = {1};", _keyName, item.Key).AppendLine();
 
                     if (notEmpty)
                         _content.Append(contentInternal.ToString());
@@ -191,18 +191,18 @@ namespace Sql
         private string BuildReplaceInsertQuery()
         {
             if (AppendDeleteQuery)
-                _content.AppendFormat("DELETE FROM `{0}` WHERE `{1}` = '{2}';", TableName, KeyName, _items[0].Key).AppendLine();
+                _content.AppendFormat("DELETE FROM `{0}` WHERE `{1}` = '{2}';", _tableName, _keyName, _items[0].Key).AppendLine();
 
             switch (QueryType)
             {
                 case SqlQueryType.Insert:
-                    _content.AppendFormat("INSERT INTO `{0}` (`{1}`, ", TableName, KeyName);
+                    _content.AppendFormat("INSERT INTO `{0}` (`{1}`, ", _tableName, _keyName);
                     break;
                 case SqlQueryType.InsertIgnore:
-                    _content.AppendFormat("INSERT IGNORE INTO `{0}` (`{1}`, ", TableName, KeyName);
+                    _content.AppendFormat("INSERT IGNORE INTO `{0}` (`{1}`, ", _tableName, _keyName);
                     break;
                 case SqlQueryType.Replace:
-                    _content.AppendFormat("REPLACE INTO `{0}` (`{1}`, ", TableName, KeyName);
+                    _content.AppendFormat("REPLACE INTO `{0}` (`{1}`, ", _tableName, _keyName);
                     break;
             }
 
@@ -225,7 +225,7 @@ namespace Sql
                 _content.AppendFormat("){0}", i < _items.Count - 1 ? "," : ";").AppendLine();
             }
 
-            return _content.ToString() + Environment.NewLine;
+            return _content + Environment.NewLine;
         }
     }
 }

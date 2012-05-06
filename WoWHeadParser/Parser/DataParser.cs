@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-namespace WoWHeadParser
+using WoWHeadParser.Page;
+
+namespace WoWHeadParser.Parser
 {
-    public class Parser
+    public class DataParser
     {
         public virtual string PreParse()
         {

@@ -4,10 +4,11 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
+using WoWHeadParser.DB2Reader;
 
-namespace WoWHeadParser
+namespace WoWHeadParser.DB2Reader
 {
-    internal static class DB2Reader
+    internal static class DBFileReader
     {
         public static Dictionary<uint, T> ReadDb2<T>(Dictionary<uint, string> strDict) where T : struct
         {

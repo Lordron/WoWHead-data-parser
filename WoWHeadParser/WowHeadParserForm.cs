@@ -6,6 +6,8 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using WoWHeadParser.DB2Reader;
+using WoWHeadParser.Parser;
 using WoWHeadParser.Properties;
 
 namespace WoWHeadParser
@@ -14,7 +16,7 @@ namespace WoWHeadParser
     {
         private Worker _worker;
         private List<uint> _entries;
-        private List<Parser> _parsers;
+        private List<DataParser> _parsers;
 
         #region Messages
         private Dictionary<MessageType, Message> _message = new Dictionary<MessageType, Message>
@@ -35,7 +37,7 @@ namespace WoWHeadParser
             RichTextBoxWriter.Instance.OutputBox = consoleBox;
 
             _entries = new List<uint>();
-            _parsers = new List<Parser>();
+            _parsers = new List<DataParser>();
 
             _worker = new Worker();
             _worker.PageDownloadingComplete += WorkerPageDownloaded;
@@ -46,7 +48,7 @@ namespace WoWHeadParser
         protected override void OnLoad(EventArgs e)
         {
             #region Parsers loading
-            Type typofParser = typeof(Parser);
+            Type typofParser = typeof(DataParser);
             Type[] types = Assembly.GetExecutingAssembly().GetTypes();
             for (int i = 0; i < types.Length; ++i)
             {
@@ -54,7 +56,7 @@ namespace WoWHeadParser
                 if (!type.IsSubclassOf(typofParser))
                     continue;
 
-                Parser parser = Activator.CreateInstance(type) as Parser;
+                DataParser parser = Activator.CreateInstance(type) as DataParser;
                 parserBox.Items.Add(parser.Name);
 
                 _parsers.Add(parser);
@@ -75,7 +77,7 @@ namespace WoWHeadParser
 
         public void StartButtonClick(object sender, EventArgs e)
         {
-            Parser parser = _parsers[parserBox.SelectedIndex];
+            DataParser parser = _parsers[parserBox.SelectedIndex];
             parser.Locale = (Locale)localeBox.SelectedItem;
 
             _worker.Parser(parser);
@@ -194,7 +196,7 @@ namespace WoWHeadParser
                 _entries.Clear();
 
                 string text = reader.ReadToEnd();
-                string[] values = text.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] values = text.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i < values.Length; ++i)
                 {
                     string value = values[i];

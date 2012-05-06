@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using Sql;
+using WoWHeadParser.Page;
 
-namespace WoWHeadParser
+namespace WoWHeadParser.Parser.Parsers
 {
-    internal class PageParser : Parser
+    internal class PageParser : DataParser
     {
         public override string Parse(PageItem block)
         {
@@ -21,7 +22,7 @@ namespace WoWHeadParser
             {
                 Match item = matches[i];
                 GroupCollection groups = item.Groups;
-                string typeStr = groups["page"].Value ?? string.Empty;
+                string typeStr = groups["page"].Value;
                 string[] pages = typeStr.Split(new[] {@"','"}, StringSplitOptions.RemoveEmptyEntries);
 
                 string query = string.Format(@"SET @ENTRY := (SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0});", block.Id);
@@ -40,9 +41,9 @@ namespace WoWHeadParser
                     for (int j = 0; j < pages.Length; ++j)
                     {
                         string key = string.Format("@ENTRY + {0}", j);
-                        string next_page = (j < pages.Length - 1) ? string.Format("@ENTRY + {0}", j + 1) : "0";
+                        string nextPage = (j < pages.Length - 1) ? string.Format("@ENTRY + {0}", j + 1) : "0";
 
-                        builder.AppendFieldsValue(key, pages[j].HTMLEscapeSumbols(), next_page);
+                        builder.AppendFieldsValue(key, pages[j].HTMLEscapeSumbols(), nextPage);
                     }
                 }
             }

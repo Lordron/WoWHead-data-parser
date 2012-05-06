@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WoWHeadParser
+namespace WoWHeadParser.Parser
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class ParserAttribute : Attribute
@@ -15,6 +15,6 @@ namespace WoWHeadParser
 
         public string Address { get; private set; }
 
-        public Parser Parser { get; set; }
+        public DataParser Parser { get; set; }
     }
 }

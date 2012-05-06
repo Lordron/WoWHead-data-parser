@@ -1,10 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Sql;
+using WoWHeadParser.Page;
 
-namespace WoWHeadParser
+namespace WoWHeadParser.Parser.Parsers
 {
-    internal class TrainerParser : Parser
+    internal class TrainerParser : DataParser
     {
         private Dictionary<TrainerType, string> _patterns = new Dictionary<TrainerType, string>
         {
@@ -40,10 +41,10 @@ namespace WoWHeadParser
                             continue;
                     }
 
-                    int start = item.Index;
-                    int end = page.IndexOf("});", start);
+                    int startIndex = item.Index;
+                    int endIndex = page.FastIndexOf("});", startIndex);
 
-                    page = page.Substring(start, end - start + 3);
+                    page = page.Substring(startIndex, endIndex - startIndex + 3);
                 }
             }
 

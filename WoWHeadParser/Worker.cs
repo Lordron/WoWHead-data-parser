@@ -4,6 +4,8 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using WoWHeadParser.Page;
+using WoWHeadParser.Parser;
 using WoWHeadParser.Properties;
 
 namespace WoWHeadParser
@@ -14,7 +16,7 @@ namespace WoWHeadParser
         private uint _end;
         private bool _isWorking;
         private string _address;
-        private Parser _parser;
+        private DataParser _parser;
         private DateTime _timeStart;
         private DateTime _timeEnd;
         private List<uint> _entries;
@@ -46,7 +48,7 @@ namespace WoWHeadParser
             _semaphore = new SemaphoreSlim(SemaphoreCount, SemaphoreCount);
         }
 
-        public void Parser(Parser parser)
+        public void Parser(DataParser parser)
         {
             _parser = parser;
             _address = string.Format("http://{0}wowhead.com/{1}", _locales[parser.Locale], parser.Address);

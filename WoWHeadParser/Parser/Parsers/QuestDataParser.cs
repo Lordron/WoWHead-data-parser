@@ -2,10 +2,11 @@
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sql;
+using WoWHeadParser.Page;
 
-namespace WoWHeadParser
+namespace WoWHeadParser.Parser.Parsers
 {
-    internal class QuestLocaleParser : Parser
+    internal class QuestLocaleParser : DataParser
     {
         public override string Parse(PageItem block)
         {
@@ -54,7 +55,7 @@ namespace WoWHeadParser
         public override int MaxCount { get { return 32000; } }
     }
 
-    internal class QuestDataParser : Parser
+    internal class QuestDataParser : DataParser
     {
         public override string Parse(PageItem block)
         {

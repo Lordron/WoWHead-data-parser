@@ -91,7 +91,7 @@ namespace WoWHeadParser
             if (Response == null)
                 return string.Empty;
 
-            Stream stream = default(Stream);
+            Stream stream;
             switch (Response.ContentEncoding.ToUpperInvariant())
             {
                 case "GZIP":

@@ -67,7 +67,6 @@ namespace WoWHeadParser
             if (pattern.Length == 1) 
                 return source.IndexOf(pattern[0], startIndex);
 
-            bool found;
             int limit = source.Length - pattern.Length + 1;
             if (limit < 1) 
                 return -1;
@@ -87,14 +86,14 @@ namespace WoWHeadParser
                     continue;
                 }
                 // Check the rest of "pattern" (starting with the 3rd character)
-                found = true;
+                bool found = true;
                 for (int j = 2; j < pattern.Length; j++)
                 {
-                    if (source[first + j] != pattern[j])
-                    {
-                        found = false;
-                        break;
-                    }
+                    if (source[first + j] == pattern[j])
+                        continue;
+
+                    found = false;
+                    break;
                 }
                 // If the whole word was found, return its index, otherwise try again
                 if (found) 

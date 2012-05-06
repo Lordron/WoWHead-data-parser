@@ -15,7 +15,7 @@ namespace WoWHeadParser
         public RichTextBoxWriter()
             : base(new FileStream(Assembly.GetExecutingAssembly().GetName().Name + ".log", FileMode.Create))
         {
-            this.AutoFlush = true;
+            AutoFlush = true;
 
             if (base.BaseStream.Position != 0)
             {

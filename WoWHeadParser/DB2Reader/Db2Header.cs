@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace WoWHeadParser
+namespace WoWHeadParser.DB2Reader
 {
     public struct Db2Header
     {

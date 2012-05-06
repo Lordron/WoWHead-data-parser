@@ -94,13 +94,14 @@
     <Compile Include="DB2Reader\Db2Reader.cs" />
     <Compile Include="Locale.cs" />
     <Compile Include="Message.cs" />
+    <Compile Include="Parser\Parsers\ItemParser.cs" />
     <Compile Include="Parser\Parsers\NpcDataParser.cs" />
     <Compile Include="Parser\ParserAttribute.cs" />
     <Compile Include="Parser\Parsers\QuestDataParser.cs" />
     <Compile Include="Parser\Parsers\TrainerParser.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Parser\Parsers\PageParser.cs" />
-    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Parser\DataParser.cs" />
     <Compile Include="Parser\Parsers\VendorParser.cs" />
     <Compile Include="ParsingType.cs" />
     <Compile Include="RichTextBoxWriter.cs" />
@@ -150,6 +151,9 @@
     </Compile>
     <None Include="db2\ItemExtendedCost.db2">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="EntryList\item.welf">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="EntryList\trainer.welf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>

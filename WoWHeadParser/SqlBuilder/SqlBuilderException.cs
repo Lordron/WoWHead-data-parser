@@ -5,7 +5,6 @@ namespace Sql
     class InvalidQueryTypeException : Exception
     {
         public InvalidQueryTypeException()
-            : base()
         {
         }
 
@@ -19,7 +18,7 @@ namespace Sql
         {
         }
 
-        public InvalidQueryTypeException(string message, params string[] args)
+        public InvalidQueryTypeException(string message, params object[] args)
             : base(string.Format(message, args))
         {
         }
