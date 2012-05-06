@@ -18,6 +18,7 @@ namespace WoWHeadParser
         private DateTime _timeStart;
         private DateTime _timeEnd;
         private List<uint> _entries;
+        private ServicePoint _service;
         private List<PageItem> _pages;
         private SemaphoreSlim _semaphore;
 
@@ -49,6 +50,11 @@ namespace WoWHeadParser
         {
             _parser = parser;
             _address = string.Format("http://{0}wowhead.com/{1}", _locales[parser.Locale], parser.Address);
+            _service = ServicePointManager.FindServicePoint(new Uri(_address));
+            {
+                _service.ConnectionLeaseTimeout = Timeout.Infinite;
+                _service.ConnectionLimit = SemaphoreCount;
+            }
         }
 
         public void SetValue(uint value)
@@ -74,12 +80,6 @@ namespace WoWHeadParser
 
             _isWorking = true;
             _timeStart = DateTime.Now;
-
-            ServicePoint servicePoint = ServicePointManager.FindServicePoint(new Uri(_address));
-            {
-                servicePoint.ConnectionLimit = 1000;
-                servicePoint.SetTcpKeepAlive(true, 100000, 100000);
-            }
 
             switch (type)
             {
@@ -174,12 +174,14 @@ namespace WoWHeadParser
                 throw new InvalidOperationException();
 
             _isWorking = false;
+            _service.ConnectionLeaseTimeout = 0;
         }
 
         public void Reset()
         {
             _isWorking = false;
             _pages.Clear();
+            _service.ConnectionLeaseTimeout = 0;
         }
 
         public void Dispose()
@@ -199,7 +201,7 @@ namespace WoWHeadParser
 
             for (int i = 0; i < _pages.Count; ++i)
             {
-                content.AppendLine(_pages[i].ToString());
+                content.Append(_pages[i].ToString());
             }
 
             return content.ToString();

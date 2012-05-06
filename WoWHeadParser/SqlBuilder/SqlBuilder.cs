@@ -225,7 +225,7 @@ namespace Sql
                 _content.AppendFormat("){0}", i < _items.Count - 1 ? "," : ";").AppendLine();
             }
 
-            return _content.ToString();
+            return _content.ToString() + Environment.NewLine;
         }
     }
 }
