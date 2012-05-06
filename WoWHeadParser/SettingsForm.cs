@@ -16,13 +16,13 @@ namespace WoWHeadParser
                 if (type > SqlQueryType.None && type < SqlQueryType.Max)
                     sqlQueryTypeBox.Items.Add(type);
             }
-            sqlQueryTypeBox.SelectedItem = (SqlQueryType) Settings.Default.QueryType;
+            sqlQueryTypeBox.SelectedItem = (SqlQueryType)Settings.Default.QueryType;
 
             foreach (SortOrder sort in Enum.GetValues(typeof(SortOrder)))
             {
                 sortDirectionBox.Items.Add(sort);
             }
-            sortDirectionBox.SelectedItem = (SortOrder) Settings.Default.SortOrder;
+            sortDirectionBox.SelectedItem = (SortOrder)Settings.Default.SortOrder;
         }
 
         private void OkButtonClick(object sender, EventArgs e)

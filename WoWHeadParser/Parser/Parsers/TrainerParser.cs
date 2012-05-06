@@ -55,7 +55,7 @@ namespace WoWHeadParser.Parser.Parsers
             string subPattern = _patterns[type];
 
             MatchCollection find = Regex.Matches(page, pattern);
-            
+
             SqlBuilder builder = new SqlBuilder("npc_trainer");
             builder.SetFieldsName("spell", "spellcost", "reqlevel", "reqSkill", "reqSkillValue");
 

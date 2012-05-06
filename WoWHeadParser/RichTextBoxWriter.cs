@@ -13,7 +13,7 @@ namespace WoWHeadParser
         public RichTextBox OutputBox;
 
         public RichTextBoxWriter()
-            : base(new FileStream(Assembly.GetExecutingAssembly().GetName().Name + ".log", FileMode.Create))
+                : base(new FileStream(Assembly.GetExecutingAssembly().GetName().Name + ".log", FileMode.Create))
         {
             AutoFlush = true;
 
@@ -26,10 +26,7 @@ namespace WoWHeadParser
 
         // Must Implement Methods
 
-        public override Encoding Encoding
-        {
-            get { return Encoding.UTF8; }
-        }
+        public override Encoding Encoding { get { return Encoding.UTF8; } }
 
         public override void WriteLine(string value)
         {
@@ -63,10 +60,10 @@ namespace WoWHeadParser
             if (!OutputBox.IsDisposed)
             {
                 OutputBox.ThreadSafeBegin(x =>
-                {
-                    x.AppendText(text);
-                    x.ScrollToCaret();
-                });
+                    {
+                        x.AppendText(text);
+                        x.ScrollToCaret();
+                    });
             }
 
             if (!string.IsNullOrWhiteSpace(text))
@@ -75,7 +72,9 @@ namespace WoWHeadParser
                 {
                     base.Write(string.Format("[{0:yyyy.MM.dd HH:mm:ss.ffff}] {1}", DateTime.Now, text));
                 }
-                catch { }
+                catch
+                {
+                }
             }
         }
     }

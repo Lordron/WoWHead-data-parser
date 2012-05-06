@@ -9,12 +9,12 @@
         }
 
         public PageItem(uint id)
-            : this(id, string.Empty)
+                : this(id, string.Empty)
         {
         }
 
         public PageItem(Requests requests)
-            : this(requests.Id, requests.ToString())
+                : this(requests.Id, requests.ToString())
         {
         }
 

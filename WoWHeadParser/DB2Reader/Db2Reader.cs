@@ -4,7 +4,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows.Forms;
-using WoWHeadParser.DB2Reader;
 
 namespace WoWHeadParser.DB2Reader
 {

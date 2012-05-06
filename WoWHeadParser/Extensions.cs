@@ -58,17 +58,17 @@ namespace WoWHeadParser
 
         public static int FastIndexOf(this string source, string pattern, int startIndex = 0)
         {
-            if (pattern == null) 
+            if (pattern == null)
                 throw new ArgumentNullException();
 
-            if (pattern.Length == 0) 
+            if (pattern.Length == 0)
                 return 0;
 
-            if (pattern.Length == 1) 
+            if (pattern.Length == 1)
                 return source.IndexOf(pattern[0], startIndex);
 
             int limit = source.Length - pattern.Length + 1;
-            if (limit < 1) 
+            if (limit < 1)
                 return -1;
 
             // Store the first 2 characters of "pattern"
@@ -96,7 +96,7 @@ namespace WoWHeadParser
                     break;
                 }
                 // If the whole word was found, return its index, otherwise try again
-                if (found) 
+                if (found)
                     return first;
 
                 first = source.IndexOf(c0, ++first, limit - first);

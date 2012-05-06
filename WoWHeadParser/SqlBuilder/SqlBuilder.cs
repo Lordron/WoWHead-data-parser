@@ -66,7 +66,7 @@ namespace Sql
         /// <param name="tableName">Table name (like creature_template, creature etc.)</param>
         /// </summary>
         public SqlBuilder(string tableName)
-            : this(tableName, "entry")
+                : this(tableName, "entry")
         {
         }
 
