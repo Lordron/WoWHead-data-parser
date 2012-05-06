@@ -28,7 +28,7 @@ namespace WoWHeadParser
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                Console.WriteLine("[{0}]: {1}", item.Id, e.Message);
                 return string.Empty;
             }
         }
