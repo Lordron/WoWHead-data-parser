@@ -70,7 +70,7 @@ namespace WoWHeadParser
             {
                 try
                 {
-                    base.Write(string.Format("[{0:yyyy.MM.dd HH:mm:ss.ffff}] {1}", DateTime.Now, text));
+                    base.WriteLine(string.Format("[{0:yyyy.MM.dd HH:mm:ss.ffff}] {1}", DateTime.Now, text));
                 }
                 catch
                 {
