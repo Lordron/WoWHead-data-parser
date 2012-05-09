@@ -59,9 +59,10 @@ namespace WoWHeadParser.Parser.Parsers
             SqlBuilder builder = new SqlBuilder("npc_trainer");
             builder.SetFieldsName("spell", "spellcost", "reqlevel", "reqSkill", "reqSkillValue");
 
+            uint blockId = block.Id;
             if (find.Count > 0)
             {
-                string query = string.Format(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | '{0}', `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcflag, (int)type, block.Id);
+                string query = string.Format(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | '{0}', `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcflag, (int)type, blockId);
                 builder.AppendSqlQuery(query);
             }
 
@@ -81,13 +82,13 @@ namespace WoWHeadParser.Parser.Parsers
                             {
                                 string reqSkill = (string.IsNullOrEmpty(groups[4].Value) ? "0" : groups[4].Value);
                                 string reqSkillValue = (string.IsNullOrEmpty(groups[2].Value) ? "0" : groups[2].Value);
-                                builder.AppendFieldsValue(block.Id, groups[1].Value, spellCost, groups[3].Value, reqSkill, reqSkillValue);
+                                builder.AppendFieldsValue(blockId, groups[1].Value, spellCost, groups[3].Value, reqSkill, reqSkillValue);
                             }
                             break;
                         case TrainerType.TypeClass:
                             {
                                 string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? "0" : groups[3].Value);
-                                builder.AppendFieldsValue(block.Id, groups[1].Value, spellCost, groups[2].Value, reqSkill, "0");
+                                builder.AppendFieldsValue(blockId, groups[1].Value, spellCost, groups[2].Value, reqSkill, "0");
                             }
                             break;
                     }

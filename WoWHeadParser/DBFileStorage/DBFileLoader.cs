@@ -11,7 +11,7 @@ namespace WoWHeadParser.DBFileStorage
     {
         public static readonly List<IDBFileLoader> loaders = new List<IDBFileLoader>(8);
 
-        public static bool Initial()
+        public static void Initial()
         {
             Type[] types = Assembly.GetCallingAssembly().GetTypes();
             for (int i = 0; i < types.Length; ++i)
@@ -40,8 +40,6 @@ namespace WoWHeadParser.DBFileStorage
                 sw.Stop();
                 Console.WriteLine("Loaded {0} db files in {1} ms", loaders.Count, sw.ElapsedMilliseconds);
             }
-
-            return false;
         }
 
         public static T GetLoader<T>() where T : class

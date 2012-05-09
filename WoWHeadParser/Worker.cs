@@ -184,6 +184,8 @@ namespace WoWHeadParser
             _isWorking = false;
             _pages.Clear();
             _service.ConnectionLeaseTimeout = 0;
+
+            GC.Collect();
         }
 
         public void Dispose()

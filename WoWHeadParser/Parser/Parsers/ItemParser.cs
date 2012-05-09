@@ -19,7 +19,7 @@ namespace WoWHeadParser.Parser.Parsers
             int endIndex = page.FastIndexOf("<br />", startIndex);
             string subsString = page.Substring(startIndex, (endIndex - startIndex));
             {
-                string[] values = subsString.Split(new[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+                string[] values = subsString.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i < values.Length; ++i)
                 {
                     int durability;

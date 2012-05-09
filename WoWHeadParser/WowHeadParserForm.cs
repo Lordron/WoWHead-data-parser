@@ -36,8 +36,8 @@ namespace WoWHeadParser
 
             RichTextBoxWriter.Instance.OutputBox = consoleBox;
 
-            _entries = new List<uint>();
-            _parsers = new List<DataParser>();
+            _entries = new List<uint>(1024);
+            _parsers = new List<DataParser>(16);
 
             _worker = new Worker();
             _worker.PageDownloadingComplete += WorkerPageDownloaded;
@@ -48,6 +48,7 @@ namespace WoWHeadParser
         protected override void OnLoad(EventArgs e)
         {
             #region Parsers loading
+
             Type typofParser = typeof(DataParser);
             Type[] types = Assembly.GetExecutingAssembly().GetTypes();
             for (int i = 0; i < types.Length; ++i)
@@ -62,6 +63,7 @@ namespace WoWHeadParser
 
                 _parsers.Add(parser);
             }
+
             #endregion
 
             foreach (Locale locale in Enum.GetValues(typeof(Locale)))
@@ -200,14 +202,14 @@ namespace WoWHeadParser
                 string[] values = text.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i < values.Length; ++i)
                 {
-                    string value = values[i];
+                    string s = values[i];
 
-                    uint val;
-                    if (!uint.TryParse(value, out val))
+                    uint value;
+                    if (!uint.TryParse(s, out value))
                         continue;
 
-                    if (!_entries.Contains(val))
-                        _entries.Add(val);
+                    if (!_entries.Contains(value))
+                        _entries.Add(value);
                 }
             }
 

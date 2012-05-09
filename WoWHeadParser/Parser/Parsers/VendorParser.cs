@@ -22,15 +22,14 @@ namespace WoWHeadParser.Parser.Parsers
             string page = block.Page.Substring("\'sells\'");
 
             const string pattern = @"data: \[.*;";
+            char[] anyOf = new[] { '[', ']', '{', '}' };
 
-            char[] anyOf = new[] {'[', ']', '{', '}'};
-            string[] subPatterns = new[] {@"\[(\d+),(\d+)\]", @"\[\[(\d+),(\d+)\]\]"};
+            uint blockId = block.Id;
 
             SqlBuilder builder = new SqlBuilder("npc_vendor");
             builder.SetFieldsName("item", "maxcount", "incrtime", "ExtendedCost");
 
             MatchCollection find = Regex.Matches(page, pattern);
-
             for (int i = 0; i < find.Count; ++i)
             {
                 Match item = find[i];
@@ -44,16 +43,14 @@ namespace WoWHeadParser.Parser.Parsers
                     JToken maxcountToken = jobj["avail"];
 
                     string id = jobj["id"].ToString();
-
-                    string scost = string.Empty;
-                    string scount = string.Empty;
                     string maxcount = maxcountToken == null ? string.Empty : maxcountToken.ToString();
-
-                    uint extendedCostEntry = 0;
 
                     object obj = jobj["cost"];
                     if (!(obj is JArray))
                         continue;
+
+                    uint cost = 0;
+                    uint count = 0;
 
                     JArray array = obj as JArray;
                     foreach (JToken token in array)
@@ -65,36 +62,30 @@ namespace WoWHeadParser.Parser.Parsers
 
                         if (costBlock.IndexOfAny(anyOf) != -1)
                         {
-                            foreach (string subpattern in subPatterns)
+                            MatchCollection matches = Regex.Matches(costBlock, @"\[(\d+),(\d+)\]");
+                            foreach (Match match in matches)
                             {
-                                MatchCollection matches = Regex.Matches(costBlock, subpattern);
-                                foreach (Match match in matches)
-                                {
-                                    scost = match.Groups[1].Value;
-                                    scount = match.Groups[2].Value;
-                                }
+                                cost = uint.Parse(match.Groups[1].Value);
+                                count = uint.Parse(match.Groups[2].Value);
                             }
                         }
                         else
-                            scost = costBlock;
+                            cost = uint.Parse(costBlock);
                     }
 
                     maxcount = maxcount.Equals("-1") ? "0" : maxcount;
                     string incrTime = maxcount.Equals("0") ? "0" : "3600";
 
-                    if (!string.IsNullOrWhiteSpace(scost) && !scost.Equals("0"))
+                    uint extendedCost = 0;
+                    if (cost > 0)
                     {
-                        if (!string.IsNullOrEmpty(scount))
-                        {
-                            uint cost = uint.Parse(scost);
-                            uint count = uint.Parse(scount);
-                            extendedCostEntry = _itemExtendedCost.GetExtendedCost(cost, count);
-                        }
+                        if (count > 0)
+                            extendedCost = _itemExtendedCost.GetExtendedCost(cost, count);
                     }
                     else
-                        extendedCostEntry = 9999999;
+                        extendedCost = 9999999;
 
-                    builder.AppendFieldsValue(block.Id, id, maxcount, incrTime, (extendedCostEntry != 9999999) ? extendedCostEntry.ToString() : "@UNK_COST");
+                    builder.AppendFieldsValue(blockId, id, maxcount, incrTime, (extendedCost != 9999999) ? extendedCost.ToString() : "@UNK_COST");
                 }
             }
 
