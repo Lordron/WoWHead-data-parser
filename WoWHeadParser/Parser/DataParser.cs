@@ -6,6 +6,10 @@ namespace WoWHeadParser.Parser
 {
     public class DataParser
     {
+        public virtual void Prepare()
+        {
+        }
+
         public virtual string PreParse()
         {
             return string.Empty;

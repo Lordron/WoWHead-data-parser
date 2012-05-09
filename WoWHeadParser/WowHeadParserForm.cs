@@ -6,7 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using WoWHeadParser.DB2Reader;
+using WoWHeadParser.DBFileStorage;
 using WoWHeadParser.Parser;
 using WoWHeadParser.Properties;
 
@@ -42,7 +42,7 @@ namespace WoWHeadParser
             _worker = new Worker();
             _worker.PageDownloadingComplete += WorkerPageDownloaded;
 
-            new DB2Loader();
+            DBFileLoader.Initial();
         }
 
         protected override void OnLoad(EventArgs e)
@@ -58,6 +58,7 @@ namespace WoWHeadParser
 
                 DataParser parser = Activator.CreateInstance(type) as DataParser;
                 parserBox.Items.Add(parser.Name);
+                parser.Prepare();
 
                 _parsers.Add(parser);
             }

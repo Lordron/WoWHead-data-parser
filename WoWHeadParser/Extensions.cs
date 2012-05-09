@@ -105,30 +105,6 @@ namespace WoWHeadParser
             return -1;
         }
 
-        public static string ReadCString(this BinaryReader reader)
-        {
-            return reader.ReadCString(Encoding.UTF8);
-        }
-
-        public static string ReadCString(this BinaryReader reader, Encoding encoding)
-        {
-            List<byte> bytes = new List<byte>();
-            byte b;
-            while ((b = reader.ReadByte()) != 0)
-                bytes.Add(b);
-
-            return encoding.GetString(bytes.ToArray());
-        }
-
-        public static T ReadStruct<T>(this BinaryReader reader) where T : struct
-        {
-            byte[] rawData = reader.ReadBytes(Marshal.SizeOf(typeof(T)));
-            GCHandle handle = GCHandle.Alloc(rawData, GCHandleType.Pinned);
-            T returnObject = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
-            handle.Free();
-            return returnObject;
-        }
-
         public static void ThreadSafe<T>(this T control, Action<T> action) where T : Control
         {
             if (control == null)

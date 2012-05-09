@@ -3,13 +3,20 @@ using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sql;
-using WoWHeadParser.DB2Reader;
+using WoWHeadParser.DBFileStorage;
 using WoWHeadParser.Page;
 
 namespace WoWHeadParser.Parser.Parsers
 {
     internal class VendorParser : DataParser
     {
+        private ItemExtendedCost _itemExtendedCost = null;
+
+        public override void Prepare()
+        {
+            _itemExtendedCost = DBFileLoader.GetLoader<ItemExtendedCost>();
+        }
+
         public override string Parse(PageItem block)
         {
             string page = block.Page.Substring("\'sells\'");
@@ -81,7 +88,7 @@ namespace WoWHeadParser.Parser.Parsers
                         {
                             uint cost = uint.Parse(scost);
                             uint count = uint.Parse(scount);
-                            extendedCostEntry = DBFileReader.GetExtendedCost(cost, count);
+                            extendedCostEntry = _itemExtendedCost.GetExtendedCost(cost, count);
                         }
                     }
                     else

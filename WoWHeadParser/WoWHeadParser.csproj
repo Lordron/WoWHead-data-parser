@@ -28,7 +28,7 @@
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -40,9 +40,10 @@
     <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
     <GenerateSerializationAssemblies>Off</GenerateSerializationAssemblies>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -54,6 +55,7 @@
     <NoWarn />
     <CodeAnalysisIgnoreGeneratedCode>false</CodeAnalysisIgnoreGeneratedCode>
     <RunCodeAnalysis>false</RunCodeAnalysis>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -68,6 +70,10 @@
     <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DBFilesClient.NET, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Lib\DBFilesClient.NET.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.0.8.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\Newtonsoft.Json.dll</HintPath>
@@ -86,12 +92,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DBFileStorage\DBFileLoader.cs" />
+    <Compile Include="DBFileStorage\IDBFileLoader.cs" />
+    <Compile Include="DBFileStorage\IStructureFmt.cs" />
     <Compile Include="Page\PageItem.cs" />
     <Compile Include="Page\PageItemComparer.cs" />
-    <Compile Include="DB2Reader\Db2Dictionary.cs" />
-    <Compile Include="DB2Reader\Db2Header.cs" />
-    <Compile Include="DB2Reader\Db2Loader.cs" />
-    <Compile Include="DB2Reader\Db2Reader.cs" />
+    <Compile Include="DBFileStorage\ItemExtendedCost.cs" />
     <Compile Include="Locale.cs" />
     <Compile Include="Message.cs" />
     <Compile Include="Parser\Parsers\ItemParser.cs" />
@@ -203,6 +209,7 @@
     <None Include="Resources\wowIcon.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Lib\DBFilesClient.NET.dll" />
     <Content Include="Lib\Newtonsoft.Json.dll" />
   </ItemGroup>
   <ItemGroup />
