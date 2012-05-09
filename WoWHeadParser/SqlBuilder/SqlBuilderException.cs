@@ -2,6 +2,7 @@
 
 namespace Sql
 {
+    [Serializable]
     internal class InvalidQueryTypeException : Exception
     {
         public InvalidQueryTypeException()

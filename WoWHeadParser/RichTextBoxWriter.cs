@@ -8,7 +8,7 @@ namespace WoWHeadParser
 {
     public class RichTextBoxWriter : StreamWriter
     {
-        public static RichTextBoxWriter Instance = new RichTextBoxWriter();
+        public static readonly RichTextBoxWriter Instance = new RichTextBoxWriter();
 
         public RichTextBox OutputBox;
 

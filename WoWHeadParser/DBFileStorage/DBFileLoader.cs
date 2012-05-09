@@ -9,7 +9,7 @@ namespace WoWHeadParser.DBFileStorage
 {
     public static class DBFileLoader
     {
-        public static readonly List<IDBFileLoader> loaders = new List<IDBFileLoader>(8);
+        private static List<IDBFileLoader> _loaders = new List<IDBFileLoader>(8);
 
         public static void Initial()
         {
@@ -29,7 +29,7 @@ namespace WoWHeadParser.DBFileStorage
                         throw new InvalidCastException();
 
                     loader.Load();
-                    loaders.Add(loader);
+                    _loaders.Add(loader);
                 }
                 catch(Exception e)
                 {
@@ -38,15 +38,15 @@ namespace WoWHeadParser.DBFileStorage
                     continue;
                 }
                 sw.Stop();
-                Console.WriteLine("Loaded {0} db files in {1} ms", loaders.Count, sw.ElapsedMilliseconds);
+                Console.WriteLine("Loaded {0} db files in {1} ms", _loaders.Count, sw.ElapsedMilliseconds);
             }
         }
 
         public static T GetLoader<T>() where T : class
         {
-            for (int i = 0; i < loaders.Count; ++i)
+            for (int i = 0; i < _loaders.Count; ++i)
             {
-                IDBFileLoader loader = loaders[i];
+                IDBFileLoader loader = _loaders[i];
                 if (!(loader is T))
                     continue;
 
@@ -57,7 +57,7 @@ namespace WoWHeadParser.DBFileStorage
 
         #region Reading dbX files
 
-        public static string DbFilePath = "db2";
+        public const string DbFilePath = "db2";
 
         public static unsafe DBCStorage Load<T>(bool dbc) where T : struct
         {
