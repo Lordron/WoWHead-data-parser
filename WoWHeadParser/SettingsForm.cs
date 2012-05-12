@@ -31,6 +31,8 @@ namespace WoWHeadParser
             Settings.Default.AppendDeleteQuery = appendDeleteQueryCheckBox.Checked;
             Settings.Default.QueryType = sqlQueryTypeBox.SelectedIndex + 1;
             Settings.Default.SortOrder = sortDirectionBox.SelectedIndex;
+            Settings.Default.Append = appendSqlCheckBox.Checked;
+            Settings.Default.WithoutHeader = withoutHeaderCheckBox.Checked;
             Settings.Default.Save();
 
             Close();

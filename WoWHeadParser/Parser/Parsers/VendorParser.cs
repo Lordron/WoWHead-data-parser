@@ -33,9 +33,8 @@ namespace WoWHeadParser.Parser.Parsers
             for (int i = 0; i < find.Count; ++i)
             {
                 Match item = find[i];
-
                 string text = item.Value.Replace("data: ", "").Replace("});", "");
-                JArray serialization = (JArray)JsonConvert.DeserializeObject(text);
+                JArray serialization = JsonConvert.DeserializeObject<JArray>(text);
 
                 for (int j = 0; j < serialization.Count; ++j)
                 {

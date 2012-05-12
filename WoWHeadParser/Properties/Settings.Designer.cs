@@ -82,5 +82,17 @@ namespace WoWHeadParser.Properties {
                 this["Append"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool WithoutHeader {
+            get {
+                return ((bool)(this["WithoutHeader"]));
+            }
+            set {
+                this["WithoutHeader"] = value;
+            }
+        }
     }
 }

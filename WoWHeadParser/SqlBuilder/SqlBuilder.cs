@@ -33,6 +33,11 @@ namespace Sql
         /// </summary>
         public bool AppendDeleteQuery { get; private set; }
 
+        /// <summary>
+        /// Gets a value indication whether to allow append header to insert and replace query
+        /// </summary>
+        public bool WriteWithoutHeader { get; private set; }
+
         private string _tableName = string.Empty;
 
         private string _keyName = string.Empty;
@@ -53,6 +58,7 @@ namespace Sql
             _tableName = tableName;
             _keyName = keyName;
 
+            WriteWithoutHeader = Settings.Default.WithoutHeader;
             AppendDeleteQuery = Settings.Default.AppendDeleteQuery;
             AllowNullValue = Settings.Default.AllowEmptyValues;
             QueryType = (SqlQueryType)Settings.Default.QueryType;
@@ -201,21 +207,27 @@ namespace Sql
             switch (QueryType)
             {
                 case SqlQueryType.Insert:
-                    _content.AppendFormat("INSERT INTO `{0}` (`{1}`, ", _tableName, _keyName);
+                    _content.AppendFormat("INSERT INTO `{0}`", _tableName);
                     break;
                 case SqlQueryType.InsertIgnore:
-                    _content.AppendFormat("INSERT IGNORE INTO `{0}` (`{1}`, ", _tableName, _keyName);
+                    _content.AppendFormat("INSERT IGNORE INTO `{0}`", _tableName);
                     break;
                 case SqlQueryType.Replace:
-                    _content.AppendFormat("REPLACE INTO `{0}` (`{1}`, ", _tableName, _keyName);
+                    _content.AppendFormat("REPLACE INTO `{0}`", _tableName);
                     break;
             }
 
-            for (int i = 0; i < _fields.Count; ++i)
-                _content.AppendFormat("`{0}`, ", _fields[i]);
+            if (!WriteWithoutHeader)
+            {
+                _content.AppendFormat(" (`{1}`, ", _keyName);
 
-            _content.Remove(_content.Length - 2, 2);
-            _content.AppendLine(") VALUES");
+                for (int i = 0; i < _fields.Count; ++i)
+                    _content.AppendFormat("`{0}`, ", _fields[i]);
+
+                _content.Remove(_content.Length - 2, 2);
+                _content.Append(")");
+            }
+            _content.AppendLine(" VALUES");
 
             for (int i = 0; i < _items.Count; ++i)
             {
