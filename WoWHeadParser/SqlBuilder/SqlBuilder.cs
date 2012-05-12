@@ -135,12 +135,17 @@ namespace Sql
             _content.AppendLine(query);
         }
 
+        public bool Empty
+        {
+            get { return _items.Count <= 0; }
+        }
+
         /// <summary>
         /// Build sql query
         /// </summary>
         public override string ToString()
         {
-            if (_items.Count <= 0)
+            if (Empty)
                 return string.Empty;
 
             _content.Capacity = 2048 * _items.Count;

@@ -44,7 +44,8 @@ namespace WoWHeadParser.DBFileStorage
 
         public unsafe uint GetExtendedCost(uint cost, uint count)
         {
-            for (uint id = _storage.MinId; id <= _storage.MaxId; ++id)
+            uint maxId = _storage.MaxId;
+            for (uint id = _storage.MinId; id <= maxId; ++id)
             {
                 IntPtr entryPtr = _storage.GetEntry(id);
                 if (entryPtr == IntPtr.Zero)
@@ -55,10 +56,7 @@ namespace WoWHeadParser.DBFileStorage
                 {
                     if (entry->ReqItems[i] == cost && entry->ReqItemCounts[i] == count)
                         return entry->Id;
-                }
 
-                for (int i = 0; i < MaxSize; ++i)
-                {
                     if (entry->ReqCurrences[i] == cost && (entry->ReqCurrencyCounts[i] == count || entry->ReqCurrencyCounts[i] == count * 100))
                         return entry->Id;
                 }

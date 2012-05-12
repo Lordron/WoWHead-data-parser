@@ -14,7 +14,7 @@ namespace WoWHeadParser.Parser.Parsers
             {TrainerType.TypeTradeskills, "{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*"},
         };
 
-        public override string Parse(PageItem block)
+        public override bool Parse(ref PageItem block)
         {
             string page = block.Page;
 
@@ -49,7 +49,7 @@ namespace WoWHeadParser.Parser.Parsers
             }
 
             if (type == TrainerType.TypeNone)
-                return string.Empty;
+                return false;
 
             const string pattern = @"data: \[.*;";
             string subPattern = _patterns[type];
@@ -60,18 +60,20 @@ namespace WoWHeadParser.Parser.Parsers
             builder.SetFieldsName("spell", "spellcost", "reqlevel", "reqSkill", "reqSkillValue");
 
             uint blockId = block.Id;
-            if (find.Count > 0)
+
+            int count = find.Count;
+            if (count > 0)
             {
                 string query = string.Format(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | '{0}', `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcflag, (int)type, blockId);
                 builder.AppendSqlQuery(query);
             }
 
-            for (int i = 0; i < find.Count; ++i)
+            for (int i = 0; i < count; ++i)
             {
-                Match item = find[i];
-                MatchCollection matches = Regex.Matches(item.Value, subPattern);
+                MatchCollection matches = Regex.Matches(find[i].Value, subPattern);
 
-                for (int j = 0; j < matches.Count; ++j)
+                int matchesCount = matches.Count;
+                for (int j = 0; j < matchesCount; ++j)
                 {
                     GroupCollection groups = matches[j].Groups;
 
@@ -95,7 +97,8 @@ namespace WoWHeadParser.Parser.Parsers
                 }
             }
 
-            return builder.ToString();
+            block.Page = builder.ToString();
+            return !builder.Empty;
         }
 
         public override string Name { get { return "Professions & Class Trainer data parser"; } }

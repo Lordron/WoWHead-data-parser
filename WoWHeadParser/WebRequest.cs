@@ -105,7 +105,13 @@ namespace WoWHeadParser
                     break;
             }
 
-            return new StreamReader(stream).ReadToEnd();
+            using (BufferedStream buffer = new BufferedStream(stream))
+            {
+                using (StreamReader reader = new StreamReader(buffer))
+                {
+                    return reader.ReadToEnd();
+                }
+            }
         }
     }
 }

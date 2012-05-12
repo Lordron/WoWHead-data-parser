@@ -8,10 +8,9 @@ namespace WoWHeadParser.Parser.Parsers
 {
     internal class QuestLocaleParser : DataParser
     {
-        public override string Parse(PageItem block)
+        public override bool Parse(ref PageItem block)
         {
             string page = block.Page.Substring("\'quests\'");
-
             const string pattern = @"data: \[.*;";
 
             SqlBuilder builder;
@@ -45,7 +44,8 @@ namespace WoWHeadParser.Parser.Parsers
                 }
             }
 
-            return builder.ToString();
+            block.Page = builder.ToString();
+            return !builder.Empty;
         }
 
         public override string Name { get { return "Quest locale data parser"; } }
@@ -57,10 +57,9 @@ namespace WoWHeadParser.Parser.Parsers
 
     internal class QuestDataParser : DataParser
     {
-        public override string Parse(PageItem block)
+        public override bool Parse(ref PageItem block)
         {
             string page = block.Page.Substring("\'quests\'");
-
             const string pattern = @"data: \[.*;";
 
             SqlBuilder builder = new SqlBuilder("quest_template", "id");
@@ -93,7 +92,8 @@ namespace WoWHeadParser.Parser.Parsers
                 }
             }
 
-            return builder.ToString();
+            block.Page = builder.ToString();
+            return !builder.Empty;
         }
 
         public override string Name { get { return "Quest template data parser"; } }

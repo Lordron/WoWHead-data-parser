@@ -7,7 +7,7 @@ namespace WoWHeadParser.Parser.Parsers
 {
     internal class PageParser : DataParser
     {
-        public override string Parse(PageItem block)
+        public override bool Parse(ref PageItem block)
         {
             Regex regex = new Regex(@"new Book\({ parent: '.+', pages: \['(?<page>.+)'\]}\)", RegexOptions.Multiline);
             MatchCollection matches = regex.Matches(block.Page);
@@ -48,7 +48,8 @@ namespace WoWHeadParser.Parser.Parsers
                 }
             }
 
-            return builder.ToString();
+            block.Page = builder.ToString();
+            return !builder.Empty;
         }
 
         public override string Name { get { return "Book page data parser"; } }

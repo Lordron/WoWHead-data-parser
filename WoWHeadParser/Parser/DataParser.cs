@@ -15,9 +15,9 @@ namespace WoWHeadParser.Parser
             return string.Empty;
         }
 
-        public virtual string Parse(PageItem block)
+        public virtual bool Parse(ref PageItem block)
         {
-            return string.Empty;
+            return false;
         }
 
         public virtual string Address { get { return string.Empty; } }
@@ -26,16 +26,16 @@ namespace WoWHeadParser.Parser
 
         public virtual int MaxCount { get { return 0; } }
 
-        public string SafeParser(PageItem item)
+        public bool SafeParser(ref PageItem item)
         {
             try
             {
-                return Parse(item);
+                return Parse(ref item);
             }
             catch (Exception e)
             {
                 Console.WriteLine("[{0}]: {1}", item.Id, e.Message);
-                return string.Empty;
+                return false;
             }
         }
 

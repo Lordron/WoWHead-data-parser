@@ -6,12 +6,12 @@ namespace WoWHeadParser.Parser.Parsers
 {
     internal class ItemParser : DataParser
     {
-        public override string Parse(PageItem block)
+        public override bool Parse(ref PageItem block)
         {
             string page = block.Page;
             int startIndex = page.FastIndexOf("Durability");
             if (startIndex == -1)
-                return string.Empty;
+                return false;
 
             SqlBuilder builder = new SqlBuilder("item_template");
             builder.SetFieldsName("Durability");
@@ -31,7 +31,8 @@ namespace WoWHeadParser.Parser.Parsers
                 }
             }
 
-            return builder.ToString();
+            block.Page = builder.ToString();
+            return !builder.Empty;
         }
 
         public override string Name { get { return "Item data parser"; } }

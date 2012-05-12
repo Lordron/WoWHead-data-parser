@@ -9,7 +9,7 @@ namespace WoWHeadParser.Parser.Parsers
 {
     internal class NpcLocaleParser : DataParser
     {
-        public override string Parse(PageItem block)
+        public override bool Parse(ref PageItem block)
         {
             string page = block.Page.Substring("\'npcs\'");
 
@@ -44,8 +44,8 @@ namespace WoWHeadParser.Parser.Parsers
                     builder.AppendFieldsValue(id, name, subName);
                 }
             }
-
-            return builder.ToString();
+            block.Page = builder.ToString();
+            return !builder.Empty;
         }
 
         public override string Name { get { return "NPC locale data parser"; } }
@@ -57,7 +57,7 @@ namespace WoWHeadParser.Parser.Parsers
 
     internal class NpcDataParser : DataParser
     {
-        public override string Parse(PageItem block)
+        public override bool Parse(ref PageItem block)
         {
             string page = block.Page.Substring("\'npcs\'");
 
@@ -96,7 +96,8 @@ namespace WoWHeadParser.Parser.Parsers
                 }
             }
 
-            return builder.ToString();
+            block.Page = builder.ToString();
+            return !builder.Empty;
         }
 
         public override string PreParse()

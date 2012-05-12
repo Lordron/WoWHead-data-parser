@@ -56,6 +56,7 @@ namespace WoWHeadParser
             {
                 _service.ConnectionLeaseTimeout = Timeout.Infinite;
                 _service.ConnectionLimit = SemaphoreCount;
+                _service.SetTcpKeepAlive(true, 100000000, 100000000);
             }
         }
 
@@ -157,8 +158,7 @@ namespace WoWHeadParser
                 PageItem item = new PageItem(request);
                 lock (_threadLock)
                 {
-                    item.Page = _parser.SafeParser(item);
-                    if (!string.IsNullOrEmpty(item.Page))
+                    if (_parser.SafeParser(ref item))
                         _pages.Add(item);
                 }
             }

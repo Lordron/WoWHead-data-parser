@@ -17,7 +17,7 @@ namespace WoWHeadParser.Parser.Parsers
             _itemExtendedCost = DBFileLoader.GetLoader<ItemExtendedCost>();
         }
 
-        public override string Parse(PageItem block)
+        public override bool Parse(ref PageItem block)
         {
             string page = block.Page.Substring("\'sells\'");
 
@@ -51,6 +51,7 @@ namespace WoWHeadParser.Parser.Parsers
 
                     uint cost = 0;
                     uint count = 0;
+                    bool hasExtendedCost = false;
 
                     JArray array = obj as JArray;
                     foreach (JToken token in array)
@@ -67,29 +68,28 @@ namespace WoWHeadParser.Parser.Parsers
                             {
                                 cost = uint.Parse(match.Groups[1].Value);
                                 count = uint.Parse(match.Groups[2].Value);
+                                hasExtendedCost = true;
                             }
                         }
                         else
-                            cost = uint.Parse(costBlock);
+                            hasExtendedCost = true;
                     }
 
                     maxcount = maxcount.Equals("-1") ? "0" : maxcount;
                     string incrTime = maxcount.Equals("0") ? "0" : "3600";
 
                     uint extendedCost = 0;
-                    if (cost > 0)
-                    {
-                        if (count > 0)
-                            extendedCost = _itemExtendedCost.GetExtendedCost(cost, count);
-                    }
-                    else
+                    if (hasExtendedCost && cost > 0 && count > 0)
+                        extendedCost = _itemExtendedCost.GetExtendedCost(cost, count);
+                    else if (!hasExtendedCost)
                         extendedCost = 9999999;
 
                     builder.AppendFieldsValue(blockId, id, maxcount, incrTime, (extendedCost != 9999999) ? extendedCost.ToString() : "@UNK_COST");
                 }
             }
 
-            return builder.ToString();
+            block.Page = builder.ToString();
+            return !builder.Empty;
         }
 
         public override string PreParse()
