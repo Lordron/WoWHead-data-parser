@@ -18,9 +18,9 @@
         {
         }
 
-        public string Page { get; set; }
-
         public uint Id { get; private set; }
+
+        public string Page { get; set; }
 
         public override string ToString()
         {

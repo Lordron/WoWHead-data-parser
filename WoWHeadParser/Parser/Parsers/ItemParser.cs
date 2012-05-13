@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Sql;
 using WoWHeadParser.Page;
 
@@ -6,10 +7,21 @@ namespace WoWHeadParser.Parser.Parsers
 {
     internal class ItemParser : DataParser
     {
+        private Dictionary<Locale, string> _durabiliy = new Dictionary<Locale, string>
+        {
+            {Locale.Old, @"Durability"},
+            {Locale.English, @"Durability"},
+            {Locale.Russia, @"Прочность"},
+            {Locale.Germany, @"Haltbarkeit"},
+            {Locale.Spain, @"Durabilidad"},
+            {Locale.France, @"Durabilité"},
+            {Locale.Portugal, @"Durabilidade"},
+        };
+
         public override bool Parse(ref PageItem block)
         {
             string page = block.Page;
-            int startIndex = page.FastIndexOf("Durability");
+            int startIndex = page.FastIndexOf(_durabiliy[Locale]);
             if (startIndex == -1)
                 return false;
 
