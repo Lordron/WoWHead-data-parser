@@ -47,6 +47,8 @@ namespace WoWHeadParser
 
         protected override void OnLoad(EventArgs e)
         {
+            #region Prepare
+
             #region Parsers loading
 
             Type typofParser = typeof(DataParser);
@@ -75,10 +77,35 @@ namespace WoWHeadParser
                     localeBox.Items.Add(locale);
             }
 
-            parserBox.SelectedIndex = 0;
-            localeBox.SelectedItem = Locale.English;
+            #endregion
+
+            #region Load from settings
+
+            int lastParser = Settings.Default.LastParser;
+            if (lastParser < parserBox.Items.Count)
+                parserBox.SelectedIndex = lastParser;
+            else
+                Console.WriteLine("Error while loading last parser from settings! Last parser index < parsers count!");
+
+            int lastLanguage = Settings.Default.LastLanguage;
+            if (lastLanguage < localeBox.Items.Count)
+                localeBox.SelectedIndex = lastLanguage;
+            else
+                Console.WriteLine("Error while loading last language from settings! Last language index < parsers count!");
+
+            #endregion
 
             LoadWelfFiles();
+        }
+
+        private void LocaleBoxSelectedIndexChanged(object sender, EventArgs e)
+        {
+            Settings.Default.LastLanguage = localeBox.SelectedIndex;
+        }
+
+        private void ParserBoxSelectedIndexChanged(object sender, EventArgs e)
+        {
+            Settings.Default.LastParser = parserBox.SelectedIndex;
         }
 
         public void StartButtonClick(object sender, EventArgs e)
@@ -240,12 +267,18 @@ namespace WoWHeadParser
         private void ExitMenuClick(object sender, EventArgs e)
         {
             Application.Exit();
+            Settings.Default.Save();
         }
 
         protected override void OnClosing(CancelEventArgs e)
         {
             DialogResult result = ShowMessageBox(MessageType.ExitQuestion);
             e.Cancel = (result == DialogResult.No);
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            Settings.Default.Save();
         }
 
         private void SetLabelText(string text)

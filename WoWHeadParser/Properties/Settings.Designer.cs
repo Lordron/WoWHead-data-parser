@@ -94,5 +94,29 @@ namespace WoWHeadParser.Properties {
                 this["WithoutHeader"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int LastLanguage {
+            get {
+                return ((int)(this["LastLanguage"]));
+            }
+            set {
+                this["LastLanguage"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int LastParser {
+            get {
+                return ((int)(this["LastParser"]));
+            }
+            set {
+                this["LastParser"] = value;
+            }
+        }
     }
 }

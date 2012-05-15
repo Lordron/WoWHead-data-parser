@@ -114,6 +114,7 @@ namespace WoWHeadParser
             this.parserBox.Name = "parserBox";
             this.parserBox.Size = new System.Drawing.Size(290, 21);
             this.parserBox.TabIndex = 1;
+            this.parserBox.SelectedIndexChanged += new System.EventHandler(this.ParserBoxSelectedIndexChanged);
             // 
             // localeBox
             // 
@@ -125,6 +126,7 @@ namespace WoWHeadParser
             this.localeBox.Name = "localeBox";
             this.localeBox.Size = new System.Drawing.Size(68, 21);
             this.localeBox.TabIndex = 3;
+            this.localeBox.SelectedIndexChanged += new System.EventHandler(this.LocaleBoxSelectedIndexChanged);
             // 
             // settingsBox
             // 
@@ -510,7 +512,6 @@ namespace WoWHeadParser
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.CancelButton = this.abortButton;
-            this.MaximizeBox = false;
             this.ClientSize = new System.Drawing.Size(379, 353);
             this.Controls.Add(this.consoleGroupBox);
             this.Controls.Add(this.progressLabel);
@@ -521,6 +522,7 @@ namespace WoWHeadParser
             this.Controls.Add(this.startButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Menu = this.mainMenu;
             this.Name = "WoWHeadParserForm";
             this.Text = "WowHead Parser";
