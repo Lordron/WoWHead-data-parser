@@ -172,9 +172,6 @@ namespace WoWHeadParser
 
         public void Stop()
         {
-            if (!_isWorking)
-                throw new InvalidOperationException();
-
             _isWorking = false;
             _service.ConnectionLeaseTimeout = 0;
         }
