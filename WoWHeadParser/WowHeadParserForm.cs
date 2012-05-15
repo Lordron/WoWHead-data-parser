@@ -232,6 +232,11 @@ namespace WoWHeadParser
             this.ThreadSafeBegin(x => LoadWelfFiles());
         }
 
+        private void AboutMenuItemClick(object sender, EventArgs e)
+        {
+            this.ThreadSafeBegin(x => new AboutForm().ShowDialog());
+        }
+
         private void ExitMenuClick(object sender, EventArgs e)
         {
             Application.Exit();

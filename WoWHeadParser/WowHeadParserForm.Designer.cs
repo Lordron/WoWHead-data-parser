@@ -69,6 +69,7 @@ namespace WoWHeadParser
             this.launchMenuItem = new System.Windows.Forms.MenuItem();
             this.separatorMenuItem = new System.Windows.Forms.MenuItem();
             this.optionsMenuItem = new System.Windows.Forms.MenuItem();
+            this.aboutMenuItem = new System.Windows.Forms.MenuItem();
             this.settingsBox.SuspendLayout();
             this.parsingControl.SuspendLayout();
             this.singleTab.SuspendLayout();
@@ -453,7 +454,8 @@ namespace WoWHeadParser
             // 
             this.mainMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.fileMenuItem,
-            this.editMenuItem});
+            this.editMenuItem,
+            this.aboutMenuItem});
             // 
             // fileMenuItem
             // 
@@ -494,6 +496,12 @@ namespace WoWHeadParser
             this.optionsMenuItem.Index = 2;
             this.optionsMenuItem.Text = "Options";
             this.optionsMenuItem.Click += new System.EventHandler(this.OptionsMenuItemClick);
+            // 
+            // aboutMenuItem
+            // 
+            this.aboutMenuItem.Index = 2;
+            this.aboutMenuItem.Text = "About";
+            this.aboutMenuItem.Click += new System.EventHandler(this.AboutMenuItemClick);
             // 
             // WoWHeadParserForm
             // 
@@ -577,6 +585,7 @@ namespace WoWHeadParser
         private MenuItem optionsMenuItem;
         private MenuItem separatorMenuItem;
         private Button reloadButton;
+        private MenuItem aboutMenuItem;
     }
 }
 
