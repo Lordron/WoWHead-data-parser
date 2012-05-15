@@ -510,6 +510,7 @@ namespace WoWHeadParser
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.CancelButton = this.abortButton;
+            this.MaximizeBox = false;
             this.ClientSize = new System.Drawing.Size(379, 353);
             this.Controls.Add(this.consoleGroupBox);
             this.Controls.Add(this.progressLabel);
