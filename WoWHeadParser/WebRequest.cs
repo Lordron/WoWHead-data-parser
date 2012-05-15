@@ -91,17 +91,14 @@ namespace WoWHeadParser
             if (Response == null)
                 return string.Empty;
 
-            Stream stream;
+            Stream stream = Response.GetResponseStream();
             switch (Response.ContentEncoding.ToUpperInvariant())
             {
                 case "GZIP":
-                    stream = new GZipStream(Response.GetResponseStream(), CompressionMode.Decompress);
+                    stream = new GZipStream(stream, CompressionMode.Decompress);
                     break;
                 case "DEFLATE":
-                    stream = new DeflateStream(Response.GetResponseStream(), CompressionMode.Decompress);
-                    break;
-                default:
-                    stream = Response.GetResponseStream();
+                    stream = new DeflateStream(stream, CompressionMode.Decompress);
                     break;
             }
 

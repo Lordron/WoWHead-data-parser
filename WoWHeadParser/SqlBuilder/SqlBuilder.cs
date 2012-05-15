@@ -219,7 +219,7 @@ namespace Sql
 
             if (!WriteWithoutHeader)
             {
-                _content.AppendFormat(" (`{1}`, ", _keyName);
+                _content.AppendFormat(" (`{0}`, ", _keyName);
 
                 for (int i = 0; i < _fields.Count; ++i)
                     _content.AppendFormat("`{0}`, ", _fields[i]);

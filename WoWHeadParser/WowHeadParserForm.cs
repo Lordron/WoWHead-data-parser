@@ -58,6 +58,9 @@ namespace WoWHeadParser
                     continue;
 
                 DataParser parser = Activator.CreateInstance(type) as DataParser;
+                if (parser == null)
+                    continue;
+
                 parserBox.Items.Add(parser.Name);
                 parser.Prepare();
 

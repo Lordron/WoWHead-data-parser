@@ -59,7 +59,7 @@ namespace WoWHeadParser.DBFileStorage
 
         public const string DbFilePath = "db2";
 
-        public static unsafe DBCStorage Load<T>(bool dbc) where T : struct
+        public static DBCStorage Load<T>(bool dbc) where T : struct
         {
             string fileName = string.Format("{0}.{1}", typeof(T).Name.Replace("Entry", ""), dbc ? "dbc" : "db2");
             string path = Path.Combine(DbFilePath, fileName);
