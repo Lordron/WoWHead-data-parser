@@ -18,6 +18,8 @@ namespace WoWHeadParser
         private List<uint> _entries;
         private List<DataParser> _parsers;
 
+        private const string WelfFolder = "EntryList";
+
         #region Messages
         private Dictionary<MessageType, Message> _message = new Dictionary<MessageType, Message>
         {
@@ -216,7 +218,7 @@ namespace WoWHeadParser
 
         private void WelfBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            string fileName = Path.Combine("EntryList", (string)welfBox.SelectedItem);
+            string fileName = Path.Combine(WelfFolder, (string)welfBox.SelectedItem);
 
             if (!File.Exists(fileName))
             {
@@ -238,8 +240,7 @@ namespace WoWHeadParser
                     if (!uint.TryParse(s, out value))
                         continue;
 
-                    if (!_entries.Contains(value))
-                        _entries.Add(value);
+                    _entries.Add(value);
                 }
             }
 
@@ -290,14 +291,14 @@ namespace WoWHeadParser
         {
             welfBox.Items.Clear();
 
-            DirectoryInfo info = new DirectoryInfo(Application.StartupPath);
-            FileInfo[] files = info.GetFiles("*.welf", SearchOption.AllDirectories);
-            foreach (FileInfo file in files)
+            DirectoryInfo info = new DirectoryInfo(WelfFolder);
+            FileInfo[] files = info.GetFiles("*.welf");
+            foreach(FileInfo file in files)
             {
                 welfBox.Items.Add(file.Name);
             }
 
-            if (welfBox.Items.Count > 0)
+            if (files.Length > 0)
                 welfBox.SelectedIndex = 0;
         }
 
