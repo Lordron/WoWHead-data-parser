@@ -183,7 +183,7 @@ namespace WoWHeadParser
             // valueBox
             // 
             this.valueBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
-            this.valueBox.Location = new System.Drawing.Point(49, 19);
+            this.valueBox.Location = new System.Drawing.Point(44, 19);
             this.valueBox.Maximum = new decimal(new int[] {
             -2147483648,
             0,
@@ -338,7 +338,7 @@ namespace WoWHeadParser
             // entryCountLabel
             // 
             this.entryCountLabel.AutoSize = true;
-            this.entryCountLabel.Location = new System.Drawing.Point(231, 27);
+            this.entryCountLabel.Location = new System.Drawing.Point(231, 22);
             this.entryCountLabel.Name = "entryCountLabel";
             this.entryCountLabel.Size = new System.Drawing.Size(13, 13);
             this.entryCountLabel.TabIndex = 1;

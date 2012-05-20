@@ -51,13 +51,14 @@ namespace WoWHeadParser
         public void Parser(DataParser parser)
         {
             _parser = parser;
-            _address = string.Format("http://{0}wowhead.com/{1}", _locales[parser.Locale], parser.Address);
+            _address = string.Format("http://{0}wowhead.com/", _locales[parser.Locale]);
             _service = ServicePointManager.FindServicePoint(new Uri(_address));
             {
                 _service.ConnectionLeaseTimeout = Timeout.Infinite;
                 _service.ConnectionLimit = SemaphoreCount;
-                _service.SetTcpKeepAlive(true, 100000000, 100000000);
+                _service.SetTcpKeepAlive(true, 1000, 500);
             }
+            _address = string.Format("http://{0}wowhead.com/{1}", _locales[parser.Locale], parser.Address);
         }
 
         public void SetValue(uint value)
@@ -188,6 +189,7 @@ namespace WoWHeadParser
         public void Dispose()
         {
             _semaphore.Dispose();
+            _service.ConnectionLeaseTimeout = 0;
         }
 
         public override string ToString()

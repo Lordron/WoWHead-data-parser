@@ -21,6 +21,7 @@ namespace WoWHeadParser
         private const string WelfFolder = "EntryList";
 
         #region Messages
+
         private Dictionary<MessageType, Message> _message = new Dictionary<MessageType, Message>
         {
             {MessageType.WelfFileNotFound, new Message(@"File {0} not found!")},
@@ -30,6 +31,7 @@ namespace WoWHeadParser
             {MessageType.AbortQuestion, new Message(@"Do you really want to stop ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
             {MessageType.ExitQuestion, new Message(@"Do you really want to quit WoWHead Parser ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
         };
+
         #endregion
 
         public WoWHeadParserForm()
@@ -218,34 +220,42 @@ namespace WoWHeadParser
 
         private void WelfBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            string fileName = Path.Combine(WelfFolder, (string)welfBox.SelectedItem);
+            string path = string.Format("{0}\\{1}", WelfFolder, welfBox.SelectedItem);
 
-            if (!File.Exists(fileName))
+            if (!File.Exists(path))
             {
-                ShowMessageBox(MessageType.WelfFileNotFound, fileName);
+                ShowMessageBox(MessageType.WelfFileNotFound, path);
                 return;
             }
 
-            using (StreamReader reader = new StreamReader(fileName))
+            _entries.Clear();
+
+            try
             {
-                _entries.Clear();
-
-                string text = reader.ReadToEnd();
-                string[] values = text.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                for (int i = 0; i < values.Length; ++i)
+                using (StreamReader reader = new StreamReader(path))
                 {
-                    string s = values[i];
+                    string text = reader.ReadToEnd();
+                    string[] values = text.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                    for (int i = 0; i < values.Length; ++i)
+                    {
+                        string s = values[i];
 
-                    uint value;
-                    if (!uint.TryParse(s, out value))
-                        continue;
+                        uint value;
+                        if (!uint.TryParse(s, out value))
+                            continue;
 
-                    _entries.Add(value);
+                        _entries.Add(value);
+                    }
                 }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine("Error while loading welf file {0} - {1}", path, exception.Message);
+                return;
             }
 
             if (_entries.Count == -1)
-                ShowMessageBox(MessageType.WelfListEmpty, fileName);
+                ShowMessageBox(MessageType.WelfListEmpty, path);
 
             entryCountLabel.Text = string.Format("Entries count: {0}", _entries.Count);
         }
@@ -309,6 +319,9 @@ namespace WoWHeadParser
 
             Message message = _message[type];
             string msg = string.Format(CultureInfo.InvariantCulture, message.Text, args);
+
+            Console.WriteLine(msg);
+
             return MessageBox.Show(msg, @"WoWHead Parser", message.Button, message.Icon);
         }
 
