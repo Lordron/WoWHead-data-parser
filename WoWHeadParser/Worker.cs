@@ -15,7 +15,7 @@ namespace WoWHeadParser
         private uint _start;
         private uint _end;
         private bool _isWorking;
-        private string _address;
+        private Uri _address;
         private DataParser _parser;
         private DateTime _timeStart;
         private DateTime _timeEnd;
@@ -51,14 +51,15 @@ namespace WoWHeadParser
         public void Parser(DataParser parser)
         {
             _parser = parser;
-            _address = string.Format("http://{0}wowhead.com/", _locales[parser.Locale]);
-            _service = ServicePointManager.FindServicePoint(new Uri(_address));
+
+            _address = new Uri(string.Format("http://{0}wowhead.com/", _locales[parser.Locale]));
+            _service = ServicePointManager.FindServicePoint(_address);
             {
                 _service.ConnectionLeaseTimeout = Timeout.Infinite;
                 _service.ConnectionLimit = SemaphoreCount;
                 _service.SetTcpKeepAlive(true, 1000, 500);
             }
-            _address = string.Format("http://{0}wowhead.com/{1}", _locales[parser.Locale], parser.Address);
+            _address = new Uri(_address, parser.Address);
         }
 
         public void SetValue(uint value)
