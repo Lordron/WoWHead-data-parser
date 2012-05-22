@@ -13,11 +13,14 @@ namespace WoWHeadParser.DBFileStorage
 
         public static void Initial()
         {
+            _loaders.Clear();
+
             Type[] types = Assembly.GetCallingAssembly().GetTypes();
+
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
             for (int i = 0; i < types.Length; ++i)
             {
-                Stopwatch sw = new Stopwatch();
-                sw.Start();
                 Type type = types[i];
                 try
                 {
@@ -37,9 +40,9 @@ namespace WoWHeadParser.DBFileStorage
                     Console.WriteLine(e.Message);
                     continue;
                 }
-                sw.Stop();
-                Console.WriteLine("Loaded {0} db files in {1} ms", _loaders.Count, sw.ElapsedMilliseconds);
             }
+            sw.Stop();
+            Console.WriteLine("Loaded {0} db files in {1} ms", _loaders.Count, sw.ElapsedMilliseconds);
         }
 
         public static T GetLoader<T>() where T : class
@@ -72,8 +75,8 @@ namespace WoWHeadParser.DBFileStorage
 
             DBCStorage storage = new DBCStorage(fmt.Fmt);
             {
-                FileStream stream = new FileStream(path, FileMode.Open);
-                storage.Load(stream, false, true);
+                using (FileStream stream = new FileStream(path, FileMode.Open))
+                    storage.Load(stream, false, true);
             }
 
             return storage;
