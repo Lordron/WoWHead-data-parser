@@ -117,34 +117,50 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Error_while_loading_last_parser" xml:space="preserve">
-    <value>Error while loading last parser from settings! Last parser index &lt; parsers count!</value>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="quertTypelabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>71, 13</value>
   </data>
-  <data name="Error_while_loading_last_language" xml:space="preserve">
-    <value>Error while loading last language from settings! Last language index &lt; parsers count!</value>
+  <data name="quertTypelabel.Text" xml:space="preserve">
+    <value>Тип запроса</value>
   </data>
-  <data name="Error_while_loading_welf_file" xml:space="preserve">
-    <value>Error while loading welf file {0} - {1}</value>
+  <data name="okButton.Text" xml:space="preserve">
+    <value>Ок</value>
   </data>
-  <data name="Error_Cannot_get_response" xml:space="preserve">
-    <value>Cannot get response from {0}</value>
+  <data name="cancleButton.Text" xml:space="preserve">
+    <value>Отмена</value>
   </data>
-  <data name="AbortQuestion" xml:space="preserve">
-    <value>Do you really want to stop ?</value>
+  <data name="dirLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>67, 13</value>
   </data>
-  <data name="ExitQuestion" xml:space="preserve">
-    <value>Do you really want to quit WoWHead Parser ?</value>
+  <data name="dirLabel.Text" xml:space="preserve">
+    <value>Сортировка</value>
   </data>
-  <data name="MultipleTypeBigger" xml:space="preserve">
-    <value>Starting value can not be bigger than ending value!</value>
+  <data name="appendSqlCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>183, 17</value>
   </data>
-  <data name="MultipleTypeEqual" xml:space="preserve">
-    <value>Starting value can not be equal ending value!</value>
+  <data name="appendSqlCheckBox.Text" xml:space="preserve">
+    <value>Добавлять sql запросы в файл</value>
   </data>
-  <data name="WelfFileNotFound" xml:space="preserve">
-    <value>File {0} not found!</value>
+  <data name="appendDeleteQueryCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>153, 17</value>
   </data>
-  <data name="WelfListEmpty" xml:space="preserve">
-    <value>Entries list ({0}) is empty</value>
+  <data name="appendDeleteQueryCheckBox.Text" xml:space="preserve">
+    <value>Добавлять delete запрос</value>
+  </data>
+  <data name="allowNullValCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>181, 17</value>
+  </data>
+  <data name="allowNullValCheckBox.Text" xml:space="preserve">
+    <value>Разрешение пустого значения</value>
+  </data>
+  <data name="withoutHeaderCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>208, 17</value>
+  </data>
+  <data name="withoutHeaderCheckBox.Text" xml:space="preserve">
+    <value>Игнорировать header (insert\replace)</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Настройки</value>
   </data>
 </root>

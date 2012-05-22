@@ -117,162 +117,38 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="productNameLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="&gt;&gt;copyrightLabel.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="$this.Text" xml:space="preserve">
-    <value>About</value>
-  </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
-    <value>6, 13</value>
-  </data>
-  <data name="productNameLabel.Text" xml:space="preserve">
-    <value>Product name: </value>
-  </data>
-  <data name="&gt;&gt;copyrightLabel.Name" xml:space="preserve">
-    <value>copyrightLabel</value>
-  </data>
-  <data name="&gt;&gt;productNameLabel.ZOrder" xml:space="preserve">
-    <value>1</value>
+  <data name="descriptionLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>63, 13</value>
   </data>
   <data name="descriptionLabel.Text" xml:space="preserve">
-    <value>Description: </value>
-  </data>
-  <data name="&gt;&gt;copyrightLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="versionLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 9</value>
-  </data>
-  <data name="&gt;&gt;$this.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
-    <value>253, 119</value>
-  </data>
-  <data name="&gt;&gt;$this.Name" xml:space="preserve">
-    <value>AboutForm</value>
-  </data>
-  <data name="descriptionLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
-  <data name="copyrightLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="versionLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="versionLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>48, 13</value>
-  </data>
-  <data name="companyLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 29</value>
-  </data>
-  <data name="&gt;&gt;versionLabel.ZOrder" xml:space="preserve">
-    <value>0</value>
-  </data>
-  <data name="copyrightLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>57, 13</value>
-  </data>
-  <data name="&gt;&gt;companyLabel.Name" xml:space="preserve">
-    <value>companyLabel</value>
-  </data>
-  <data name="productNameLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>79, 13</value>
-  </data>
-  <data name="&gt;&gt;companyLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;descriptionLabel.ZOrder" xml:space="preserve">
-    <value>4</value>
-  </data>
-  <data name="&gt;&gt;descriptionLabel.Parent" xml:space="preserve">
-    <value>$this</value>
-  </data>
-  <data name="&gt;&gt;descriptionLabel.Name" xml:space="preserve">
-    <value>descriptionLabel</value>
-  </data>
-  <data name="&gt;&gt;descriptionLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;productNameLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;companyLabel.ZOrder" xml:space="preserve">
-    <value>3</value>
-  </data>
-  <data name="companyLabel.Text" xml:space="preserve">
-    <value>Company: </value>
-  </data>
-  <data name="productNameLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>3</value>
-  </data>
-  <data name="productNameLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 89</value>
-  </data>
-  <data name="versionLabel.Text" xml:space="preserve">
-    <value>Version: </value>
-  </data>
-  <data name="&gt;&gt;versionLabel.Name" xml:space="preserve">
-    <value>versionLabel</value>
-  </data>
-  <data name="copyrightLabel.Text" xml:space="preserve">
-    <value>Copyright: </value>
-  </data>
-  <data name="copyrightLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;copyrightLabel.ZOrder" xml:space="preserve">
-    <value>2</value>
-  </data>
-  <data name="&gt;&gt;versionLabel.Type" xml:space="preserve">
-    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;productNameLabel.Name" xml:space="preserve">
-    <value>productNameLabel</value>
-  </data>
-  <data name="descriptionLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 69</value>
+    <value>Описание: </value>
   </data>
   <data name="companyLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>57, 13</value>
+    <value>64, 13</value>
   </data>
-  <data name="&gt;&gt;versionLabel.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="companyLabel.Text" xml:space="preserve">
+    <value>Компания: </value>
   </data>
-  <data name="&gt;&gt;companyLabel.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="copyrightLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>45, 13</value>
   </data>
-  <data name="companyLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="copyrightLabel.Text" xml:space="preserve">
+    <value>Права: </value>
   </data>
-  <data name="&gt;&gt;productNameLabel.Parent" xml:space="preserve">
-    <value>$this</value>
+  <data name="productNameLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>63, 13</value>
   </data>
-  <data name="copyrightLabel.Location" type="System.Drawing.Point, System.Drawing">
-    <value>12, 49</value>
+  <data name="productNameLabel.Text" xml:space="preserve">
+    <value>Название: </value>
   </data>
-  <data name="versionLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>4</value>
+  <data name="versionLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>50, 13</value>
   </data>
-  <data name="descriptionLabel.AutoSize" type="System.Boolean, mscorlib">
-    <value>True</value>
+  <data name="versionLabel.Text" xml:space="preserve">
+    <value>Версия: </value>
   </data>
-  <data name="descriptionLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>66, 13</value>
-  </data>
-  <data name="companyLabel.TabIndex" type="System.Int32, mscorlib">
-    <value>1</value>
-  </data>
-  <data name="$this.Localizable" type="System.Boolean, mscorlib">
-    <value>True</value>
-  </data>
-  <data name="$this.Language" type="System.Globalization.CultureInfo, mscorlib">
-    <value>ru</value>
+  <data name="$this.Text" xml:space="preserve">
+    <value>О программе</value>
   </data>
 </root>

@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using WoWHeadParser.DBFileStorage;
 using WoWHeadParser.Parser;
@@ -17,6 +18,8 @@ namespace WoWHeadParser
         private Worker _worker;
         private List<uint> _entries;
         private List<DataParser> _parsers;
+
+        private string _currentCulture;
 
         private const string WelfFolder = "EntryList";
 
@@ -34,8 +37,26 @@ namespace WoWHeadParser
 
         #endregion
 
+        #region Language
+
+        private List<string> _language = new List<string>
+        {
+            "en-US",
+            "ru-RU",
+        };
+
+        #endregion
+
         public WoWHeadParserForm()
         {
+            #region Load culture info
+
+            _currentCulture = Settings.Default.Culture;
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo(_currentCulture, true);
+            Thread.CurrentThread.CurrentCulture = new CultureInfo(_currentCulture, true);
+
+            #endregion
+
             InitializeComponent();
 
             RichTextBoxWriter.Instance.OutputBox = consoleBox;
@@ -75,11 +96,25 @@ namespace WoWHeadParser
 
             #endregion
 
+            #region Language loading
+
+            foreach (string language in _language)
+            {
+                MenuItem item = new MenuItem(language, LanguageMenuItemClick);
+                languageMenuItem.MenuItems.Add(item);
+            }
+
+            #endregion
+
+            #region Locale loading
+
             foreach (Locale locale in Enum.GetValues(typeof(Locale)))
             {
                 if (locale != Locale.Portugal)
                     localeBox.Items.Add(locale);
             }
+
+            #endregion
 
             #endregion
 
@@ -89,13 +124,13 @@ namespace WoWHeadParser
             if (lastParser < parserBox.Items.Count)
                 parserBox.SelectedIndex = lastParser;
             else
-                Console.WriteLine("Error while loading last parser from settings! Last parser index < parsers count!");
+                Console.WriteLine(Resources.Error_while_loading_last_parser);
 
             int lastLanguage = Settings.Default.LastLanguage;
             if (lastLanguage < localeBox.Items.Count)
                 localeBox.SelectedIndex = lastLanguage;
             else
-                Console.WriteLine("Error while loading last language from settings! Last language index < parsers count!");
+                Console.WriteLine(Resources.Error_while_loading_last_language);
 
             #endregion
 
@@ -250,14 +285,14 @@ namespace WoWHeadParser
             }
             catch (Exception exception)
             {
-                Console.WriteLine("Error while loading welf file {0} - {1}", path, exception.Message);
+                Console.WriteLine(Resources.Error_while_loading_welf_file, path, exception.Message);
                 return;
             }
 
             if (_entries.Count == -1)
                 ShowMessageBox(MessageType.WelfListEmpty, path);
 
-            entryCountLabel.Text = string.Format("Entries count: {0}", _entries.Count);
+            entryCountLabel.Text = string.Format(entryCountLabel.Text, _entries.Count);
         }
 
         private void WELFCreatorMenuClick(object sender, EventArgs e)
@@ -270,9 +305,28 @@ namespace WoWHeadParser
             this.ThreadSafeBegin(x => LoadWelfFiles());
         }
 
+        private void LanguageMenuItemClick(object sender, EventArgs e)
+        {
+            MenuItem item = sender as MenuItem;
+            if (item == null)
+                return;
+
+            string selectedCulture = item.Text;
+            if (_currentCulture.Equals(selectedCulture))
+                return;
+
+            _currentCulture = Settings.Default.Culture = selectedCulture;
+
+            CultureInfo culture = new CultureInfo(_currentCulture, true);
+            Thread.CurrentThread.CurrentCulture = culture;
+            Thread.CurrentThread.CurrentUICulture = culture;
+            
+            Reload();
+        }
+
         private void AboutMenuItemClick(object sender, EventArgs e)
         {
-            this.ThreadSafeBegin(x => new AboutForm().ShowDialog());
+            this.ThreadSafeBegin(x => new AboutForm(_currentCulture).ShowDialog());
         }
 
         private void ExitMenuClick(object sender, EventArgs e)
@@ -322,12 +376,12 @@ namespace WoWHeadParser
 
             Console.WriteLine(msg);
 
-            return MessageBox.Show(msg, @"WoWHead Parser", message.Button, message.Icon);
+            return MessageBox.Show(msg, this.Text, message.Button, message.Icon);
         }
 
         private void OptionsMenuItemClick(object sender, EventArgs e)
         {
-            this.ThreadSafeBegin(x => new SettingsForm().ShowDialog());
+            this.ThreadSafeBegin(x => new SettingsForm(_currentCulture).ShowDialog());
         }
     }
 }

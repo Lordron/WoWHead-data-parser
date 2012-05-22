@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Globalization;
+using System.Threading;
 using System.Windows.Forms;
 using Sql;
 using WoWHeadParser.Properties;
@@ -7,10 +9,15 @@ namespace WoWHeadParser
 {
     public partial class SettingsForm : Form
     {
-        public SettingsForm()
+        public SettingsForm(string culture)
         {
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo(culture, true);
+            Thread.CurrentThread.CurrentCulture = new CultureInfo(culture, true);
             InitializeComponent();
+        }
 
+        protected override void OnLoad(EventArgs e)
+        {
             foreach (SqlQueryType type in Enum.GetValues(typeof(SqlQueryType)))
             {
                 if (type > SqlQueryType.None && type < SqlQueryType.Max)

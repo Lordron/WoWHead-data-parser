@@ -117,4 +117,279 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="sqlQueryTypeBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>113, 21</value>
+  </data>
+  <data name="&gt;&gt;allowNullValCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;withoutHeaderCheckBox.ZOrder" xml:space="preserve">
+    <value>0</value>
+  </data>
+  <data name="okButton.Text" xml:space="preserve">
+    <value>Ok</value>
+  </data>
+  <data name="allowNullValCheckBox.Text" xml:space="preserve">
+    <value>Allow null values</value>
+  </data>
+  <data name="&gt;&gt;appendDeleteQueryCheckBox.ZOrder" xml:space="preserve">
+    <value>8</value>
+  </data>
+  <data name="&gt;&gt;quertTypelabel.Name" xml:space="preserve">
+    <value>quertTypelabel</value>
+  </data>
+  <assembly alias="mscorlib" name="mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="cancleButton.TabIndex" type="System.Int32, mscorlib">
+    <value>5</value>
+  </data>
+  <data name="$this.ClientSize" type="System.Drawing.Size, System.Drawing">
+    <value>224, 206</value>
+  </data>
+  <data name="&gt;&gt;sortDirectionBox.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;sqlQueryTypeBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;$this.Name" xml:space="preserve">
+    <value>SettingsForm</value>
+  </data>
+  <data name="&gt;&gt;quertTypelabel.ZOrder" xml:space="preserve">
+    <value>7</value>
+  </data>
+  <data name="&gt;&gt;okButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;sqlQueryTypeBox.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="sortDirectionBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>113, 21</value>
+  </data>
+  <data name="appendDeleteQueryCheckBox.Text" xml:space="preserve">
+    <value>Append delete query</value>
+  </data>
+  <data name="&gt;&gt;sortDirectionBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="allowNullValCheckBox.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;appendSqlCheckBox.Name" xml:space="preserve">
+    <value>appendSqlCheckBox</value>
+  </data>
+  <data name="$this.AutoScaleDimensions" type="System.Drawing.SizeF, System.Drawing">
+    <value>6, 13</value>
+  </data>
+  <data name="cancleButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="&gt;&gt;appendDeleteQueryCheckBox.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cancleButton.Name" xml:space="preserve">
+    <value>cancleButton</value>
+  </data>
+  <data name="sortDirectionBox.TabIndex" type="System.Int32, mscorlib">
+    <value>7</value>
+  </data>
+  <data name="withoutHeaderCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>173, 17</value>
+  </data>
+  <data name="&gt;&gt;sortDirectionBox.ZOrder" xml:space="preserve">
+    <value>2</value>
+  </data>
+  <data name="cancleButton.Text" xml:space="preserve">
+    <value>Cancle</value>
+  </data>
+  <data name="&gt;&gt;okButton.Name" xml:space="preserve">
+    <value>okButton</value>
+  </data>
+  <data name="appendSqlCheckBox.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="dirLabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;allowNullValCheckBox.Name" xml:space="preserve">
+    <value>allowNullValCheckBox</value>
+  </data>
+  <data name="sqlQueryTypeBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>95, 144</value>
+  </data>
+  <data name="quertTypelabel.TabIndex" type="System.Int32, mscorlib">
+    <value>2</value>
+  </data>
+  <data name="&gt;&gt;appendSqlCheckBox.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="dirLabel.Text" xml:space="preserve">
+    <value>Sort direction</value>
+  </data>
+  <data name="&gt;&gt;cancleButton.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;appendSqlCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="sqlQueryTypeBox.TabIndex" type="System.Int32, mscorlib">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;dirLabel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="okButton.Size" type="System.Drawing.Size, System.Drawing">
+    <value>75, 23</value>
+  </data>
+  <data name="cancleButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>133, 171</value>
+  </data>
+  <data name="&gt;&gt;appendDeleteQueryCheckBox.Name" xml:space="preserve">
+    <value>appendDeleteQueryCheckBox</value>
+  </data>
+  <data name="appendDeleteQueryCheckBox.TabIndex" type="System.Int32, mscorlib">
+    <value>1</value>
+  </data>
+  <data name="sortDirectionBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>95, 117</value>
+  </data>
+  <data name="&gt;&gt;quertTypelabel.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="okButton.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 171</value>
+  </data>
+  <data name="appendDeleteQueryCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>124, 17</value>
+  </data>
+  <data name="&gt;&gt;cancleButton.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;sqlQueryTypeBox.Name" xml:space="preserve">
+    <value>sqlQueryTypeBox</value>
+  </data>
+  <data name="dirLabel.TabIndex" type="System.Int32, mscorlib">
+    <value>6</value>
+  </data>
+  <data name="withoutHeaderCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 83</value>
+  </data>
+  <data name="&gt;&gt;dirLabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="allowNullValCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 13</value>
+  </data>
+  <data name="&gt;&gt;okButton.ZOrder" xml:space="preserve">
+    <value>5</value>
+  </data>
+  <data name="appendDeleteQueryCheckBox.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="dirLabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 120</value>
+  </data>
+  <data name="appendSqlCheckBox.TabIndex" type="System.Int32, mscorlib">
+    <value>8</value>
+  </data>
+  <data name="allowNullValCheckBox.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
+  </data>
+  <data name="&gt;&gt;okButton.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;cancleButton.ZOrder" xml:space="preserve">
+    <value>4</value>
+  </data>
+  <data name="quertTypelabel.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <data name="&gt;&gt;dirLabel.ZOrder" xml:space="preserve">
+    <value>3</value>
+  </data>
+  <data name="&gt;&gt;withoutHeaderCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;sortDirectionBox.Name" xml:space="preserve">
+    <value>sortDirectionBox</value>
+  </data>
+  <data name="&gt;&gt;appendDeleteQueryCheckBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.CheckBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;withoutHeaderCheckBox.Name" xml:space="preserve">
+    <value>withoutHeaderCheckBox</value>
+  </data>
+  <data name="&gt;&gt;$this.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Form, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="&gt;&gt;allowNullValCheckBox.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="withoutHeaderCheckBox.Text" xml:space="preserve">
+    <value>Without header (insert\replace)</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="allowNullValCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>104, 17</value>
+  </data>
+  <data name="&gt;&gt;allowNullValCheckBox.ZOrder" xml:space="preserve">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;withoutHeaderCheckBox.Parent" xml:space="preserve">
+    <value>$this</value>
+  </data>
+  <data name="&gt;&gt;appendSqlCheckBox.ZOrder" xml:space="preserve">
+    <value>1</value>
+  </data>
+  <data name="dirLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>69, 13</value>
+  </data>
+  <data name="appendSqlCheckBox.Size" type="System.Drawing.Size, System.Drawing">
+    <value>136, 17</value>
+  </data>
+  <data name="quertTypelabel.Location" type="System.Drawing.Point, System.Drawing">
+    <value>10, 147</value>
+  </data>
+  <data name="quertTypelabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>76, 13</value>
+  </data>
+  <data name="quertTypelabel.Text" xml:space="preserve">
+    <value>Sql Query type</value>
+  </data>
+  <data name="&gt;&gt;sqlQueryTypeBox.ZOrder" xml:space="preserve">
+    <value>6</value>
+  </data>
+  <data name="&gt;&gt;dirLabel.Name" xml:space="preserve">
+    <value>dirLabel</value>
+  </data>
+  <data name="appendSqlCheckBox.Text" xml:space="preserve">
+    <value>Append sql query to file</value>
+  </data>
+  <data name="withoutHeaderCheckBox.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
+  </data>
+  <data name="&gt;&gt;quertTypelabel.Type" xml:space="preserve">
+    <value>System.Windows.Forms.Label, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="appendSqlCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 60</value>
+  </data>
+  <data name="appendDeleteQueryCheckBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>13, 37</value>
+  </data>
+  <data name="okButton.TabIndex" type="System.Int32, mscorlib">
+    <value>4</value>
+  </data>
+  <data name="withoutHeaderCheckBox.AutoSize" type="System.Boolean, mscorlib">
+    <value>True</value>
+  </data>
+  <metadata name="$this.Localizable" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
+  <metadata name="$this.Language" type="System.Globalization.CultureInfo, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>ru</value>
+  </metadata>
 </root>

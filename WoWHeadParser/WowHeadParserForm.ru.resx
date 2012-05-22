@@ -1,0 +1,259 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="rangeEndLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>41, 13</value>
+  </data>
+  <data name="rangeEndLabel.Text" xml:space="preserve">
+    <value>Конец:</value>
+  </data>
+  <data name="rangeStartLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>39, 13</value>
+  </data>
+  <data name="rangeStartLabel.Text" xml:space="preserve">
+    <value>Старт:</value>
+  </data>
+  <data name="valueBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>54, 19</value>
+  </data>
+  <data name="valueLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>42, 13</value>
+  </data>
+  <data name="valueLabel.Text" xml:space="preserve">
+    <value>Число:</value>
+  </data>
+  <data name="singleBox.Text" xml:space="preserve">
+    <value>Настройки парсера</value>
+  </data>
+  <data name="singleTab.Text" xml:space="preserve">
+    <value>Еденичный</value>
+  </data>
+  <data name="rangeStart.Location" type="System.Drawing.Point, System.Drawing">
+    <value>54, 19</value>
+  </data>
+  <data name="rangeEnd.Location" type="System.Drawing.Point, System.Drawing">
+    <value>182, 19</value>
+  </data>
+  <data name="multipleBox.Text" xml:space="preserve">
+    <value>Настройки парсера</value>
+  </data>
+  <data name="multipleTab.Text" xml:space="preserve">
+    <value>В диапазоне</value>
+  </data>
+  <data name="reloadButton.Text" xml:space="preserve">
+    <value>Перезагрузка</value>
+  </data>
+  <data name="entryCountLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>70, 13</value>
+  </data>
+  <data name="entryCountLabel.Text" xml:space="preserve">
+    <value>Записей: {0}</value>
+  </data>
+  <data name="listBox.Text" xml:space="preserve">
+    <value>Настройки парсера</value>
+  </data>
+  <data name="listTab.Text" xml:space="preserve">
+    <value>Список</value>
+  </data>
+  <data name="notifyLabel.Size" type="System.Drawing.Size, System.Drawing">
+    <value>331, 13</value>
+  </data>
+  <data name="notifyLabel.Text" xml:space="preserve">
+    <value>Эта страница используется только для локалей НПС и квестов</value>
+  </data>
+  <data name="wowheadFilterTab.Text" xml:space="preserve">
+    <value>WoW Head Фильтр</value>
+  </data>
+  <data name="settingsBox.Text" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="consoleGroupBox.Text" xml:space="preserve">
+    <value>Консоль</value>
+  </data>
+  <data name="abortButton.Text" xml:space="preserve">
+    <value>Прервать</value>
+  </data>
+  <data name="startButton.Text" xml:space="preserve">
+    <value>Старт</value>
+  </data>
+  <data name="exitMenuItem.Text" xml:space="preserve">
+    <value>Выход</value>
+  </data>
+  <data name="fileMenuItem.Text" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="launchMenuItem.Text" xml:space="preserve">
+    <value>Запустить .welf creator</value>
+  </data>
+  <data name="optionsMenuItem.Text" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="editMenuItem.Text" xml:space="preserve">
+    <value>Правка</value>
+  </data>
+  <data name="aboutMenuItem.Text" xml:space="preserve">
+    <value>?</value>
+  </data>
+  <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        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
+        ////////////////////////
+</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>WowHead Парсер</value>
+  </data>
+</root>

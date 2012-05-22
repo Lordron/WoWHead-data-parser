@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Net;
+using WoWHeadParser.Properties;
 
 namespace WoWHeadParser
 {
@@ -49,7 +50,7 @@ namespace WoWHeadParser
             Id = id;
             Uri = new Uri(string.Format(address.OriginalString, id));
 
-            Request = (HttpWebRequest)HttpWebRequest.Create(Uri);
+            Request = (HttpWebRequest)WebRequest.Create(Uri);
             Request.UserAgent = GetRandomUserAgent();
             Request.Headers.Add("Accept-Encoding", "gzip,deflate");
             Request.KeepAlive = true;
@@ -60,7 +61,7 @@ namespace WoWHeadParser
             Id = ids;
             Uri = new Uri(string.Format(address.OriginalString, ids, ide));
 
-            Request = (HttpWebRequest)HttpWebRequest.Create(Uri);
+            Request = (HttpWebRequest)WebRequest.Create(Uri);
             Request.UserAgent = GetRandomUserAgent();
             Request.Headers.Add("Accept-Encoding", "gzip,deflate");
             Request.KeepAlive = true;
@@ -75,7 +76,7 @@ namespace WoWHeadParser
             }
             catch
             {
-                Console.WriteLine("Cannot get response from {0}", Uri);
+                Console.WriteLine(Resources.Error_Cannot_get_response, Uri);
                 return false;
             }
         }

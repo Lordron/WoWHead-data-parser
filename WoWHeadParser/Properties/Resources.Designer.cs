@@ -59,5 +59,95 @@ namespace WoWHeadParser.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you really want to stop ?.
+        /// </summary>
+        internal static string AbortQuestion {
+            get {
+                return ResourceManager.GetString("AbortQuestion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot get response from {0}.
+        /// </summary>
+        internal static string Error_Cannot_get_response {
+            get {
+                return ResourceManager.GetString("Error_Cannot_get_response", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error while loading last language from settings! Last language index &lt; parsers count!.
+        /// </summary>
+        internal static string Error_while_loading_last_language {
+            get {
+                return ResourceManager.GetString("Error_while_loading_last_language", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error while loading last parser from settings! Last parser index &lt; parsers count!.
+        /// </summary>
+        internal static string Error_while_loading_last_parser {
+            get {
+                return ResourceManager.GetString("Error_while_loading_last_parser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error while loading welf file {0} - {1}.
+        /// </summary>
+        internal static string Error_while_loading_welf_file {
+            get {
+                return ResourceManager.GetString("Error_while_loading_welf_file", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Do you really want to quit WoWHead Parser ?.
+        /// </summary>
+        internal static string ExitQuestion {
+            get {
+                return ResourceManager.GetString("ExitQuestion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Starting value can not be bigger than ending value!.
+        /// </summary>
+        internal static string MultipleTypeBigger {
+            get {
+                return ResourceManager.GetString("MultipleTypeBigger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Starting value can not be equal ending value!.
+        /// </summary>
+        internal static string MultipleTypeEqual {
+            get {
+                return ResourceManager.GetString("MultipleTypeEqual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to File {0} not found!.
+        /// </summary>
+        internal static string WelfFileNotFound {
+            get {
+                return ResourceManager.GetString("WelfFileNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Entries list ({0}) is empty.
+        /// </summary>
+        internal static string WelfListEmpty {
+            get {
+                return ResourceManager.GetString("WelfListEmpty", resourceCulture);
+            }
+        }
     }
 }

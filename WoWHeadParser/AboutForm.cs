@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Reflection;
-using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace WoWHeadParser
 {
     public partial class AboutForm : Form
     {
-        public AboutForm()
+        public AboutForm(string culture)
         {
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo(culture, true);
+            Thread.CurrentThread.CurrentCulture = new CultureInfo(culture, true);
             InitializeComponent();
         }
 

@@ -145,7 +145,13 @@
     <EmbeddedResource Include="AboutForm.resx">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="AboutForm.ru.resx">
+      <DependentUpon>AboutForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SettingsForm.resx">
+      <DependentUpon>SettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SettingsForm.ru.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WelfCreator.resx">
@@ -164,6 +170,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <EmbeddedResource Include="WowHeadParserForm.ru.resx">
+      <DependentUpon>WowHeadParserForm.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="db2\ItemExtendedCost.db2">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
