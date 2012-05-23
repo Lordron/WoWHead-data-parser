@@ -48,6 +48,12 @@ namespace WoWHeadParser
             _semaphore = new SemaphoreSlim(SemaphoreCount, SemaphoreCount);
         }
 
+        public Worker(EventHandler OnPageDownloadingComplete)
+            : this()
+        {
+            PageDownloadingComplete += OnPageDownloadingComplete;
+        }
+
         public void Parser(DataParser parser)
         {
             _parser = parser;
@@ -169,7 +175,7 @@ namespace WoWHeadParser
             _semaphore.Release();
 
             if (PageDownloadingComplete != null)
-                PageDownloadingComplete();
+                PageDownloadingComplete(null, EventArgs.Empty);
         }
 
         public void Stop()
@@ -211,11 +217,9 @@ namespace WoWHeadParser
             return content.ToString();
         }
 
-        public delegate void OnPageDownloadingComplete();
-
         /// <summary>
         /// Occurs when a page is downloaded.
         /// </summary>
-        public event OnPageDownloadingComplete PageDownloadingComplete;
+        public event EventHandler PageDownloadingComplete;
     }
 }

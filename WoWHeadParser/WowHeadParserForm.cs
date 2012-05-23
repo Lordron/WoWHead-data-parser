@@ -40,9 +40,7 @@ namespace WoWHeadParser
 
             _entries = new List<uint>(1024);
             _parsers = new List<DataParser>(32);
-
-            _worker = new Worker();
-            _worker.PageDownloadingComplete += WorkerPageDownloaded;
+            _worker = new Worker(WorkerPageDownloaded);
 
             DBFileLoader.Initial();
         }
@@ -193,7 +191,7 @@ namespace WoWHeadParser
             _worker.Start(type);
         }
 
-        private void WorkerPageDownloaded()
+        private void WorkerPageDownloaded(object sender, EventArgs e)
         {
             this.ThreadSafeBegin(_ =>
                 {

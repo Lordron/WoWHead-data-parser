@@ -76,8 +76,8 @@ namespace WoWHeadParser.DBFileStorage
 
             DBCStorage storage = new DBCStorage(fmt.Fmt);
             {
-                using (FileStream stream = new FileStream(path, FileMode.Open))
-                    storage.Load(stream, false, true);
+                FileStream stream = new FileStream(path, FileMode.Open);
+                storage.Load(stream, false, true);
             }
 
             return storage;
