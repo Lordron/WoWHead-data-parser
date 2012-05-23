@@ -79,11 +79,20 @@ namespace WoWHeadParser.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error while loading last language from settings! Last language index &lt; parsers count!.
+        ///   Looks up a localized string similar to Error while loading {0}! Skip.
         /// </summary>
-        internal static string Error_while_loading_last_language {
+        internal static string Error_while_loading_db_file {
             get {
-                return ResourceManager.GetString("Error_while_loading_last_language", resourceCulture);
+                return ResourceManager.GetString("Error_while_loading_db_file", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Error while loading last locale from settings! Last locale index &lt; locales count!.
+        /// </summary>
+        internal static string Error_while_loading_last_locale {
+            get {
+                return ResourceManager.GetString("Error_while_loading_last_locale", resourceCulture);
             }
         }
         
@@ -111,6 +120,42 @@ namespace WoWHeadParser.Properties {
         internal static string ExitQuestion {
             get {
                 return ResourceManager.GetString("ExitQuestion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Aborting....
+        /// </summary>
+        internal static string Label_Abort {
+            get {
+                return ResourceManager.GetString("Label_Abort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Complete!.
+        /// </summary>
+        internal static string Label_Complete {
+            get {
+                return ResourceManager.GetString("Label_Complete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Parsing....
+        /// </summary>
+        internal static string Label_Working {
+            get {
+                return ResourceManager.GetString("Label_Working", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Loaded {0} db files in {1} ms.
+        /// </summary>
+        internal static string Loaded_count_db_files {
+            get {
+                return ResourceManager.GetString("Loaded_count_db_files", resourceCulture);
             }
         }
         

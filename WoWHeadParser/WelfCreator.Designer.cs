@@ -111,7 +111,6 @@
             this.typeBox.Name = "typeBox";
             this.typeBox.Size = new System.Drawing.Size(121, 21);
             this.typeBox.TabIndex = 9;
-            this.typeBox.SelectedIndexChanged += new System.EventHandler(this.TypeBoxSelectedIndexChanged);
             // 
             // languageLabel
             // 

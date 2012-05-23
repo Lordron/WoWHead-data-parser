@@ -20,7 +20,7 @@
     <Setting Name="WithoutHeader" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="LastLanguage" Type="System.Int32" Scope="User">
+    <Setting Name="LastLocale" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="LastParser" Type="System.Int32" Scope="User">

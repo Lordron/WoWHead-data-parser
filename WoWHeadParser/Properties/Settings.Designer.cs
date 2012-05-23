@@ -98,12 +98,12 @@ namespace WoWHeadParser.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
-        public int LastLanguage {
+        public int LastLocale {
             get {
-                return ((int)(this["LastLanguage"]));
+                return ((int)(this["LastLocale"]));
             }
             set {
-                this["LastLanguage"] = value;
+                this["LastLocale"] = value;
             }
         }
         

@@ -1,5 +1,8 @@
 ﻿using System.ComponentModel;
+using System.Globalization;
+using System.Threading;
 using System.Windows.Forms;
+using WoWHeadParser.Properties;
 namespace WoWHeadParser
 {
     partial class WoWHeadParserForm
@@ -8,7 +11,6 @@ namespace WoWHeadParser
         /// Required designer variable.
         /// </summary>
         private IContainer components = null;
-        private System.ComponentModel.ComponentResourceManager resources = null;
 
         /// <summary>
         /// Clean up any resources being used.
@@ -32,7 +34,7 @@ namespace WoWHeadParser
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            this.resources = new System.ComponentModel.ComponentResourceManager(typeof(WoWHeadParserForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(WoWHeadParserForm));
             this.rangeEndLabel = new System.Windows.Forms.Label();
             this.rangeStartLabel = new System.Windows.Forms.Label();
             this.parserBox = new System.Windows.Forms.ComboBox();
@@ -451,8 +453,17 @@ namespace WoWHeadParser
 
         #region Windows Form language reloading
 
-        private void Reload()
+        private void Reload(string culture)
         {
+            CultureInfo cultureInfo = new CultureInfo(culture, true);
+            {
+                Resources.Culture = cultureInfo;
+                Thread.CurrentThread.CurrentCulture = cultureInfo;
+                Thread.CurrentThread.CurrentUICulture = cultureInfo;
+            }
+
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(WoWHeadParserForm));
+
             resources.ApplyResources(this.rangeEndLabel, "rangeEndLabel");
             resources.ApplyResources(this.rangeStartLabel, "rangeStartLabel");
             resources.ApplyResources(this.parserBox, "parserBox");

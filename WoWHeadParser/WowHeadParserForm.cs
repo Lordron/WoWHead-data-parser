@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 using WoWHeadParser.DBFileStorage;
+using WoWHeadParser.Messages;
 using WoWHeadParser.Parser;
 using WoWHeadParser.Properties;
 
@@ -23,20 +22,6 @@ namespace WoWHeadParser
 
         private const string WelfFolder = "EntryList";
 
-        #region Messages
-
-        private Dictionary<MessageType, Message> _message = new Dictionary<MessageType, Message>
-        {
-            {MessageType.WelfFileNotFound, new Message(@"File {0} not found!")},
-            {MessageType.WelfListEmpty, new Message(@"Entries list ({0}) is empty!")},
-            {MessageType.MultipleTypeEqual, new Message(@"Starting value can not be equal ending value!")},
-            {MessageType.MultipleTypeBigger, new Message(@"Starting value can not be bigger than ending value!")},
-            {MessageType.AbortQuestion, new Message(@"Do you really want to stop ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
-            {MessageType.ExitQuestion, new Message(@"Do you really want to quit WoWHead Parser ?", MessageBoxButtons.YesNo, MessageBoxIcon.Question)},
-        };
-
-        #endregion
-
         #region Language
 
         private List<string> _language = new List<string>
@@ -49,20 +34,12 @@ namespace WoWHeadParser
 
         public WoWHeadParserForm()
         {
-            #region Load culture info
-
-            _currentCulture = Settings.Default.Culture;
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo(_currentCulture, true);
-            Thread.CurrentThread.CurrentCulture = new CultureInfo(_currentCulture, true);
-
-            #endregion
-
             InitializeComponent();
 
             RichTextBoxWriter.Instance.OutputBox = consoleBox;
 
             _entries = new List<uint>(1024);
-            _parsers = new List<DataParser>(16);
+            _parsers = new List<DataParser>(32);
 
             _worker = new Worker();
             _worker.PageDownloadingComplete += WorkerPageDownloaded;
@@ -72,8 +49,6 @@ namespace WoWHeadParser
 
         protected override void OnLoad(EventArgs e)
         {
-            #region Prepare
-
             #region Parsers loading
 
             Type typofParser = typeof(DataParser);
@@ -104,6 +79,10 @@ namespace WoWHeadParser
                 languageMenuItem.MenuItems.Add(item);
             }
 
+
+            _currentCulture = Settings.Default.Culture;
+            Reload(_currentCulture);
+
             #endregion
 
             #region Locale loading
@@ -116,8 +95,6 @@ namespace WoWHeadParser
 
             #endregion
 
-            #endregion
-
             #region Load from settings
 
             int lastParser = Settings.Default.LastParser;
@@ -126,11 +103,11 @@ namespace WoWHeadParser
             else
                 Console.WriteLine(Resources.Error_while_loading_last_parser);
 
-            int lastLanguage = Settings.Default.LastLanguage;
-            if (lastLanguage < localeBox.Items.Count)
-                localeBox.SelectedIndex = lastLanguage;
+            int lastLocale = Settings.Default.LastLocale;
+            if (lastLocale < localeBox.Items.Count)
+                localeBox.SelectedIndex = lastLocale;
             else
-                Console.WriteLine(Resources.Error_while_loading_last_language);
+                Console.WriteLine(Resources.Error_while_loading_last_locale);
 
             #endregion
 
@@ -139,7 +116,7 @@ namespace WoWHeadParser
 
         private void LocaleBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            Settings.Default.LastLanguage = localeBox.SelectedIndex;
+            Settings.Default.LastLocale = localeBox.SelectedIndex;
         }
 
         private void ParserBoxSelectedIndexChanged(object sender, EventArgs e)
@@ -205,7 +182,7 @@ namespace WoWHeadParser
             abortButton.Enabled = true;
             settingsBox.Enabled = startButton.Enabled = false;
             numericUpDown.Value = progressBar.Value = 0;
-            SetLabelText(@"Parsing...");
+            SetLabelText(Resources.Label_Working);
 
             backgroundWorker.RunWorkerAsync(type);
         }
@@ -241,7 +218,7 @@ namespace WoWHeadParser
 
             _worker.Reset();
 
-            SetLabelText(@"Complete!");
+            SetLabelText(Resources.Label_Complete);
         }
 
         private void AbortButtonClick(object sender, EventArgs e)
@@ -250,7 +227,7 @@ namespace WoWHeadParser
                 return;
 
             _worker.Stop();
-            SetLabelText(@"Aborting...");
+            SetLabelText(Resources.Label_Abort);
         }
 
         private void WelfBoxSelectedIndexChanged(object sender, EventArgs e)
@@ -297,7 +274,7 @@ namespace WoWHeadParser
 
         private void WELFCreatorMenuClick(object sender, EventArgs e)
         {
-            this.ThreadSafeBegin(x => new WelfCreator().Show());
+            new WelfCreator(_currentCulture).ShowDialog();
         }
 
         private void ReloadWelfFilesButtonClick(object sender, EventArgs e)
@@ -317,16 +294,12 @@ namespace WoWHeadParser
 
             _currentCulture = Settings.Default.Culture = selectedCulture;
 
-            CultureInfo culture = new CultureInfo(_currentCulture, true);
-            Thread.CurrentThread.CurrentCulture = culture;
-            Thread.CurrentThread.CurrentUICulture = culture;
-            
-            Reload();
+            Reload(_currentCulture);
         }
 
         private void AboutMenuItemClick(object sender, EventArgs e)
         {
-            this.ThreadSafeBegin(x => new AboutForm(_currentCulture).ShowDialog());
+            new AboutForm(_currentCulture).ShowDialog();
         }
 
         private void ExitMenuClick(object sender, EventArgs e)
@@ -368,20 +341,13 @@ namespace WoWHeadParser
 
         private DialogResult ShowMessageBox(MessageType type, params object[] args)
         {
-            if (!_message.ContainsKey(type))
-                return DialogResult.None;
-
-            Message message = _message[type];
-            string msg = string.Format(CultureInfo.InvariantCulture, message.Text, args);
-
-            Console.WriteLine(msg);
-
-            return MessageBox.Show(msg, this.Text, message.Button, message.Icon);
+            MessageText message = MessageManager.GetMessage(type);
+            return message.ShowMessage(Text, args);
         }
 
         private void OptionsMenuItemClick(object sender, EventArgs e)
         {
-            this.ThreadSafeBegin(x => new SettingsForm(_currentCulture).ShowDialog());
+            new SettingsForm(_currentCulture).ShowDialog();
         }
     }
 }

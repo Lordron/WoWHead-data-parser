@@ -4,12 +4,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using DBFilesClient.NET;
+using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.DBFileStorage
 {
     public static class DBFileLoader
     {
-        private static List<IDBFileLoader> _loaders = new List<IDBFileLoader>(8);
+        private static List<IDBFileLoader> _loaders = new List<IDBFileLoader>(4);
 
         public static void Initial()
         {
@@ -36,13 +37,13 @@ namespace WoWHeadParser.DBFileStorage
                 }
                 catch(Exception e)
                 {
-                    Console.WriteLine("Error while loading {0}! Skip", type.Name);
+                    Console.WriteLine(Resources.Error_while_loading_db_file, type.Name);
                     Console.WriteLine(e.Message);
                     continue;
                 }
             }
             sw.Stop();
-            Console.WriteLine("Loaded {0} db files in {1} ms", _loaders.Count, sw.ElapsedMilliseconds);
+            Console.WriteLine(Resources.Loaded_count_db_files, _loaders.Count, sw.ElapsedMilliseconds);
         }
 
         public static T GetLoader<T>() where T : class

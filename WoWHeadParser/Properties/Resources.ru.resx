@@ -118,48 +118,48 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Error_while_loading_last_parser" xml:space="preserve">
-    <value>Error while loading last parser from settings! Last parser index &lt; parsers count!</value>
+    <value>Ошибка при загрузке последнего выбранного парсера! Он имеет недоступное значение</value>
   </data>
   <data name="Error_while_loading_last_locale" xml:space="preserve">
-    <value>Error while loading last locale from settings! Last locale index &lt; locales count!</value>
+    <value>Ошибка при загрузке последнего выбранного локаля! Он имеет недоступное значение</value>
   </data>
   <data name="Error_while_loading_welf_file" xml:space="preserve">
-    <value>Error while loading welf file {0} - {1}</value>
+    <value>Ошибка при загрузке welf файла {0} - {1}</value>
   </data>
   <data name="Error_Cannot_get_response" xml:space="preserve">
-    <value>Cannot get response from {0}</value>
+    <value>Невозможно получить ответ {0}</value>
   </data>
   <data name="AbortQuestion" xml:space="preserve">
-    <value>Do you really want to stop ?</value>
+    <value>Вы действительно хотите остановиться?</value>
   </data>
   <data name="ExitQuestion" xml:space="preserve">
-    <value>Do you really want to quit WoWHead Parser ?</value>
+    <value>Вы действительно хотите выйти ?</value>
   </data>
   <data name="MultipleTypeBigger" xml:space="preserve">
-    <value>Starting value can not be bigger than ending value!</value>
+    <value>Начальное значение не может быть больше конечного</value>
   </data>
   <data name="MultipleTypeEqual" xml:space="preserve">
-    <value>Starting value can not be equal ending value!</value>
+    <value>Начальное значение не может быть равно конечному</value>
   </data>
   <data name="WelfFileNotFound" xml:space="preserve">
-    <value>File {0} not found!</value>
+    <value>Файл {0} не найден!</value>
   </data>
   <data name="WelfListEmpty" xml:space="preserve">
-    <value>Entries list ({0}) is empty</value>
+    <value>Список id ({0}) пуст</value>
   </data>
   <data name="Error_while_loading_db_file" xml:space="preserve">
-    <value>Error while loading {0}! Skip</value>
+    <value>Ошибка при загрузке {0 Пропуск</value>
   </data>
   <data name="Label_Abort" xml:space="preserve">
-    <value>Aborting...</value>
+    <value>Остановка...</value>
   </data>
   <data name="Label_Complete" xml:space="preserve">
-    <value>Complete!</value>
+    <value>Готово!</value>
   </data>
   <data name="Label_Working" xml:space="preserve">
-    <value>Parsing...</value>
+    <value>Парсим...</value>
   </data>
   <data name="Loaded_count_db_files" xml:space="preserve">
-    <value>Loaded {0} db files in {1} ms</value>
+    <value>Загружено {0} db файлов за {1} ms</value>
   </data>
 </root>

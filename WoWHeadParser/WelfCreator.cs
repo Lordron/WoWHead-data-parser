@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace WoWHeadParser
@@ -11,7 +13,8 @@ namespace WoWHeadParser
     public partial class WelfCreator : Form
     {
         private List<uint> _ids;
-        private ObjectType _type;
+
+        #region Locales
 
         private Dictionary<Locale, string> _locales = new Dictionary<Locale, string>
         {
@@ -24,6 +27,10 @@ namespace WoWHeadParser
             {Locale.Portugal, "pt"},
         };
 
+        #endregion
+
+        #region ObjectTypes
+
         private Dictionary<ObjectType, string> _types = new Dictionary<ObjectType, string>
         {
             {ObjectType.TypeNpc, "npcs"},
@@ -31,9 +38,21 @@ namespace WoWHeadParser
             {ObjectType.TypeQuest, "quests"},
         };
 
-        public WelfCreator()
+        #endregion
+
+        public WelfCreator(string culture)
         {
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo(culture, true);
+            Thread.CurrentThread.CurrentCulture = new CultureInfo(culture, true);
             InitializeComponent();
+
+            _ids = new List<uint>();
+
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            #region Locale loading
 
             foreach (Locale locale in Enum.GetValues(typeof(Locale)))
             {
@@ -42,6 +61,10 @@ namespace WoWHeadParser
 
             languageBox.SelectedItem = Locale.English;
 
+            #endregion
+
+            #region ObjectType loading
+
             foreach (ObjectType locale in Enum.GetValues(typeof(ObjectType)))
             {
                 typeBox.Items.Add(locale);
@@ -49,24 +72,17 @@ namespace WoWHeadParser
 
             typeBox.SelectedItem = ObjectType.TypeNpc;
 
-            _ids = new List<uint>();
-
-        }
-
-        private void TypeBoxSelectedIndexChanged(object sender, EventArgs e)
-        {
-            _type = (ObjectType)typeBox.SelectedItem;
-
-            startButton.Enabled = true;
+            #endregion
         }
 
         private void StartButtonClick(object sender, EventArgs e)
         {
             Locale locale = (Locale)languageBox.SelectedItem;
+            ObjectType type = (ObjectType)typeBox.SelectedItem;
 
             int maxCount = 0;
             int filterId = 0;
-            switch (_type)
+            switch (type)
             {
                 case ObjectType.TypeNpc:
                     filterId = 37;
@@ -88,7 +104,7 @@ namespace WoWHeadParser
             progressBar.Minimum = progressBar.Value = 0;
             progressBar.Maximum = maxCount / 200;
 
-            string address = string.Format("http://{0}.wowhead.com/{1}?filter=cr={2}:{2};crs=2:4;", _locales[locale], _types[_type], filterId); // + crv=0:100
+            string address = string.Format("http://{0}.wowhead.com/{1}?filter=cr={2}:{2};crs=2:4;", _locales[locale], _types[type], filterId); // + crv=0:100
 
             backgroundWorker.RunWorkerAsync(address);
         }

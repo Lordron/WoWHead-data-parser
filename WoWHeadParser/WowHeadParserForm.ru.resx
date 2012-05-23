@@ -208,6 +208,9 @@
   <data name="editMenuItem.Text" xml:space="preserve">
     <value>Правка</value>
   </data>
+  <data name="languageMenuItem.Text" xml:space="preserve">
+    <value>Язык</value>
+  </data>
   <data name="aboutMenuItem.Text" xml:space="preserve">
     <value>?</value>
   </data>
