@@ -162,4 +162,7 @@
   <data name="Loaded_count_db_files" xml:space="preserve">
     <value>Loaded {0} db files in {1} ms</value>
   </data>
+  <data name="Error_unsupported_db_file_loader" xml:space="preserve">
+    <value>Can't get loader for {0} file</value>
+  </data>
 </root>

@@ -56,6 +56,8 @@ namespace WoWHeadParser.DBFileStorage
 
                 return (T)loader;
             }
+
+            Console.WriteLine(Resources.Error_unsupported_db_file_loader, typeof(T).Name);
             return null;
         }
 

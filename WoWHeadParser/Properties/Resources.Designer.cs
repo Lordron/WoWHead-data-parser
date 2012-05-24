@@ -79,6 +79,15 @@ namespace WoWHeadParser.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Can&apos;t get loader for {0} file.
+        /// </summary>
+        internal static string Error_unsupported_db_file_loader {
+            get {
+                return ResourceManager.GetString("Error_unsupported_db_file_loader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error while loading {0}! Skip.
         /// </summary>
         internal static string Error_while_loading_db_file {
