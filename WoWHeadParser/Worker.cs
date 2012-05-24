@@ -61,7 +61,8 @@ namespace WoWHeadParser
             _address = new Uri(string.Format("http://{0}wowhead.com/", _locales[parser.Locale]));
             _service = ServicePointManager.FindServicePoint(_address);
             {
-                _service.ConnectionLeaseTimeout = Timeout.Infinite;
+                _service.MaxIdleTime = 500;
+                _service.ConnectionLeaseTimeout = 500;
                 _service.ConnectionLimit = SemaphoreCount;
                 _service.SetTcpKeepAlive(true, 1000, 500);
             }
