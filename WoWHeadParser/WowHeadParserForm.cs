@@ -267,7 +267,7 @@ namespace WoWHeadParser
             if (_entries.Count == -1)
                 ShowMessageBox(MessageType.WelfListEmpty, path);
 
-            entryCountLabel.Text = string.Format(entryCountLabel.Text, _entries.Count);
+            entryCountLabel.Text = string.Format(Resources.EntryCountLabel, _entries.Count);
         }
 
         private void WELFCreatorMenuClick(object sender, EventArgs e)

@@ -165,4 +165,7 @@
   <data name="Error_unsupported_db_file_loader" xml:space="preserve">
     <value>Невозможно получить загрузчик для {0}</value>
   </data>
+  <data name="EntryCountLabel" xml:space="preserve">
+    <value>Записей: {0}</value>
+  </data>
 </root>

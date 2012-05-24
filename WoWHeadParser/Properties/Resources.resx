@@ -165,4 +165,7 @@
   <data name="Error_unsupported_db_file_loader" xml:space="preserve">
     <value>Can't get loader for {0} file</value>
   </data>
+  <data name="EntryCountLabel" xml:space="preserve">
+    <value>Entries count: {0}</value>
+  </data>
 </root>

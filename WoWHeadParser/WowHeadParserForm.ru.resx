@@ -164,7 +164,7 @@
     <value>70, 13</value>
   </data>
   <data name="entryCountLabel.Text" xml:space="preserve">
-    <value>Записей: {0}</value>
+    <value>Записей: 0</value>
   </data>
   <data name="listBox.Text" xml:space="preserve">
     <value>Настройки парсера</value>

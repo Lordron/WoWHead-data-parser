@@ -70,6 +70,15 @@ namespace WoWHeadParser.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Entries count: {0}.
+        /// </summary>
+        internal static string EntryCountLabel {
+            get {
+                return ResourceManager.GetString("EntryCountLabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot get response from {0}.
         /// </summary>
         internal static string Error_Cannot_get_response {
