@@ -53,6 +53,8 @@ namespace WoWHeadParser.Parser
 
         public bool HasLocales { get { return Locale > Locale.English; } }
 
+        public string LocalePosfix { get { return Locales[Locale]; } }
+
         #endregion
     }
 }

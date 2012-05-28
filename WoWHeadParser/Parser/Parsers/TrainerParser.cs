@@ -14,6 +14,10 @@ namespace WoWHeadParser.Parser.Parsers
             {TrainerType.TypeTradeskills, "{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*"},
         };
 
+        private const string pattern = @"data: \[.*;";
+
+        private const string trainerTypePattern = @"template: 'spell', id: ('[a-z\\-]+'), name: ";
+
         public override bool Parse(ref PageItem block)
         {
             string page = block.Page;
@@ -21,52 +25,45 @@ namespace WoWHeadParser.Parser.Parsers
             int npcflag = 0x10;
             TrainerType type = TrainerType.TypeNone;
 
-            Regex regex = new Regex("template: 'spell', id: ('[a-z\\-]+'), name: ", RegexOptions.Multiline);
+            MatchCollection items = Regex.Matches(page, trainerTypePattern, RegexOptions.Multiline);
+            foreach (Match item in items)
             {
-                MatchCollection matches = regex.Matches(page);
-                foreach (Match item in matches)
+                switch (item.Groups[1].Value)
                 {
-                    switch (item.Groups[1].Value)
-                    {
-                        //case "\'teaches-other\'":
-                        case "\'teaches-ability\'":
-                            npcflag = 0x30;
-                            type = TrainerType.TypeClass;
-                            break;
-                        case "\'teaches-recipe\'":
-                            npcflag = 0x50;
-                            type = TrainerType.TypeTradeskills;
-                            break;
-                        default:
-                            continue;
-                    }
-
-                    int startIndex = item.Index;
-                    int endIndex = page.FastIndexOf("});", startIndex);
-
-                    page = page.Substring(startIndex, endIndex - startIndex + 3);
+                    //case "\'teaches-other\'":
+                    case "\'teaches-ability\'":
+                        npcflag = 0x30;
+                        type = TrainerType.TypeClass;
+                        break;
+                    case "\'teaches-recipe\'":
+                        npcflag = 0x50;
+                        type = TrainerType.TypeTradeskills;
+                        break;
+                    default:
+                        continue;
                 }
+
+                int startIndex = item.Index;
+                int endIndex = page.FastIndexOf("});", startIndex);
+
+                page = page.Substring(startIndex, endIndex - startIndex + 3);
             }
 
             if (type == TrainerType.TypeNone)
                 return false;
 
-            const string pattern = @"data: \[.*;";
             string subPattern = _patterns[type];
 
-            MatchCollection find = Regex.Matches(page, pattern);
-
             SqlBuilder builder = new SqlBuilder("npc_trainer");
-            builder.SetFieldsName("spell", "spellcost", "reqlevel", "reqSkill", "reqSkillValue");
+            builder.SetFieldsNames("spell", "spellcost", "reqlevel", "reqSkill", "reqSkillValue");
 
             uint blockId = block.Id;
 
+            MatchCollection find = Regex.Matches(page, pattern);
+
             int count = find.Count;
             if (count > 0)
-            {
-                string query = string.Format(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | '{0}', `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcflag, (int)type, blockId);
-                builder.AppendSqlQuery(query);
-            }
+                builder.AppendSqlQuery(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | '{0}', `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcflag, (int)type, blockId);
 
             for (int i = 0; i < count; ++i)
             {

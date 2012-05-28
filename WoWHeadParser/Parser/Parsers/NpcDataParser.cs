@@ -9,25 +9,25 @@ namespace WoWHeadParser.Parser.Parsers
 {
     internal class NpcLocaleParser : DataParser
     {
+        private const string pattern = @"data: \[.*;";
+
         public override bool Parse(ref PageItem block)
         {
-            string page = block.Page.Substring("\'npcs\'");
-
-            const string pattern = @"data: \[.*;";
-
             SqlBuilder builder = new SqlBuilder(HasLocales ? "locales_creature" : "creature_template");
 
-            if (HasLocales)
-                builder.SetFieldsName(string.Format("name_{0}", Locales[Locale]), string.Format("subname_{0}", Locales[Locale]));
+            if (HasLocales) 
+                builder.SetFieldsNames(string.Format("name_{0}", LocalePosfix), string.Format("subname_{0}", LocalePosfix));
             else
-                builder.SetFieldsName("name", "subname");
+                builder.SetFieldsNames("name", "subname");
+
+            string page = block.Page.Substring("\'npcs\'");
 
             MatchCollection find = Regex.Matches(page, pattern);
             for (int i = 0; i < find.Count; ++i)
             {
                 Match item = find[i];
 
-                string text = item.Value.Replace("data: ", "").Replace("});", "");
+                string text = item.Value.Replace("data: ", string.Empty).Replace("});", string.Empty);
                 JArray serialization = (JArray)JsonConvert.DeserializeObject(text);
 
                 for (int j = 0; j < serialization.Count; ++j)
@@ -57,14 +57,14 @@ namespace WoWHeadParser.Parser.Parsers
 
     internal class NpcDataParser : DataParser
     {
+        private const string pattern = @"data: \[.*;";
+
         public override bool Parse(ref PageItem block)
         {
-            string page = block.Page.Substring("\'npcs\'");
-
-            const string pattern = @"data: \[.*;";
-
             SqlBuilder builder = new SqlBuilder("creature_template");
-            builder.SetFieldsName("minlevel", "maxlevel", "type");
+            builder.SetFieldsNames("minlevel", "maxlevel", "type");
+
+            string page = block.Page.Substring("\'npcs\'");
 
             MatchCollection find = Regex.Matches(page, pattern);
             for (int i = 0; i < find.Count; ++i)

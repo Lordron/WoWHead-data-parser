@@ -77,10 +77,10 @@ namespace Sql
         }
 
         /// <summary>
-        /// Append fields name
+        /// Append fields names
         /// </summary>
         /// <param name="args">fields name array</param>
-        public void SetFieldsName(params string[] args)
+        public void SetFieldsNames(params string[] args)
         {
             if (args == null)
                 throw new ArgumentNullException();
@@ -89,6 +89,19 @@ namespace Sql
             {
                 _fields.Add(args[i]);
             }
+        }
+
+        /// <summary>
+        /// Append fields names
+        /// </summary>
+        /// <param name="args">fields name array</param>
+        public void SetFieldsName(string format, params object[] args)
+        {
+            if (args == null || string.IsNullOrEmpty(format))
+                throw new ArgumentNullException();
+
+            string field = string.Format(format, args);
+            _fields.Add(field);
         }
 
         /// <summary>
@@ -133,12 +146,12 @@ namespace Sql
         /// Append sql query
         /// </summary>
         /// <param name="query"></param>
-        public void AppendSqlQuery(string query)
+        public void AppendSqlQuery(string query, params object[] args)
         {
-            if (string.IsNullOrWhiteSpace(query))
+            if (args == null || string.IsNullOrWhiteSpace(query))
                 throw new ArgumentNullException();
 
-            _content.AppendLine(query);
+            _content.AppendLine(string.Format(query, args));
         }
 
         public bool Empty

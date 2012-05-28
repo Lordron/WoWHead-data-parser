@@ -10,24 +10,28 @@ namespace WoWHeadParser.Parser.Parsers
 {
     internal class VendorParser : DataParser
     {
+        private const string pattern = @"data: \[.*;";
+        private const string costPattern = @"\[(\d+),(\d+)\]";
+
         private ItemExtendedCost _itemExtendedCost = null;
 
         public override void Prepare()
         {
             _itemExtendedCost = DBFileLoader.GetLoader<ItemExtendedCost>();
+            if (_itemExtendedCost == null)
+                throw new ArgumentNullException();
         }
 
         public override bool Parse(ref PageItem block)
         {
-            string page = block.Page.Substring("\'sells\'");
-
-            const string pattern = @"data: \[.*;";
-            char[] anyOf = new[] { '[', ']', '{', '}' };
+            char[] anyOf = new [] { '[', ']', '{', '}' };
 
             uint blockId = block.Id;
 
             SqlBuilder builder = new SqlBuilder("npc_vendor");
-            builder.SetFieldsName("item", "maxcount", "incrtime", "ExtendedCost");
+            builder.SetFieldsNames("item", "maxcount", "incrtime", "ExtendedCost");
+
+            string page = block.Page.Substring("\'sells\'");
 
             MatchCollection find = Regex.Matches(page, pattern);
             for (int i = 0; i < find.Count; ++i)
@@ -62,7 +66,7 @@ namespace WoWHeadParser.Parser.Parsers
 
                         if (costBlock.IndexOfAny(anyOf) != -1)
                         {
-                            MatchCollection matches = Regex.Matches(costBlock, @"\[(\d+),(\d+)\]");
+                            MatchCollection matches = Regex.Matches(costBlock, costPattern);
                             foreach (Match match in matches)
                             {
                                 cost = uint.Parse(match.Groups[1].Value);

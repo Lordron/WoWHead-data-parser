@@ -26,7 +26,7 @@ namespace WoWHeadParser.Parser.Parsers
                 return false;
 
             SqlBuilder builder = new SqlBuilder("item_template");
-            builder.SetFieldsName("Durability");
+            builder.SetFieldsNames("Durability");
 
             int endIndex = page.FastIndexOf("<br />", startIndex);
             string subsString = page.Substring(startIndex, (endIndex - startIndex));

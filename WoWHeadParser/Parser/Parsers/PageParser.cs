@@ -7,16 +7,17 @@ namespace WoWHeadParser.Parser.Parsers
 {
     internal class PageParser : DataParser
     {
+        private const string bookPattern = @"new Book\({ parent: '.+', pages: \['(?<page>.+)'\]}\)";
+
         public override bool Parse(ref PageItem block)
         {
-            Regex regex = new Regex(@"new Book\({ parent: '.+', pages: \['(?<page>.+)'\]}\)", RegexOptions.Multiline);
-            MatchCollection matches = regex.Matches(block.Page);
-
             SqlBuilder builder = new SqlBuilder(HasLocales ? "locales_page_text" : "page_text");
             if (HasLocales)
-                builder.SetFieldsName(string.Format("Text_{0}", Locales[Locale]));
+                builder.SetFieldsName("Text_{0}", LocalePosfix);
             else
-                builder.SetFieldsName("text", "next_page");
+                builder.SetFieldsNames("text", "next_page");
+
+            MatchCollection matches = Regex.Matches(block.Page, bookPattern, RegexOptions.Multiline);
 
             for (int i = 0; i < matches.Count; ++i)
             {
@@ -25,8 +26,7 @@ namespace WoWHeadParser.Parser.Parsers
                 string typeStr = groups["page"].Value;
                 string[] pages = typeStr.Split(new[] {@"','"}, StringSplitOptions.RemoveEmptyEntries);
 
-                string query = string.Format(@"SET @ENTRY := (SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0});", block.Id);
-                builder.AppendSqlQuery(query);
+                builder.AppendSqlQuery(@"SET @ENTRY := (SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0});", block.Id);
 
                 if (HasLocales)
                 {

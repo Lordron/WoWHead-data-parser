@@ -9,10 +9,10 @@ namespace WoWHeadParser
 {
     public class Requests : IDisposable
     {
+        public uint Id { get; private set; }
         public Uri Uri { get; private set; }
         public HttpWebRequest Request { get; private set; }
         public HttpWebResponse Response { get; set; }
-        public uint Id { get; private set; }
 
         #region User Agents
 
@@ -43,6 +43,7 @@ namespace WoWHeadParser
             @"Mozilla/5.0 (Windows NT 6.0; U; ja; rv:1.9.1.6) Gecko/20091201 Firefox/3.5.6 Opera 11.00",
             @"Opera/9.70 (Linux ppc64 ; U; en) Presto/2.2.1",
         };
+
         #endregion
 
         public Requests(Uri address, uint id)
@@ -111,11 +112,9 @@ namespace WoWHeadParser
             }
 
             using (BufferedStream buffer = new BufferedStream(stream))
+            using (StreamReader reader = new StreamReader(buffer))
             {
-                using (StreamReader reader = new StreamReader(buffer))
-                {
-                    return reader.ReadToEnd();
-                }
+                return reader.ReadToEnd();
             }
         }
     }

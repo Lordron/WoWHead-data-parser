@@ -8,22 +8,23 @@ namespace WoWHeadParser.Parser.Parsers
 {
     internal class QuestLocaleParser : DataParser
     {
+        private const string pattern = @"data: \[.*;";
+
         public override bool Parse(ref PageItem block)
         {
-            string page = block.Page.Substring("\'quests\'");
-            const string pattern = @"data: \[.*;";
-
             SqlBuilder builder;
             if (HasLocales)
             {
                 builder = new SqlBuilder("locales_quest");
-                builder.SetFieldsName(string.Format("title_{0}", Locales[Locale]));
+                builder.SetFieldsName("title_{0}", LocalePosfix);
             }
             else
             {
                 builder = new SqlBuilder("quest_template", "id");
-                builder.SetFieldsName("title");
+                builder.SetFieldsNames("title");
             }
+
+            string page = block.Page.Substring("\'quests\'");
 
             MatchCollection find = Regex.Matches(page, pattern);
             for (int i = 0; i < find.Count; ++i)
@@ -57,13 +58,14 @@ namespace WoWHeadParser.Parser.Parsers
 
     internal class QuestDataParser : DataParser
     {
+        private const string pattern = @"data: \[.*;";
+
         public override bool Parse(ref PageItem block)
         {
-            string page = block.Page.Substring("\'quests\'");
-            const string pattern = @"data: \[.*;";
-
             SqlBuilder builder = new SqlBuilder("quest_template", "id");
-            builder.SetFieldsName("level", "minlevel", "zoneOrSort", "RewardOrRequiredMoney");
+            builder.SetFieldsNames("level", "minlevel", "zoneOrSort", "RewardOrRequiredMoney");
+
+            string page = block.Page.Substring("\'quests\'");
 
             MatchCollection find = Regex.Matches(page, pattern);
             for (int i = 0; i < find.Count; ++i)

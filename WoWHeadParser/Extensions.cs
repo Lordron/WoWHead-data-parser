@@ -32,21 +32,18 @@ namespace WoWHeadParser
         public static string Substring(this string input, string check)
         {
             const string pattern = "template: '.+', id: ('[a-z\\-]+'), data: ";
-            Regex regex = new Regex(pattern, RegexOptions.Multiline);
+            MatchCollection matches = Regex.Matches(input, pattern, RegexOptions.Multiline);
+            foreach (Match item in matches)
             {
-                MatchCollection matches = regex.Matches(input);
-                foreach (Match item in matches)
-                {
-                    string type = item.Groups[1].Value;
+                string type = item.Groups[1].Value;
 
-                    if (!type.Equals(check))
-                        continue;
+                if (!type.Equals(check))
+                    continue;
 
-                    int start = item.Index;
-                    int end = input.FastIndexOf("});", start);
+                int start = item.Index;
+                int end = input.FastIndexOf("});", start);
 
-                    input = input.Substring(start, end - start + 3);
-                }
+                input = input.Substring(start, end - start + 3);
             }
 
             return input;

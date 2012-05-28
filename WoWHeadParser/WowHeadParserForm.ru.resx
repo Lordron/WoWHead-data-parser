@@ -161,7 +161,7 @@
     <value>Перезагрузка</value>
   </data>
   <data name="entryCountLabel.Size" type="System.Drawing.Size, System.Drawing">
-    <value>70, 13</value>
+    <value>62, 13</value>
   </data>
   <data name="entryCountLabel.Text" xml:space="preserve">
     <value>Записей: 0</value>
