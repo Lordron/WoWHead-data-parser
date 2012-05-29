@@ -11,7 +11,7 @@ namespace WoWHeadParser.Parser.Parsers
     {
         private const string pattern = @"data: \[.*;";
 
-        public override bool Parse(ref PageItem block)
+        public override PageItem Parse(string page, uint id)
         {
             SqlBuilder builder = new SqlBuilder(HasLocales ? "locales_creature" : "creature_template");
 
@@ -20,7 +20,7 @@ namespace WoWHeadParser.Parser.Parsers
             else
                 builder.SetFieldsNames("name", "subname");
 
-            string page = block.Page.Substring("\'npcs\'");
+            page = page.Substring("\'npcs\'");
 
             MatchCollection find = Regex.Matches(page, pattern);
             for (int i = 0; i < find.Count; ++i)
@@ -37,15 +37,15 @@ namespace WoWHeadParser.Parser.Parsers
                     JToken nameToken = jobj["name"];
                     JToken subNameToken = jobj["tag"];
 
-                    string id = jobj["id"].ToString();
+                    string entry = jobj["id"].ToString();
                     string name = nameToken == null ? string.Empty : nameToken.ToString().HTMLEscapeSumbols();
                     string subName = subNameToken == null ? string.Empty : subNameToken.ToString().HTMLEscapeSumbols();
 
-                    builder.AppendFieldsValue(id, name, subName);
+                    builder.AppendFieldsValue(entry, name, subName);
                 }
             }
-            block.Page = builder.ToString();
-            return !builder.Empty;
+
+            return new PageItem(id, builder.ToString());
         }
 
         public override string Name { get { return "NPC locale data parser"; } }
@@ -59,12 +59,12 @@ namespace WoWHeadParser.Parser.Parsers
     {
         private const string pattern = @"data: \[.*;";
 
-        public override bool Parse(ref PageItem block)
+        public override PageItem Parse(string page, uint id)
         {
             SqlBuilder builder = new SqlBuilder("creature_template");
             builder.SetFieldsNames("minlevel", "maxlevel", "type");
 
-            string page = block.Page.Substring("\'npcs\'");
+            page = page.Substring("\'npcs\'");
 
             MatchCollection find = Regex.Matches(page, pattern);
             for (int i = 0; i < find.Count; ++i)
@@ -81,7 +81,7 @@ namespace WoWHeadParser.Parser.Parsers
                     JToken maxLevelToken = jobj["maxlevel"];
                     JToken minLevelToken = jobj["minlevel"];
 
-                    string id = jobj["id"].ToString();
+                    string entry = jobj["id"].ToString();
                     string type = jobj["type"].ToString();
 
                     string maxLevel = maxLevelToken == null ? string.Empty : maxLevelToken.ToString();
@@ -92,12 +92,11 @@ namespace WoWHeadParser.Parser.Parsers
                     if (maxLevel.Equals("9999"))
                         maxLevel = "@BOSS_LEVEL";
 
-                    builder.AppendFieldsValue(id, minLevel, maxLevel, type);
+                    builder.AppendFieldsValue(entry, minLevel, maxLevel, type);
                 }
             }
 
-            block.Page = builder.ToString();
-            return !builder.Empty;
+            return new PageItem(id, builder.ToString());
         }
 
         public override string PreParse()

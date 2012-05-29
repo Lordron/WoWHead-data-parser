@@ -4,9 +4,7 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using WoWHeadParser.Page;
 using WoWHeadParser.Parser;
-using WoWHeadParser.Properties;
 
 namespace WoWHeadParser
 {
@@ -21,7 +19,6 @@ namespace WoWHeadParser
         private DateTime _timeEnd;
         private List<uint> _entries;
         private ServicePoint _service;
-        private List<PageItem> _pages;
         private SemaphoreSlim _semaphore;
 
         private object _threadLock = new object();
@@ -44,7 +41,6 @@ namespace WoWHeadParser
         public Worker()
         {
             _entries = new List<uint>();
-            _pages = new List<PageItem>();
             _semaphore = new SemaphoreSlim(SemaphoreCount, SemaphoreCount);
         }
 
@@ -64,7 +60,7 @@ namespace WoWHeadParser
                 _service.MaxIdleTime = 500;
                 _service.ConnectionLeaseTimeout = 500;
                 _service.ConnectionLimit = SemaphoreCount;
-                _service.SetTcpKeepAlive(true, 1000, 500);
+                _service.SetTcpKeepAlive(true, 120000000, 1000);
             }
             _address = new Uri(_address, parser.Address);
         }
@@ -153,10 +149,6 @@ namespace WoWHeadParser
             }
 
             _timeEnd = DateTime.Now;
-
-            SortOrder sortOrder = (SortOrder)Settings.Default.SortOrder;
-            if (sortOrder > SortOrder.None)
-                _pages.Sort(new PageItemComparer(sortOrder));
         }
 
         private void RespCallback(IAsyncResult iar)
@@ -164,12 +156,8 @@ namespace WoWHeadParser
             Requests request = (Requests)iar.AsyncState;
             if (request.EndGetResponse(iar))
             {
-                PageItem item = new PageItem(request);
                 lock (_threadLock)
-                {
-                    if (_parser.SafeParser(ref item))
-                        _pages.Add(item);
-                }
+                    _parser.TryParse(request.ToString(), request.Id);
             }
 
             request.Dispose();
@@ -188,7 +176,7 @@ namespace WoWHeadParser
         public void Reset()
         {
             _isWorking = false;
-            _pages.Clear();
+            _parser.Items.Clear();
             _service.ConnectionLeaseTimeout = 0;
 
             GC.Collect();
@@ -202,18 +190,10 @@ namespace WoWHeadParser
 
         public override string ToString()
         {
-            StringBuilder content = new StringBuilder(_pages.Count * 4096);
+            StringBuilder content = new StringBuilder(_parser.Items.Count * 4096);
 
-            content.AppendFormat(@"-- Dump of {0} ({1}), Total object count: {2}", _timeEnd, _timeEnd - _timeStart, _pages.Count).AppendLine();
-
-            string preParse = _parser.PreParse().TrimStart();
-            if (!string.IsNullOrEmpty(preParse))
-                content.Append(preParse);
-
-            for (int i = 0; i < _pages.Count; ++i)
-            {
-                content.Append(_pages[i].ToString());
-            }
+            content.AppendFormat(@"-- Dump of {0} ({1}), Total object count: {2}", _timeEnd, _timeEnd - _timeStart, _parser.Items.Count).AppendLine();
+            content.Append(_parser);
 
             return content.ToString();
         }

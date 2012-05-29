@@ -18,10 +18,8 @@ namespace WoWHeadParser.Parser.Parsers
 
         private const string trainerTypePattern = @"template: 'spell', id: ('[a-z\\-]+'), name: ";
 
-        public override bool Parse(ref PageItem block)
+        public override PageItem Parse(string page, uint id)
         {
-            string page = block.Page;
-
             int npcflag = 0x10;
             TrainerType type = TrainerType.TypeNone;
 
@@ -50,20 +48,18 @@ namespace WoWHeadParser.Parser.Parsers
             }
 
             if (type == TrainerType.TypeNone)
-                return false;
+                return new PageItem();
 
             string subPattern = _patterns[type];
 
             SqlBuilder builder = new SqlBuilder("npc_trainer");
             builder.SetFieldsNames("spell", "spellcost", "reqlevel", "reqSkill", "reqSkillValue");
 
-            uint blockId = block.Id;
-
             MatchCollection find = Regex.Matches(page, pattern);
 
             int count = find.Count;
             if (count > 0)
-                builder.AppendSqlQuery(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | '{0}', `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcflag, (int)type, blockId);
+                builder.AppendSqlQuery(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | '{0}', `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcflag, (int)type, id);
 
             for (int i = 0; i < count; ++i)
             {
@@ -81,21 +77,20 @@ namespace WoWHeadParser.Parser.Parsers
                             {
                                 string reqSkill = (string.IsNullOrEmpty(groups[4].Value) ? "0" : groups[4].Value);
                                 string reqSkillValue = (string.IsNullOrEmpty(groups[2].Value) ? "0" : groups[2].Value);
-                                builder.AppendFieldsValue(blockId, groups[1].Value, spellCost, groups[3].Value, reqSkill, reqSkillValue);
+                                builder.AppendFieldsValue(id, groups[1].Value, spellCost, groups[3].Value, reqSkill, reqSkillValue);
                             }
                             break;
                         case TrainerType.TypeClass:
                             {
                                 string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? "0" : groups[3].Value);
-                                builder.AppendFieldsValue(blockId, groups[1].Value, spellCost, groups[2].Value, reqSkill, "0");
+                                builder.AppendFieldsValue(id, groups[1].Value, spellCost, groups[2].Value, reqSkill, "0");
                             }
                             break;
                     }
                 }
             }
 
-            block.Page = builder.ToString();
-            return !builder.Empty;
+            return new PageItem(id, builder.ToString());
         }
 
         public override string Name { get { return "Professions & Class Trainer data parser"; } }

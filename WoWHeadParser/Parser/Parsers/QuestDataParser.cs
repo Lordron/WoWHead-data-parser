@@ -10,7 +10,7 @@ namespace WoWHeadParser.Parser.Parsers
     {
         private const string pattern = @"data: \[.*;";
 
-        public override bool Parse(ref PageItem block)
+        public override PageItem Parse(string page, uint id)
         {
             SqlBuilder builder;
             if (HasLocales)
@@ -24,7 +24,7 @@ namespace WoWHeadParser.Parser.Parsers
                 builder.SetFieldsNames("title");
             }
 
-            string page = block.Page.Substring("\'quests\'");
+            page = page.Substring("\'quests\'");
 
             MatchCollection find = Regex.Matches(page, pattern);
             for (int i = 0; i < find.Count; ++i)
@@ -38,15 +38,14 @@ namespace WoWHeadParser.Parser.Parsers
                     JObject jobj = (JObject)serialiation[j];
                     JToken nameToken = jobj["name"];
 
-                    string id = jobj["id"].ToString();
+                    string entry = jobj["id"].ToString();
                     string name = nameToken == null ? string.Empty : nameToken.ToString().HTMLEscapeSumbols();
 
-                    builder.AppendFieldsValue(id, name);
+                    builder.AppendFieldsValue(entry, name);
                 }
             }
 
-            block.Page = builder.ToString();
-            return !builder.Empty;
+            return new PageItem(id, builder.ToString());
         }
 
         public override string Name { get { return "Quest locale data parser"; } }
@@ -60,12 +59,12 @@ namespace WoWHeadParser.Parser.Parsers
     {
         private const string pattern = @"data: \[.*;";
 
-        public override bool Parse(ref PageItem block)
+        public override PageItem Parse(string page, uint id)
         {
             SqlBuilder builder = new SqlBuilder("quest_template", "id");
             builder.SetFieldsNames("level", "minlevel", "zoneOrSort", "RewardOrRequiredMoney");
 
-            string page = block.Page.Substring("\'quests\'");
+            page = page.Substring("\'quests\'");
 
             MatchCollection find = Regex.Matches(page, pattern);
             for (int i = 0; i < find.Count; ++i)
@@ -78,7 +77,7 @@ namespace WoWHeadParser.Parser.Parsers
                 {
                     JObject jobj = (JObject)serialization[j];
 
-                    string id = jobj["id"].ToString();
+                    string entry = jobj["id"].ToString();
 
                     JToken zoneOrSortToken = jobj["category"];
                     JToken levelToken = jobj["level"];
@@ -90,12 +89,11 @@ namespace WoWHeadParser.Parser.Parsers
                     string zoneOrSort = zoneOrSortToken == null ? string.Empty : zoneOrSortToken.ToString();
                     string money = moneyToken == null ? string.Empty : moneyToken.ToString();
 
-                    builder.AppendFieldsValue(id, level, minLevel, zoneOrSort, money);
+                    builder.AppendFieldsValue(entry, level, minLevel, zoneOrSort, money);
                 }
             }
 
-            block.Page = builder.ToString();
-            return !builder.Empty;
+            return new PageItem(id, builder.ToString());
         }
 
         public override string Name { get { return "Quest template data parser"; } }

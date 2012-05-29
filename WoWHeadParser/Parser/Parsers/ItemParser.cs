@@ -18,12 +18,11 @@ namespace WoWHeadParser.Parser.Parsers
             {Locale.Portugal, @"Durabilidade"},
         };
 
-        public override bool Parse(ref PageItem block)
+        public override PageItem Parse(string page, uint id)
         {
-            string page = block.Page;
             int startIndex = page.FastIndexOf(_durabiliy[Locale]);
             if (startIndex == -1)
-                return false;
+                return new PageItem();
 
             SqlBuilder builder = new SqlBuilder("item_template");
             builder.SetFieldsNames("Durability");
@@ -38,13 +37,12 @@ namespace WoWHeadParser.Parser.Parsers
                     if (!int.TryParse(values[i].Trim(), out durability))
                         continue;
 
-                    builder.AppendFieldsValue(block.Id, durability);
+                    builder.AppendFieldsValue(id, durability);
                     break;
                 }
             }
 
-            block.Page = builder.ToString();
-            return !builder.Empty;
+            return new PageItem(id, builder.ToString());
         }
 
         public override string Name { get { return "Item data parser"; } }

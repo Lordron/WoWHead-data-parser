@@ -9,7 +9,7 @@ namespace WoWHeadParser.Parser.Parsers
     {
         private const string bookPattern = @"new Book\({ parent: '.+', pages: \['(?<page>.+)'\]}\)";
 
-        public override bool Parse(ref PageItem block)
+        public override PageItem Parse(string page, uint id)
         {
             SqlBuilder builder = new SqlBuilder(HasLocales ? "locales_page_text" : "page_text");
             if (HasLocales)
@@ -17,7 +17,7 @@ namespace WoWHeadParser.Parser.Parsers
             else
                 builder.SetFieldsNames("text", "next_page");
 
-            MatchCollection matches = Regex.Matches(block.Page, bookPattern, RegexOptions.Multiline);
+            MatchCollection matches = Regex.Matches(page, bookPattern, RegexOptions.Multiline);
 
             for (int i = 0; i < matches.Count; ++i)
             {
@@ -26,7 +26,7 @@ namespace WoWHeadParser.Parser.Parsers
                 string typeStr = groups["page"].Value;
                 string[] pages = typeStr.Split(new[] {@"','"}, StringSplitOptions.RemoveEmptyEntries);
 
-                builder.AppendSqlQuery(@"SET @ENTRY := (SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0});", block.Id);
+                builder.AppendSqlQuery(@"SET @ENTRY := (SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0});", id);
 
                 if (HasLocales)
                 {
@@ -48,8 +48,7 @@ namespace WoWHeadParser.Parser.Parsers
                 }
             }
 
-            block.Page = builder.ToString();
-            return !builder.Empty;
+            return new PageItem(id, builder.ToString());
         }
 
         public override string Name { get { return "Book page data parser"; } }

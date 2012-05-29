@@ -22,16 +22,14 @@ namespace WoWHeadParser.Parser.Parsers
                 throw new ArgumentNullException();
         }
 
-        public override bool Parse(ref PageItem block)
+        public override PageItem Parse(string page, uint id)
         {
             char[] anyOf = new [] { '[', ']', '{', '}' };
-
-            uint blockId = block.Id;
 
             SqlBuilder builder = new SqlBuilder("npc_vendor");
             builder.SetFieldsNames("item", "maxcount", "incrtime", "ExtendedCost");
 
-            string page = block.Page.Substring("\'sells\'");
+            page = page.Substring("\'sells\'");
 
             MatchCollection find = Regex.Matches(page, pattern);
             for (int i = 0; i < find.Count; ++i)
@@ -45,7 +43,7 @@ namespace WoWHeadParser.Parser.Parsers
                     JObject jobj = (JObject)serialization[j];
                     JToken maxcountToken = jobj["avail"];
 
-                    string id = jobj["id"].ToString();
+                    string entry = jobj["id"].ToString();
                     string maxcount = maxcountToken == null ? string.Empty : maxcountToken.ToString();
 
                     object obj = jobj["cost"];
@@ -87,12 +85,11 @@ namespace WoWHeadParser.Parser.Parsers
                     else if (!hasExtendedCost)
                         extendedCost = 9999999;
 
-                    builder.AppendFieldsValue(blockId, id, maxcount, incrTime, (extendedCost != 9999999) ? extendedCost.ToString() : "@UNK_COST");
+                    builder.AppendFieldsValue(id, entry, maxcount, incrTime, (extendedCost != 9999999) ? extendedCost.ToString() : "@UNK_COST");
                 }
             }
 
-            block.Page = builder.ToString();
-            return !builder.Empty;
+            return new PageItem(id, builder.ToString());
         }
 
         public override string PreParse()
