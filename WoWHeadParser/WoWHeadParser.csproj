@@ -109,7 +109,6 @@
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Parser\Parsers\ItemParser.cs" />
     <Compile Include="Parser\Parsers\NpcDataParser.cs" />
-    <Compile Include="Parser\ParserAttribute.cs" />
     <Compile Include="Parser\Parsers\QuestDataParser.cs" />
     <Compile Include="Parser\Parsers\TrainerParser.cs" />
     <Compile Include="Extensions.cs" />

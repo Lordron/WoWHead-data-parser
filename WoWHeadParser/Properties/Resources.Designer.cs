@@ -203,14 +203,5 @@ namespace WoWHeadParser.Properties {
                 return ResourceManager.GetString("WelfFileNotFound", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Entries list ({0}) is empty.
-        /// </summary>
-        internal static string WelfListEmpty {
-            get {
-                return ResourceManager.GetString("WelfListEmpty", resourceCulture);
-            }
-        }
     }
 }

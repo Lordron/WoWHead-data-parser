@@ -9,10 +9,10 @@ namespace WoWHeadParser
 {
     public partial class SettingsForm : Form
     {
-        public SettingsForm(string culture)
+        public SettingsForm(CultureInfo culture)
         {
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo(culture, true);
-            Thread.CurrentThread.CurrentCulture = new CultureInfo(culture, true);
+            Thread.CurrentThread.CurrentUICulture = culture;
+            Thread.CurrentThread.CurrentCulture = culture;
             InitializeComponent();
         }
 

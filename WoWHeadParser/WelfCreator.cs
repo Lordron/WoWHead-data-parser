@@ -40,10 +40,10 @@ namespace WoWHeadParser
 
         #endregion
 
-        public WelfCreator(string culture)
+        public WelfCreator(CultureInfo culture)
         {
-            Thread.CurrentThread.CurrentUICulture = new CultureInfo(culture, true);
-            Thread.CurrentThread.CurrentCulture = new CultureInfo(culture, true);
+            Thread.CurrentThread.CurrentUICulture = culture;
+            Thread.CurrentThread.CurrentCulture = culture;
             InitializeComponent();
 
             _ids = new List<uint>();

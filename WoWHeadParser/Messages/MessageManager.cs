@@ -15,8 +15,6 @@ namespace WoWHeadParser.Messages
                     return new MessageText(Resources.MultipleTypeBigger);
                 case MessageType.WelfFileNotFound:
                     return new MessageText(Resources.WelfFileNotFound, MessageBoxIcon.Error);
-                case MessageType.WelfListEmpty:
-                    return new MessageText(Resources.WelfListEmpty, MessageBoxIcon.Error);
                 case MessageType.AbortQuestion:
                     return new MessageText(Resources.AbortQuestion, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 case MessageType.ExitQuestion:

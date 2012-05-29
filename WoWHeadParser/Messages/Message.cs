@@ -9,7 +9,6 @@ namespace WoWHeadParser.Messages
         MultipleTypeEqual,
         AbortQuestion,
         ExitQuestion,
-        WelfListEmpty,
         WelfFileNotFound,
         Max,
     }

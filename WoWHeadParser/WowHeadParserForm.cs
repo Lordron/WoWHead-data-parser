@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -18,7 +19,7 @@ namespace WoWHeadParser
         private List<uint> _entries;
         private List<DataParser> _parsers;
 
-        private string _currentCulture;
+        private CultureInfo _currentCulture;
 
         private const string WelfFolder = "EntryList";
 
@@ -77,8 +78,7 @@ namespace WoWHeadParser
                 languageMenuItem.MenuItems.Add(item);
             }
 
-
-            _currentCulture = Settings.Default.Culture;
+            _currentCulture = new CultureInfo(Settings.Default.Culture, true);
             Reload(_currentCulture);
 
             #endregion
@@ -125,9 +125,10 @@ namespace WoWHeadParser
         public void StartButtonClick(object sender, EventArgs e)
         {
             DataParser parser = _parsers[parserBox.SelectedIndex];
-            parser.Locale = (Locale)localeBox.SelectedItem;
-
-            _worker.Parser(parser);
+            {
+                parser.Locale = (Locale)localeBox.SelectedItem;
+                _worker.Parser(parser);
+            }
 
             ParsingType type = (ParsingType)parsingControl.SelectedIndex;
 
@@ -264,15 +265,22 @@ namespace WoWHeadParser
                 return;
             }
 
-            if (_entries.Count == -1)
-                ShowMessageBox(MessageType.WelfListEmpty, path);
-
             entryCountLabel.Text = string.Format(Resources.EntryCountLabel, _entries.Count);
         }
 
         private void WELFCreatorMenuClick(object sender, EventArgs e)
         {
             new WelfCreator(_currentCulture).ShowDialog();
+        }
+
+        private void OptionsMenuItemClick(object sender, EventArgs e)
+        {
+            new SettingsForm(_currentCulture).ShowDialog();
+        }
+
+        private void AboutMenuItemClick(object sender, EventArgs e)
+        {
+            new AboutForm(_currentCulture).ShowDialog();
         }
 
         private void ReloadWelfFilesButtonClick(object sender, EventArgs e)
@@ -290,14 +298,10 @@ namespace WoWHeadParser
             if (_currentCulture.Equals(selectedCulture))
                 return;
 
-            _currentCulture = Settings.Default.Culture = selectedCulture;
+            Settings.Default.Culture = selectedCulture;
+            _currentCulture = new CultureInfo(selectedCulture, true);
 
             Reload(_currentCulture);
-        }
-
-        private void AboutMenuItemClick(object sender, EventArgs e)
-        {
-            new AboutForm(_currentCulture).ShowDialog();
         }
 
         private void ExitMenuClick(object sender, EventArgs e)
@@ -341,11 +345,6 @@ namespace WoWHeadParser
         {
             MessageText message = MessageManager.GetMessage(type);
             return message.ShowMessage(Text, args);
-        }
-
-        private void OptionsMenuItemClick(object sender, EventArgs e)
-        {
-            new SettingsForm(_currentCulture).ShowDialog();
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Globalization;
 using System.Threading;
 using System.Windows.Forms;
@@ -453,14 +454,11 @@ namespace WoWHeadParser
 
         #region Windows Form language reloading
 
-        private void Reload(string culture)
+        private void Reload(CultureInfo cultureInfo)
         {
-            CultureInfo cultureInfo = new CultureInfo(culture, true);
-            {
-                Resources.Culture = cultureInfo;
-                Thread.CurrentThread.CurrentCulture = cultureInfo;
-                Thread.CurrentThread.CurrentUICulture = cultureInfo;
-            }
+            Resources.Culture = cultureInfo;
+            Thread.CurrentThread.CurrentCulture = cultureInfo;
+            Thread.CurrentThread.CurrentUICulture = cultureInfo;
 
             ComponentResourceManager resources = new ComponentResourceManager(typeof(WoWHeadParserForm));
 

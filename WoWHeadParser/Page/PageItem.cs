@@ -8,11 +8,6 @@
             Page = page;
         }
 
-        public PageItem(uint id)
-                : this(id, string.Empty)
-        {
-        }
-
         public PageItem()
             : this(0, string.Empty)
         {
