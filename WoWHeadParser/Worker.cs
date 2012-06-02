@@ -91,7 +91,7 @@ namespace WoWHeadParser
 
             switch (type)
             {
-                case ParsingType.TypeSingle:
+                case ParsingType.TypeBySingleValue:
                     {
                         _semaphore.Wait();
 
@@ -99,7 +99,7 @@ namespace WoWHeadParser
                         request.Request.BeginGetResponse(RespCallback, request);
                         break;
                     }
-                case ParsingType.TypeMultiple:
+                case ParsingType.TypeByMultipleValue:
                     {
                         for (uint entry = _start; entry <= _end; ++entry)
                         {
@@ -113,7 +113,7 @@ namespace WoWHeadParser
                         }
                         break;
                     }
-                case ParsingType.TypeList:
+                case ParsingType.TypeByList:
                     {
                         for (int i = 0; i < _entries.Count; ++i)
                         {
@@ -127,7 +127,7 @@ namespace WoWHeadParser
                         }
                         break;
                     }
-                case ParsingType.TypeWoWHead:
+                case ParsingType.TypeByWoWHeadFilter:
                     {
                         for (uint entry = 0; entry <= _start; ++entry)
                         {

@@ -19,7 +19,7 @@ namespace WoWHeadParser.Messages
         public MessageBoxButtons Button;
         public MessageBoxIcon Icon;
 
-        public MessageText(string message, MessageBoxButtons button, MessageBoxIcon icon)
+        public MessageText(string message, MessageBoxButtons button = MessageBoxButtons.OK, MessageBoxIcon icon = MessageBoxIcon.Exclamation)
         {
             Text = message;
             Button = button;
@@ -28,21 +28,6 @@ namespace WoWHeadParser.Messages
 
         public MessageText(string format, params object[] args)
             : this(string.Format(format, args))
-        {
-        }
-
-        public MessageText(string message)
-            : this(message, MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-        {
-        }
-
-        public MessageText(string message, MessageBoxButtons button)
-            : this(message, button, MessageBoxIcon.Exclamation)
-        {
-        }
-
-        public MessageText(string message, MessageBoxIcon icon)
-            : this(message, MessageBoxButtons.OK, icon)
         {
         }
 

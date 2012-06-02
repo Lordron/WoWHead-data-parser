@@ -2,9 +2,9 @@
 {
     public enum ParsingType : byte
     {
-        TypeSingle = 0,
-        TypeMultiple = 1,
-        TypeList = 2,
-        TypeWoWHead = 3,
+        TypeBySingleValue = 0,
+        TypeByMultipleValue = 1,
+        TypeByList = 2,
+        TypeByWoWHeadFilter = 3,
     }
 }

@@ -14,7 +14,7 @@ namespace WoWHeadParser.Messages
                 case MessageType.MultipleTypeBigger:
                     return new MessageText(Resources.MultipleTypeBigger);
                 case MessageType.WelfFileNotFound:
-                    return new MessageText(Resources.WelfFileNotFound, MessageBoxIcon.Error);
+                    return new MessageText(Resources.WelfFileNotFound, icon: MessageBoxIcon.Error);
                 case MessageType.AbortQuestion:
                     return new MessageText(Resources.AbortQuestion, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
                 case MessageType.ExitQuestion:
@@ -22,6 +22,11 @@ namespace WoWHeadParser.Messages
             }
 
             return new MessageText("Unsupported message type {0}", type);
+        }
+
+        public static DialogResult ShowMessage(MessageType type, string caption, params object[] args)
+        {
+            return GetMessage(type).ShowMessage(caption, args);
         }
     }
 }

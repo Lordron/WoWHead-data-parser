@@ -134,19 +134,19 @@ namespace WoWHeadParser
 
             switch (type)
             {
-                case ParsingType.TypeSingle:
+                case ParsingType.TypeBySingleValue:
                     {
                         uint value = (uint)valueBox.Value;
                         _worker.SetValue(value);
                         break;
                     }
-                case ParsingType.TypeList:
+                case ParsingType.TypeByList:
                     {
                         numericUpDown.Maximum = progressBar.Maximum = _entries.Count;
                         _worker.SetValue(_entries);
                         break;
                     }
-                case ParsingType.TypeMultiple:
+                case ParsingType.TypeByMultipleValue:
                     {
                         uint startValue = (uint)rangeStart.Value;
                         uint endValue = (uint)rangeEnd.Value;
@@ -167,7 +167,7 @@ namespace WoWHeadParser
                         _worker.SetValue(startValue, endValue);
                         break;
                     }
-                case ParsingType.TypeWoWHead:
+                case ParsingType.TypeByWoWHeadFilter:
                     {
                         int maxValue = (parser.MaxCount / 200);
                         numericUpDown.Maximum = progressBar.Maximum = maxValue + 1;
@@ -343,8 +343,7 @@ namespace WoWHeadParser
 
         private DialogResult ShowMessageBox(MessageType type, params object[] args)
         {
-            MessageText message = MessageManager.GetMessage(type);
-            return message.ShowMessage(Text, args);
+            return MessageManager.ShowMessage(type, Text, args);
         }
     }
 }

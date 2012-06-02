@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-[assembly: CLSCompliant(true)]
+[assembly: CLSCompliant(false)]
 
 namespace WoWHeadParser
 {
