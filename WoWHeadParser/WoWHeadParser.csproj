@@ -100,7 +100,6 @@
     </Compile>
     <Compile Include="DBFileStorage\DBFileLoader.cs" />
     <Compile Include="DBFileStorage\IDBFileLoader.cs" />
-    <Compile Include="DBFileStorage\IStructureFmt.cs" />
     <Compile Include="Messages\MessageManager.cs" />
     <Compile Include="Page\PageItem.cs" />
     <Compile Include="Page\PageItemComparer.cs" />

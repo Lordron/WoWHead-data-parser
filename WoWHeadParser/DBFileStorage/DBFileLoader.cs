@@ -65,21 +65,20 @@ namespace WoWHeadParser.DBFileStorage
 
         public const string DbFilePath = "db2";
 
-        public static DBCStorage Load<T>(bool dbc) where T : struct
+        public static DBCStorage<T> Load<T>(bool dbc) where T : class, new()
         {
             string fileName = string.Format("{0}.{1}", typeof(T).Name.Replace("Entry", ""), dbc ? "dbc" : "db2");
             string path = Path.Combine(DbFilePath, fileName);
             if (!File.Exists(path))
                 throw new FileNotFoundException("File " + path + " not found!");
 
-            IStructureFmt fmt = Activator.CreateInstance(typeof(T)) as IStructureFmt;
-            if (fmt == null)
-                throw new ArgumentNullException(typeof(T).Name + "is not part of IStructureFmt!");
+            DBCStorage<T> storage = new DBCStorage<T>();
+            if (!dbc)
+                storage = new DB2Storage<T>();
 
-            DBCStorage storage = new DBCStorage(fmt.Fmt);
+            using (FileStream stream = new FileStream(path, FileMode.Open))
             {
-                FileStream stream = new FileStream(path, FileMode.Open);
-                storage.Load(stream, false, true);
+                storage.Load(stream);
             }
 
             return storage;

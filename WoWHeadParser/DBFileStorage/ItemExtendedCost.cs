@@ -1,33 +1,32 @@
-﻿using System;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using DBFilesClient.NET;
 
 namespace WoWHeadParser.DBFileStorage
 {
     [StructLayout(LayoutKind.Sequential)]
-    public unsafe struct ItemExtendedCostEntry : IStructureFmt
+    public class ItemExtendedCostEntry
     {
         public uint Id;
         public uint ReqHonorPoints;
         public uint ReqArenaPoints;
         public uint ReqArenaSlot;
-        public fixed uint ReqItems[5];
-        public fixed uint ReqItemCounts[5];
+        [StoragePresence(StoragePresenceOption.Include, ArraySize = 5)]
+        public uint[] ReqItems;
+        [StoragePresence(StoragePresenceOption.Include, ArraySize = 5)]
+        public uint[] ReqItemCounts;
         public uint ReqPersonalRating;
         public uint ItemPurchaseGroup;
-        public fixed uint ReqCurrences[5];
-        public fixed uint ReqCurrencyCounts[5];
-        public fixed uint Unks[5];
-
-        public string Fmt
-        {
-            get { return "iiiiiiiiiiiiiiiiiiiiiiiiiiiiiii"; }
-        }
+        [StoragePresence(StoragePresenceOption.Include, ArraySize = 5)]
+        public uint[] ReqCurrences;
+        [StoragePresence(StoragePresenceOption.Include, ArraySize = 5)]
+        public uint[] ReqCurrencyCounts;
+        [StoragePresence(StoragePresenceOption.Include, ArraySize = 5)]
+        public uint[] Unks;
     };
 
     public class ItemExtendedCost : IDBFileLoader
     {
-        private DBCStorage _storage;
+        private DBCStorage<ItemExtendedCostEntry> _storage;
 
         #region IDBFileLoader
 
@@ -38,27 +37,21 @@ namespace WoWHeadParser.DBFileStorage
 
         #endregion
 
-        public int Count { get { return _storage == null ? -1 : _storage.EntriesCount; } } 
+        public int Count { get { return _storage == null ? -1 : _storage.Count; } } 
 
         public const uint MaxSize = 5;
 
-        public unsafe uint GetExtendedCost(uint cost, uint count)
+        public uint GetExtendedCost(uint cost, uint count)
         {
-            uint maxId = _storage.MaxId;
-            for (uint id = _storage.MinId; id <= maxId; ++id)
+            foreach (ItemExtendedCostEntry entry in _storage)
             {
-                IntPtr entryPtr = _storage.GetEntry(id);
-                if (entryPtr == IntPtr.Zero)
-                    continue;
-
-                ItemExtendedCostEntry* entry = (ItemExtendedCostEntry*)entryPtr.ToPointer();
                 for (int i = 0; i < MaxSize; ++i)
                 {
-                    if (entry->ReqItems[i] == cost && entry->ReqItemCounts[i] == count)
-                        return entry->Id;
+                    if (entry.ReqItems[i] == cost && entry.ReqItemCounts[i] == count)
+                        return entry.Id;
 
-                    if (entry->ReqCurrences[i] == cost && (entry->ReqCurrencyCounts[i] == count || entry->ReqCurrencyCounts[i] == count * 100))
-                        return entry->Id;
+                    if (entry.ReqCurrences[i] == cost && (entry.ReqCurrencyCounts[i] == count || entry.ReqCurrencyCounts[i] == count * 100))
+                        return entry.Id;
                 }
             }
             return 0;
