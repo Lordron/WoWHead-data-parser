@@ -40,6 +40,13 @@ namespace WoWHeadParser
             this.appendDeleteQueryCheckBox = new System.Windows.Forms.CheckBox();
             this.allowNullValCheckBox = new System.Windows.Forms.CheckBox();
             this.withoutHeaderCheckBox = new System.Windows.Forms.CheckBox();
+            this.sqlBuilderGroupBox = new System.Windows.Forms.GroupBox();
+            this.parserGroupBox = new System.Windows.Forms.GroupBox();
+            this.dataCompressionCheckBox = new System.Windows.Forms.CheckBox();
+            this.webRequestGroupBox = new System.Windows.Forms.GroupBox();
+            this.sqlBuilderGroupBox.SuspendLayout();
+            this.parserGroupBox.SuspendLayout();
+            this.webRequestGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // quertTypelabel
@@ -49,8 +56,8 @@ namespace WoWHeadParser
             // 
             // sqlQueryTypeBox
             // 
-            resources.ApplyResources(this.sqlQueryTypeBox, "sqlQueryTypeBox");
             this.sqlQueryTypeBox.FormattingEnabled = true;
+            resources.ApplyResources(this.sqlQueryTypeBox, "sqlQueryTypeBox");
             this.sqlQueryTypeBox.Name = "sqlQueryTypeBox";
             // 
             // okButton
@@ -62,8 +69,8 @@ namespace WoWHeadParser
             // 
             // cancleButton
             // 
-            resources.ApplyResources(this.cancleButton, "cancleButton");
             this.cancleButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            resources.ApplyResources(this.cancleButton, "cancleButton");
             this.cancleButton.Name = "cancleButton";
             this.cancleButton.UseVisualStyleBackColor = true;
             this.cancleButton.Click += new System.EventHandler(this.CancleButtonClick);
@@ -75,8 +82,8 @@ namespace WoWHeadParser
             // 
             // sortDirectionBox
             // 
-            resources.ApplyResources(this.sortDirectionBox, "sortDirectionBox");
             this.sortDirectionBox.FormattingEnabled = true;
+            resources.ApplyResources(this.sortDirectionBox, "sortDirectionBox");
             this.sortDirectionBox.Name = "sortDirectionBox";
             // 
             // appendSqlCheckBox
@@ -107,26 +114,60 @@ namespace WoWHeadParser
             this.withoutHeaderCheckBox.Name = "withoutHeaderCheckBox";
             this.withoutHeaderCheckBox.UseVisualStyleBackColor = true;
             // 
+            // sqlBuilderGroupBox
+            // 
+            this.sqlBuilderGroupBox.Controls.Add(this.allowNullValCheckBox);
+            this.sqlBuilderGroupBox.Controls.Add(this.withoutHeaderCheckBox);
+            this.sqlBuilderGroupBox.Controls.Add(this.appendDeleteQueryCheckBox);
+            this.sqlBuilderGroupBox.Controls.Add(this.appendSqlCheckBox);
+            this.sqlBuilderGroupBox.Controls.Add(this.quertTypelabel);
+            this.sqlBuilderGroupBox.Controls.Add(this.sqlQueryTypeBox);
+            resources.ApplyResources(this.sqlBuilderGroupBox, "sqlBuilderGroupBox");
+            this.sqlBuilderGroupBox.Name = "sqlBuilderGroupBox";
+            this.sqlBuilderGroupBox.TabStop = false;
+            // 
+            // parserGroupBox
+            // 
+            this.parserGroupBox.Controls.Add(this.dirLabel);
+            this.parserGroupBox.Controls.Add(this.sortDirectionBox);
+            resources.ApplyResources(this.parserGroupBox, "parserGroupBox");
+            this.parserGroupBox.Name = "parserGroupBox";
+            this.parserGroupBox.TabStop = false;
+            // 
+            // dataCompressionCheckBox
+            // 
+            resources.ApplyResources(this.dataCompressionCheckBox, "dataCompressionCheckBox");
+            this.dataCompressionCheckBox.Checked = global::WoWHeadParser.Properties.Settings.Default.DataCompression;
+            this.dataCompressionCheckBox.Name = "dataCompressionCheckBox";
+            this.dataCompressionCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // webRequestGroupBox
+            // 
+            this.webRequestGroupBox.Controls.Add(this.dataCompressionCheckBox);
+            resources.ApplyResources(this.webRequestGroupBox, "webRequestGroupBox");
+            this.webRequestGroupBox.Name = "webRequestGroupBox";
+            this.webRequestGroupBox.TabStop = false;
+            // 
             // SettingsForm
             // 
             this.AcceptButton = this.okButton;
             resources.ApplyResources(this, "$this");
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.cancleButton;
-            this.Controls.Add(this.withoutHeaderCheckBox);
-            this.Controls.Add(this.appendSqlCheckBox);
-            this.Controls.Add(this.sortDirectionBox);
-            this.Controls.Add(this.dirLabel);
+            this.Controls.Add(this.webRequestGroupBox);
+            this.Controls.Add(this.parserGroupBox);
+            this.Controls.Add(this.sqlBuilderGroupBox);
             this.Controls.Add(this.cancleButton);
             this.Controls.Add(this.okButton);
-            this.Controls.Add(this.sqlQueryTypeBox);
-            this.Controls.Add(this.quertTypelabel);
-            this.Controls.Add(this.appendDeleteQueryCheckBox);
-            this.Controls.Add(this.allowNullValCheckBox);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
             this.Name = "SettingsForm";
+            this.sqlBuilderGroupBox.ResumeLayout(false);
+            this.sqlBuilderGroupBox.PerformLayout();
+            this.parserGroupBox.ResumeLayout(false);
+            this.parserGroupBox.PerformLayout();
+            this.webRequestGroupBox.ResumeLayout(false);
+            this.webRequestGroupBox.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -142,6 +183,10 @@ namespace WoWHeadParser
         private System.Windows.Forms.ComboBox sortDirectionBox;
         private System.Windows.Forms.CheckBox appendSqlCheckBox;
         private System.Windows.Forms.CheckBox withoutHeaderCheckBox;
+        private System.Windows.Forms.GroupBox sqlBuilderGroupBox;
+        private System.Windows.Forms.GroupBox parserGroupBox;
+        private System.Windows.Forms.CheckBox dataCompressionCheckBox;
+        private System.Windows.Forms.GroupBox webRequestGroupBox;
 
     }
 }

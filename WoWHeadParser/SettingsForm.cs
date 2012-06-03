@@ -40,6 +40,7 @@ namespace WoWHeadParser
             Settings.Default.SortOrder = sortDirectionBox.SelectedIndex;
             Settings.Default.Append = appendSqlCheckBox.Checked;
             Settings.Default.WithoutHeader = withoutHeaderCheckBox.Checked;
+            Settings.Default.DataCompression = dataCompressionCheckBox.Checked;
             Settings.Default.Save();
 
             Close();

@@ -55,11 +55,11 @@ namespace WoWHeadParser
             _parser = parser;
 
             _address = new Uri(string.Format("http://{0}wowhead.com/", _locales[parser.Locale]));
+            ServicePointManager.DefaultConnectionLimit = SemaphoreCount * 2;
             _service = ServicePointManager.FindServicePoint(_address);
             {
                 _service.MaxIdleTime = 500;
                 _service.ConnectionLeaseTimeout = 500;
-                _service.ConnectionLimit = SemaphoreCount;
                 _service.SetTcpKeepAlive(true, 120000000, 1000);
             }
             _address = new Uri(_address, parser.Address);
@@ -81,7 +81,7 @@ namespace WoWHeadParser
             _entries = entries;
         }
 
-        public void Start(ParsingType type)
+        public void Start(ParsingType type, bool compress)
         {
             if (_isWorking)
                 throw new InvalidOperationException();
@@ -95,7 +95,7 @@ namespace WoWHeadParser
                     {
                         _semaphore.Wait();
 
-                        Requests request = new Requests(_address, _start);
+                        Requests request = new Requests(_address, _start, compress);
                         request.Request.BeginGetResponse(RespCallback, request);
                         break;
                     }
@@ -108,7 +108,7 @@ namespace WoWHeadParser
 
                             _semaphore.Wait();
 
-                            Requests request = new Requests(_address, entry);
+                            Requests request = new Requests(_address, entry, compress);
                             request.Request.BeginGetResponse(RespCallback, request);
                         }
                         break;
@@ -122,7 +122,7 @@ namespace WoWHeadParser
 
                             _semaphore.Wait();
 
-                            Requests request = new Requests(_address, _entries[i]);
+                            Requests request = new Requests(_address, _entries[i], compress);
                             request.Request.BeginGetResponse(RespCallback, request);
                         }
                         break;
@@ -136,7 +136,7 @@ namespace WoWHeadParser
 
                             _semaphore.Wait();
 
-                            Requests request = new Requests(_address, (entry * 200), ((entry + 1) * 200));
+                            Requests request = new Requests(_address, (entry * 200), ((entry + 1) * 200), compress);
                             request.Request.BeginGetResponse(RespCallback, request);
                         }
                         break;

@@ -189,7 +189,7 @@ namespace WoWHeadParser
         private void BackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
         {
             ParsingType type = (ParsingType)e.Argument;
-            _worker.Start(type);
+            _worker.Start(type, Settings.Default.DataCompression);
         }
 
         private void WorkerPageDownloaded(object sender, EventArgs e)
@@ -226,6 +226,7 @@ namespace WoWHeadParser
                 return;
 
             _worker.Stop();
+            abortButton.Enabled = false;
             SetLabelText(Resources.Label_Abort);
         }
 

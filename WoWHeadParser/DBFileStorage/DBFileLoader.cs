@@ -30,7 +30,7 @@ namespace WoWHeadParser.DBFileStorage
 
                     IDBFileLoader loader = Activator.CreateInstance(type) as IDBFileLoader;
                     if (loader == null)
-                        throw new InvalidCastException();
+                        throw new InvalidCastException("IDBFileLoader");
 
                     loader.Load();
                     _loaders.Add(loader);
@@ -38,7 +38,7 @@ namespace WoWHeadParser.DBFileStorage
                 catch(Exception e)
                 {
                     Console.WriteLine(Resources.Error_while_loading_db_file, type.Name);
-                    Console.WriteLine(e.Message);
+                    Console.WriteLine(e);
                     continue;
                 }
             }
