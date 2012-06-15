@@ -19,7 +19,7 @@ namespace WoWHeadParser.Parser.Parsers
         {
             _itemExtendedCost = DBFileLoader.GetLoader<ItemExtendedCost>();
             if (_itemExtendedCost == null)
-                throw new ArgumentNullException();
+                throw new ArgumentNullException("_itemExtendedCost");
         }
 
         public override PageItem Parse(string page, uint id)
@@ -100,5 +100,7 @@ namespace WoWHeadParser.Parser.Parsers
         public override string Name { get { return "Vendor data parser"; } }
 
         public override string Address { get { return "npc={0}"; } }
+
+        public override string WelfName { get { return "vendor"; } }
     }
 }

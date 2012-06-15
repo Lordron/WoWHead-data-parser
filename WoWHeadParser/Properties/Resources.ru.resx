@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Error_while_loading_last_parser" xml:space="preserve">
-    <value>Ошибка при загрузке последнего выбранного парсера! Он имеет недоступное значение</value>
+    <value>Ошибка при загрузке последнего выбранного парсера! Он имеет недоступное значение {0}</value>
   </data>
   <data name="Error_while_loading_last_locale" xml:space="preserve">
-    <value>Ошибка при загрузке последнего выбранного локаля! Он имеет недоступное значение</value>
+    <value>Ошибка при загрузке последнего выбранного локаля! Он имеет недоступное значение {0}</value>
   </data>
   <data name="Error_while_loading_welf_file" xml:space="preserve">
     <value>Ошибка при загрузке welf файла {0} - {1}</value>

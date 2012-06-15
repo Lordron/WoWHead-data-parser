@@ -50,12 +50,11 @@ namespace WoWHeadParser
         {
             #region Parsers loading
 
-            Type typofParser = typeof(DataParser);
             Type[] types = Assembly.GetExecutingAssembly().GetTypes();
             for (int i = 0; i < types.Length; ++i)
             {
                 Type type = types[i];
-                if (!type.IsSubclassOf(typofParser))
+                if (!type.IsSubclassOf(typeof(DataParser)))
                     continue;
 
                 DataParser parser = Activator.CreateInstance(type) as DataParser;
@@ -63,8 +62,6 @@ namespace WoWHeadParser
                     continue;
 
                 parserBox.Items.Add(parser.Name);
-                parser.Prepare();
-
                 _parsers.Add(parser);
             }
 
@@ -93,23 +90,27 @@ namespace WoWHeadParser
 
             #endregion
 
+            #region Welf files loading
+
+            LoadWelfFiles();
+
+            #endregion
+
             #region Load from settings
 
             int lastParser = Settings.Default.LastParser;
             if (lastParser < parserBox.Items.Count)
                 parserBox.SelectedIndex = lastParser;
             else
-                Console.WriteLine(Resources.Error_while_loading_last_parser);
+                Console.WriteLine(Resources.Error_while_loading_last_parser, lastParser);
 
             int lastLocale = Settings.Default.LastLocale;
             if (lastLocale < localeBox.Items.Count)
                 localeBox.SelectedIndex = lastLocale;
             else
-                Console.WriteLine(Resources.Error_while_loading_last_locale);
+                Console.WriteLine(Resources.Error_while_loading_last_locale, lastLocale);
 
             #endregion
-
-            LoadWelfFiles();
         }
 
         private void LocaleBoxSelectedIndexChanged(object sender, EventArgs e)
@@ -119,7 +120,10 @@ namespace WoWHeadParser
 
         private void ParserBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            Settings.Default.LastParser = parserBox.SelectedIndex;
+            int index = parserBox.SelectedIndex;
+            Settings.Default.LastParser = index;
+
+            welfBox.SelectedItem = string.Format("{0}.welf", _parsers[index].WelfName);
         }
 
         public void StartButtonClick(object sender, EventArgs e)

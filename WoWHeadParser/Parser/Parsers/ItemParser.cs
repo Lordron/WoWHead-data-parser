@@ -48,5 +48,7 @@ namespace WoWHeadParser.Parser.Parsers
         public override string Name { get { return "Item data parser"; } }
 
         public override string Address { get { return "item={0}?power"; } }
+
+        public override string WelfName { get { return "item"; } }
     }
 }

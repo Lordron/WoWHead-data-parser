@@ -91,6 +91,8 @@ namespace WoWHeadParser
 
         public void Dispose()
         {
+            _userAgents.Clear();
+
             if (Request != null)
                 Request.Abort();
             if (Response != null)

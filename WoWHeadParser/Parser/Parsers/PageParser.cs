@@ -54,5 +54,7 @@ namespace WoWHeadParser.Parser.Parsers
         public override string Name { get { return "Book page data parser"; } }
 
         public override string Address { get { return "object={0}"; } }
+
+        public override string WelfName { get { return "page"; } }
     }
 }

@@ -97,6 +97,8 @@ namespace WoWHeadParser.Parser.Parsers
 
         public override string Address { get { return "npc={0}"; } }
 
+        public override string WelfName { get { return "trainer"; } }
+
         public enum TrainerType
         {
             TypeNone = -1,

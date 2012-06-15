@@ -9,6 +9,11 @@ namespace WoWHeadParser.Parser
 {
     public class DataParser
     {
+        public DataParser()
+        {
+            Prepare();
+        }
+
         public virtual void Prepare()
         {
         }
@@ -28,6 +33,8 @@ namespace WoWHeadParser.Parser
         public virtual string Name { get { return string.Empty; } }
 
         public virtual int MaxCount { get { return 0; } }
+
+        public virtual string WelfName { get { return string.Empty; } }
 
         public List<PageItem> Items = new List<PageItem>(2048);
 
