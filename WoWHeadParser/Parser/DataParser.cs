@@ -31,20 +31,20 @@ namespace WoWHeadParser.Parser
 
         public List<PageItem> Items = new List<PageItem>(2048);
 
-        public bool TryParse(string page, uint id)
+        public bool TryParse(Requests request)
         {
             try
             {
-                PageItem item = Parse(page, id);
+                PageItem item = Parse(request.ToString(), request.Id);
                 if (item == null)
-                    return false;
+                    throw new ArgumentNullException("item");
 
                 Items.Add(item);
                 return true;
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error in parsing items # {0}: {1}", id, e);
+                Console.WriteLine("Error while parsing items # {0}: {1}", request.Id, e);
                 return false;
             }
         }

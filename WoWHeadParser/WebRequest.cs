@@ -12,7 +12,7 @@ namespace WoWHeadParser
         public uint Id { get; private set; }
         public Uri Uri { get; private set; }
         public HttpWebRequest Request { get; private set; }
-        public HttpWebResponse Response { get; set; }
+        public HttpWebResponse Response { get; private set; }
 
         #region User Agents
 
@@ -103,12 +103,12 @@ namespace WoWHeadParser
                 return string.Empty;
 
             Stream stream = Response.GetResponseStream();
-            switch (Response.ContentEncoding.ToUpperInvariant())
+            switch (Response.ContentEncoding)
             {
-                case "GZIP":
+                case "gzip":
                     stream = new GZipStream(stream, CompressionMode.Decompress);
                     break;
-                case "DEFLATE":
+                case "deflate":
                     stream = new DeflateStream(stream, CompressionMode.Decompress);
                     break;
             }

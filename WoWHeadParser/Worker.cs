@@ -21,11 +21,10 @@ namespace WoWHeadParser
         private ServicePoint _service;
         private SemaphoreSlim _semaphore;
 
-        private object _threadLock = new object();
-
         private const int SemaphoreCount = 100;
 
         #region Locales
+
         private Dictionary<Locale, string> _locales = new Dictionary<Locale, string>
         {
             {Locale.Old, "old."},
@@ -36,11 +35,11 @@ namespace WoWHeadParser
             {Locale.Spain, "es."},
             {Locale.Portugal, "pt."},
         };
+
         #endregion
 
         public Worker()
         {
-            _entries = new List<uint>();
             _semaphore = new SemaphoreSlim(SemaphoreCount, SemaphoreCount);
         }
 
@@ -52,15 +51,16 @@ namespace WoWHeadParser
 
         public void Parser(DataParser parser)
         {
+            if (parser == null)
+                throw new ArgumentNullException("parser");
+
             _parser = parser;
 
             _address = new Uri(string.Format("http://{0}wowhead.com/", _locales[parser.Locale]));
-            ServicePointManager.DefaultConnectionLimit = SemaphoreCount * 2;
+            ServicePointManager.DefaultConnectionLimit = SemaphoreCount * 10;
             _service = ServicePointManager.FindServicePoint(_address);
             {
-                _service.MaxIdleTime = 500;
-                _service.ConnectionLeaseTimeout = 500;
-                _service.SetTcpKeepAlive(true, 120000000, 1000);
+                _service.SetTcpKeepAlive(true, 100000, 100000);
             }
             _address = new Uri(_address, parser.Address);
         }
@@ -84,7 +84,7 @@ namespace WoWHeadParser
         public void Start(ParsingType type, bool compress)
         {
             if (_isWorking)
-                throw new InvalidOperationException();
+                throw new InvalidOperationException("_isWorking");
 
             _isWorking = true;
             _timeStart = DateTime.Now;
@@ -155,10 +155,7 @@ namespace WoWHeadParser
         {
             Requests request = (Requests)iar.AsyncState;
             if (request.EndGetResponse(iar))
-            {
-                lock (_threadLock)
-                    _parser.TryParse(request.ToString(), request.Id);
-            }
+                _parser.TryParse(request);
 
             request.Dispose();
             _semaphore.Release();
@@ -190,7 +187,7 @@ namespace WoWHeadParser
 
         public override string ToString()
         {
-            StringBuilder content = new StringBuilder(_parser.Items.Count * 4096);
+            StringBuilder content = new StringBuilder(_parser.Items.Count * 1024);
 
             content.AppendFormat(@"-- Dump of {0} ({1}), Total object count: {2}", _timeEnd, _timeEnd - _timeStart, _parser.Items.Count).AppendLine();
             content.Append(_parser);
