@@ -59,6 +59,12 @@ namespace WoWHeadParser
 
             #endregion
 
+            #region DB File loading
+
+            DBFileLoader.Initial();
+
+            #endregion
+
             #region Parsers loading
 
             Type[] types = Assembly.GetExecutingAssembly().GetTypes();
