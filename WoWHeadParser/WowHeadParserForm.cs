@@ -42,12 +42,23 @@ namespace WoWHeadParser
             _entries = new List<uint>(1024);
             _parsers = new List<DataParser>(32);
             _worker = new Worker(WorkerPageDownloaded);
-
-            DBFileLoader.Initial();
         }
 
         protected override void OnLoad(EventArgs e)
         {
+            #region Language loading
+
+            foreach (string language in _language)
+            {
+                MenuItem item = new MenuItem(language, LanguageMenuItemClick);
+                languageMenuItem.MenuItems.Add(item);
+            }
+
+            _currentCulture = new CultureInfo(Settings.Default.Culture, true);
+            Reload(_currentCulture);
+
+            #endregion
+
             #region Parsers loading
 
             Type[] types = Assembly.GetExecutingAssembly().GetTypes();
@@ -64,19 +75,6 @@ namespace WoWHeadParser
                 parserBox.Items.Add(parser.Name);
                 _parsers.Add(parser);
             }
-
-            #endregion
-
-            #region Language loading
-
-            foreach (string language in _language)
-            {
-                MenuItem item = new MenuItem(language, LanguageMenuItemClick);
-                languageMenuItem.MenuItems.Add(item);
-            }
-
-            _currentCulture = new CultureInfo(Settings.Default.Culture, true);
-            Reload(_currentCulture);
 
             #endregion
 
