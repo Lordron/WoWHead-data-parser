@@ -216,6 +216,9 @@
   <data name="numericUpDown.Location" type="System.Drawing.Point, System.Drawing">
     <value>281, 299</value>
   </data>
+  <data name="consoleBox.Location" type="System.Drawing.Point, System.Drawing">
+    <value>6, 12</value>
+  </data>
   <data name="parsingControl.Size" type="System.Drawing.Size, System.Drawing">
     <value>364, 88</value>
   </data>
@@ -248,6 +251,9 @@
   </data>
   <data name="fileMenuItem.Text" xml:space="preserve">
     <value>File</value>
+  </data>
+  <data name="rangeStart.Location" type="System.Drawing.Point, System.Drawing">
+    <value>44, 19</value>
   </data>
   <data name="&gt;&gt;listTab.ZOrder" xml:space="preserve">
     <value>2</value>
@@ -411,9 +417,6 @@
   <data name="&gt;&gt;optionsMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.MenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;notifyLabel.Name" xml:space="preserve">
-    <value>notifyLabel</value>
-  </data>
   <data name="&gt;&gt;valueBox.ZOrder" xml:space="preserve">
     <value>0</value>
   </data>
@@ -455,9 +458,6 @@
   </data>
   <data name="consoleBox.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
-  </data>
-  <data name="singleBox.TabIndex" type="System.Int32, mscorlib">
-    <value>14</value>
   </data>
   <data name="&gt;&gt;abortButton.Type" xml:space="preserve">
     <value>System.Windows.Forms.Button, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -564,9 +564,6 @@
   <data name="multipleBox.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
   </data>
-  <data name="singleTab.TabIndex" type="System.Int32, mscorlib">
-    <value>0</value>
-  </data>
   <data name="&gt;&gt;multipleBox.Name" xml:space="preserve">
     <value>multipleBox</value>
   </data>
@@ -582,11 +579,14 @@
   <data name="&gt;&gt;localeBox.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
+  <data name="&gt;&gt;valueBox.Type" xml:space="preserve">
+    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
   <data name="abortButton.Enabled" type="System.Boolean, mscorlib">
     <value>False</value>
   </data>
-  <data name="&gt;&gt;valueBox.Type" xml:space="preserve">
-    <value>System.Windows.Forms.NumericUpDown, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="&gt;&gt;notifyLabel.Name" xml:space="preserve">
+    <value>notifyLabel</value>
   </data>
   <data name="settingsBox.AutoSizeMode" type="System.Windows.Forms.AutoSizeMode, System.Windows.Forms">
     <value>GrowAndShrink</value>
@@ -684,6 +684,9 @@
   <data name="&gt;&gt;welfBox.Type" xml:space="preserve">
     <value>System.Windows.Forms.ComboBox, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
+  <data name="listTab.Text" xml:space="preserve">
+    <value>List</value>
+  </data>
   <data name="multipleBox.Text" xml:space="preserve">
     <value>Settings</value>
   </data>
@@ -710,9 +713,6 @@
   </data>
   <data name="&gt;&gt;reloadButton.ZOrder" xml:space="preserve">
     <value>0</value>
-  </data>
-  <data name="parsingControl.TabIndex" type="System.Int32, mscorlib">
-    <value>9</value>
   </data>
   <data name="notifyLabel.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 15</value>
@@ -792,8 +792,8 @@
   <data name="localeBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>6, 19</value>
   </data>
-  <data name="consoleBox.Location" type="System.Drawing.Point, System.Drawing">
-    <value>6, 12</value>
+  <data name="singleTab.TabIndex" type="System.Int32, mscorlib">
+    <value>0</value>
   </data>
   <data name="notifyLabel.TabIndex" type="System.Int32, mscorlib">
     <value>0</value>
@@ -807,8 +807,8 @@
   <data name="&gt;&gt;multipleTab.Type" xml:space="preserve">
     <value>System.Windows.Forms.TabPage, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="rangeStart.Location" type="System.Drawing.Point, System.Drawing">
-    <value>44, 19</value>
+  <data name="singleBox.TabIndex" type="System.Int32, mscorlib">
+    <value>14</value>
   </data>
   <data name="valueBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>44, 19</value>
@@ -882,8 +882,8 @@
   <data name="&gt;&gt;abortButton.Parent" xml:space="preserve">
     <value>$this</value>
   </data>
-  <data name="listTab.Text" xml:space="preserve">
-    <value>List</value>
+  <data name="&gt;&gt;progressBar.Name" xml:space="preserve">
+    <value>progressBar</value>
   </data>
   <data name="&gt;&gt;exitMenuItem.Name" xml:space="preserve">
     <value>exitMenuItem</value>
@@ -939,8 +939,8 @@
   <data name="&gt;&gt;rangeStart.ZOrder" xml:space="preserve">
     <value>1</value>
   </data>
-  <data name="&gt;&gt;progressBar.Name" xml:space="preserve">
-    <value>progressBar</value>
+  <data name="parsingControl.TabIndex" type="System.Int32, mscorlib">
+    <value>9</value>
   </data>
   <data name="progressLabel.TabIndex" type="System.Int32, mscorlib">
     <value>7</value>

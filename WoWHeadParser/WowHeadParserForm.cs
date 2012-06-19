@@ -54,7 +54,18 @@ namespace WoWHeadParser
                 languageMenuItem.MenuItems.Add(item);
             }
 
-            _currentCulture = new CultureInfo(Settings.Default.Culture, true);
+            string stringCulture = Settings.Default.Culture;
+            {
+                foreach (MenuItem item in languageMenuItem.MenuItems)
+                {
+                    if (!item.Text.Equals(stringCulture))
+                        continue;
+
+                    item.Checked = true;
+                    break;
+                }
+            }
+            _currentCulture = new CultureInfo(stringCulture, true);
             Reload(_currentCulture);
 
             #endregion
@@ -306,6 +317,13 @@ namespace WoWHeadParser
             string selectedCulture = item.Text;
             if (_currentCulture.Equals(selectedCulture))
                 return;
+
+            foreach (MenuItem menu in languageMenuItem.MenuItems)
+            {
+                menu.Checked = false;
+            }
+
+            item.Checked = true;
 
             Settings.Default.Culture = selectedCulture;
             _currentCulture = new CultureInfo(selectedCulture, true);
