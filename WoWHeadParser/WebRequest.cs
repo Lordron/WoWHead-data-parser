@@ -104,21 +104,29 @@ namespace WoWHeadParser
             if (Response == null)
                 return string.Empty;
 
-            Stream stream = Response.GetResponseStream();
-            switch (Response.ContentEncoding)
+            try
             {
-                case "gzip":
-                    stream = new GZipStream(stream, CompressionMode.Decompress);
-                    break;
-                case "deflate":
-                    stream = new DeflateStream(stream, CompressionMode.Decompress);
-                    break;
-            }
+                Stream stream = Response.GetResponseStream();
+                switch (Response.ContentEncoding)
+                {
+                    case "gzip":
+                        stream = new GZipStream(stream, CompressionMode.Decompress);
+                        break;
+                    case "deflate":
+                        stream = new DeflateStream(stream, CompressionMode.Decompress);
+                        break;
+                }
 
-            using (BufferedStream buffer = new BufferedStream(stream))
-            using (StreamReader reader = new StreamReader(buffer))
+                using (BufferedStream buffer = new BufferedStream(stream))
+                using (StreamReader reader = new StreamReader(buffer))
+                {
+                    return reader.ReadToEnd();
+                }
+            }
+            catch
             {
-                return reader.ReadToEnd();
+                Console.WriteLine(Resources.Error_Cannot_get_response, Uri);
+                return string.Empty;
             }
         }
     }

@@ -14,6 +14,8 @@ namespace WoWHeadParser.Parser
             Prepare();
         }
 
+        #region Virtual
+
         public virtual void Prepare()
         {
         }
@@ -36,24 +38,28 @@ namespace WoWHeadParser.Parser
 
         public virtual string WelfName { get { return string.Empty; } }
 
+        #endregion
+
         public List<PageItem> Items = new List<PageItem>(2048);
 
         public bool TryParse(Requests request)
         {
+            string page = request.ToString();
+            if (string.IsNullOrEmpty(page))
+                return false;
+
+            PageItem item;
             try
             {
-                PageItem item = Parse(request.ToString(), request.Id);
-                if (item == null)
-                    throw new ArgumentNullException("item");
-
-                Items.Add(item);
-                return true;
+                item = Parse(page, request.Id);
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error while parsing items # {0}: {1}", request.Id, e);
+                Console.WriteLine("Error while parsing: Parser: {0}, Item: {1} - {2}", GetType().Name, request.Id, e);
                 return false;
             }
+            Items.Add(item);
+            return true;
         }
 
         public void Sort()
@@ -65,16 +71,13 @@ namespace WoWHeadParser.Parser
 
         public override string ToString()
         {
-            StringBuilder content = new StringBuilder(Items.Count * 2048);
+            StringBuilder content = new StringBuilder(Items.Count * 1024);
 
             string preParse = PreParse().TrimStart();
             if (!string.IsNullOrEmpty(preParse))
                 content.Append(preParse);
 
-            for (int i = 0; i < Items.Count; ++i)
-            {
-                content.Append(Items[i].ToString());
-            }
+            Items.ForEach(x => content.Append(x.ToString()));
             return content.ToString();
         }
 
