@@ -99,7 +99,7 @@ namespace WoWHeadParser.Parser.Parsers
 
         public override string WelfName { get { return "trainer"; } }
 
-        public enum TrainerType
+        public enum TrainerType : sbyte
         {
             TypeNone = -1,
             TypeClass = 0,

@@ -22,13 +22,22 @@ namespace WoWHeadParser.Parser.Parsers
 
         #endregion
 
-        #region Text type
+        #region Text
 
         private Dictionary<string, int> textType = new Dictionary<string, int>
         {
             {"S1", 14},
             {"S2", 12},
             {"S3", 15},
+        };
+
+        private Dictionary<Locale, string> textFields = new Dictionary<Locale, string>
+        {
+            {Locale.English, "text"},
+            {Locale.Russia, "text_loc1"},
+            {Locale.Germany, "text_loc2"},
+            {Locale.France, "text_loc3"},
+            {Locale.Spain, "text_loc4"},
         };
 
         #endregion
@@ -121,7 +130,7 @@ namespace WoWHeadParser.Parser.Parsers
             if (Quotes(page, out quotes))
             {
                 builder = new SqlBuilder("creature_quotes");
-                builder.SetFieldsNames("id", "type", "text");
+                builder.SetFieldsNames("id", "type", textFields[Locale]);
                 for (int i = 0; i < quotes.Count; ++i)
                 {
                     Tuple<string, int> quote = quotes[i];
@@ -350,6 +359,10 @@ CREATE TABLE `creature_quotes` (
   `id` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `type` tinyint(3) unsigned NOT NULL DEFAULT '0',
   `text` longtext,
+  `text_loc1` longtext,
+  `text_loc2` longtext,
+  `text_loc3` longtext,
+  `text_loc4` longtext,
   PRIMARY KEY (`entry`,`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"
 );
