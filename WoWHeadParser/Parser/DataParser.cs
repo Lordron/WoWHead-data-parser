@@ -83,7 +83,13 @@ namespace WoWHeadParser.Parser
 
         #region Locales
 
-        public Locale Locale = Locale.English;
+        private Locale _locale;
+
+        public Locale Locale 
+        {
+            get { return _locale > Locale.Old ? _locale : Locale.English; }
+            set { _locale = value; }
+        }
 
         public Dictionary<Locale, string> Locales = new Dictionary<Locale, string>
         {
@@ -93,7 +99,7 @@ namespace WoWHeadParser.Parser
             {Locale.Spain, "loc6"},
         };
 
-        public bool HasLocales { get { return Locale > Locale.English; } }
+        public bool HasLocales { get { return _locale > Locale.English; } }
 
         public string LocalePosfix { get { return Locales[Locale]; } }
 
