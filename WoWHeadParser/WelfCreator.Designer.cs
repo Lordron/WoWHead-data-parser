@@ -44,7 +44,6 @@
             // 
             // startButton
             // 
-            this.startButton.Enabled = false;
             this.startButton.Location = new System.Drawing.Point(221, 10);
             this.startButton.Name = "startButton";
             this.startButton.Size = new System.Drawing.Size(75, 23);

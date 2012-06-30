@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Text;
 using WoWHeadParser.Properties;
 
@@ -85,10 +86,23 @@ namespace Sql
             if (args == null)
                 throw new ArgumentNullException();
 
-            for (int i = 0; i < args.Length; ++i)
-            {
-                _fields.Add(args[i]);
-            }
+            _fields.AddRange(args);
+        }
+
+        /// <summary>
+        /// Append fields names
+        /// </summary>
+        /// <param name="args">Sequance</param>
+        /// <param name="count">A specified mumber of contiguous elements from the start of a sequance</param>
+        public void SetFieldsNames(IEnumerable<string> args, int count)
+        {
+            if (args == null)
+                throw new ArgumentNullException();
+
+            if (count == -1)
+                throw new ArgumentOutOfRangeException();
+
+            _fields.AddRange(args.Take(count));
         }
 
         /// <summary>
@@ -114,12 +128,7 @@ namespace Sql
             if (key == null || args == null)
                 throw new ArgumentNullException();
 
-            List<string> values = new List<string>(args.Length);
-            for (int i = 0; i < args.Length; ++i)
-            {
-                values.Add(args[i]);
-            }
-
+            List<string> values = new List<string>(args);
             _items.Add(new SqlItem(key, values));
         }
 
@@ -138,6 +147,25 @@ namespace Sql
             {
                 values.Add(args[i].ToString());
             }
+
+            _items.Add(new SqlItem(key, values));
+        }
+
+        /// <summary>
+        /// Append key and fields value 
+        /// </summary>
+        /// <param name="key">key value</param>
+        /// <param name="args">object fields values array</param>
+        /// <param name="count">A specified mumber of contiguous elements from the start of a sequance</param>
+        public void AppendFieldsValue(object key, IEnumerable<string> args, int count)
+        {
+            if (key == null || args == null)
+                throw new ArgumentNullException();
+
+            if (count == -1)
+                throw new ArgumentOutOfRangeException();
+
+            List<string> values = new List<string>(args.Take(count));
 
             _items.Add(new SqlItem(key, values));
         }

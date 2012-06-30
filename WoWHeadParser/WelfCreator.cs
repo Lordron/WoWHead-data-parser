@@ -142,12 +142,11 @@ namespace WoWHeadParser
                     ++count;
                 }
 
-                numericUpDown.Value += count;
-
-                if (progressBar.InvokeRequired)
-                    progressBar.BeginInvoke(new Action(() => ++progressBar.Value));
-                else
+                this.ThreadSafeBegin(_ =>
+                {
                     ++progressBar.Value;
+                    numericUpDown.Value += count;
+                });
             }
         }
 

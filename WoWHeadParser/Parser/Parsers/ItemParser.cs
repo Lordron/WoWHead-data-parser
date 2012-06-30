@@ -15,7 +15,6 @@ namespace WoWHeadParser.Parser.Parsers
             {Locale.Germany, @"Haltbarkeit"},
             {Locale.Spain, @"Durabilidad"},
             {Locale.France, @"Durabilité"},
-            {Locale.Portugal, @"Durabilidade"},
         };
 
         public override PageItem Parse(string page, uint id)
