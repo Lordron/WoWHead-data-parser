@@ -142,6 +142,15 @@ namespace WoWHeadParser.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Item data parser.
+        /// </summary>
+        internal static string ItemParser {
+            get {
+                return ResourceManager.GetString("ItemParser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Aborting....
         /// </summary>
         internal static string Label_Abort {
@@ -192,6 +201,69 @@ namespace WoWHeadParser.Properties {
         internal static string MultipleTypeEqual {
             get {
                 return ResourceManager.GetString("MultipleTypeEqual", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NPC data parser.
+        /// </summary>
+        internal static string NpcDataParser {
+            get {
+                return ResourceManager.GetString("NpcDataParser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NPC locale data parser.
+        /// </summary>
+        internal static string NpcLocaleParser {
+            get {
+                return ResourceManager.GetString("NpcLocaleParser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Book page data parser.
+        /// </summary>
+        internal static string PageParser {
+            get {
+                return ResourceManager.GetString("PageParser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quest template data parser.
+        /// </summary>
+        internal static string QuestDataParser {
+            get {
+                return ResourceManager.GetString("QuestDataParser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quest locale data parser.
+        /// </summary>
+        internal static string QuestLocaleParser {
+            get {
+                return ResourceManager.GetString("QuestLocaleParser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Professions &amp; Class Trainer data parser.
+        /// </summary>
+        internal static string TrainerParser {
+            get {
+                return ResourceManager.GetString("TrainerParser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Vendor data parser.
+        /// </summary>
+        internal static string VendorParser {
+            get {
+                return ResourceManager.GetString("VendorParser", resourceCulture);
             }
         }
         

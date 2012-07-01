@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using Sql;
 using WoWHeadParser.DBFileStorage;
 using WoWHeadParser.Page;
+using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
@@ -97,7 +98,7 @@ namespace WoWHeadParser.Parser.Parsers
             return @"SET @UNK_COST := 9999999;" + Environment.NewLine;
         }
 
-        public override string Name { get { return "Vendor data parser"; } }
+        public override string Name { get { return Resources.VendorParser; } }
 
         public override string Address { get { return "npc={0}"; } }
 

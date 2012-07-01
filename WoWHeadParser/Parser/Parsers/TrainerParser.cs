@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using Sql;
 using WoWHeadParser.Page;
+using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
@@ -9,7 +10,7 @@ namespace WoWHeadParser.Parser.Parsers
     {
         private Dictionary<TrainerType, string> _patterns = new Dictionary<TrainerType, string>
         {
-            {TrainerType.TypeNone, ""},
+            {TrainerType.TypeNone, string.Empty},
             {TrainerType.TypeClass, "{[^}]*\"id\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*"},
             {TrainerType.TypeTradeskills, "{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*"},
         };
@@ -93,13 +94,13 @@ namespace WoWHeadParser.Parser.Parsers
             return new PageItem(id, builder.ToString());
         }
 
-        public override string Name { get { return "Professions & Class Trainer data parser"; } }
+        public override string Name { get { return Resources.TrainerParser; } }
 
         public override string Address { get { return "npc={0}"; } }
 
         public override string WelfName { get { return "trainer"; } }
 
-        public enum TrainerType : sbyte
+        private enum TrainerType : sbyte
         {
             TypeNone = -1,
             TypeClass = 0,

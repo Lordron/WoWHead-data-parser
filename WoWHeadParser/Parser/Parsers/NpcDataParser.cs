@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Sql;
 using WoWHeadParser.Page;
+using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
@@ -393,13 +394,13 @@ CREATE TABLE `creature_health` (
             return content.AppendLine().ToString();
         }
 
-        public override string Name { get { return "NPC data parser"; } }
+        public override string Name { get { return Resources.NpcDataParser; } }
 
         public override string Address { get { return "npc={0}"; } }
 
         public override string WelfName { get { return "npc"; } }
 
-        public enum Difficulty : byte
+        private enum Difficulty : byte
         {
             Normal,
             Heroic,

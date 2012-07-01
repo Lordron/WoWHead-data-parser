@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sql;
 using WoWHeadParser.Page;
+using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
@@ -48,7 +49,7 @@ namespace WoWHeadParser.Parser.Parsers
             return new PageItem(id, builder.ToString());
         }
 
-        public override string Name { get { return "Quest locale data parser"; } }
+        public override string Name { get { return Resources.QuestLocaleParser; } }
 
         public override string Address { get { return "quests?filter=cr=30:30;crs=1:4;crv={0}:{1}"; } }
 
@@ -96,7 +97,7 @@ namespace WoWHeadParser.Parser.Parsers
             return new PageItem(id, builder.ToString());
         }
 
-        public override string Name { get { return "Quest template data parser"; } }
+        public override string Name { get { return Resources.QuestDataParser; } }
 
         public override string Address { get { return "quests?filter=cr=30:30;crs=1:4;crv={0}:{1}"; } }
 

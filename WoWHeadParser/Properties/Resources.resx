@@ -165,4 +165,28 @@
   <data name="EntryCountLabel" xml:space="preserve">
     <value>Entries count: {0}</value>
   </data>
+  <data name="ItemParser" xml:space="preserve">
+    <value>Item data parser</value>
+  </data>
+  <data name="NpcDataParser" xml:space="preserve">
+    <value>NPC data parser</value>
+  </data>
+  <data name="NpcLocaleParser" xml:space="preserve">
+    <value>NPC locale data parser</value>
+  </data>
+  <data name="PageParser" xml:space="preserve">
+    <value>Book page data parser</value>
+  </data>
+  <data name="QuestDataParser" xml:space="preserve">
+    <value>Quest template data parser</value>
+  </data>
+  <data name="QuestLocaleParser" xml:space="preserve">
+    <value>Quest locale data parser</value>
+  </data>
+  <data name="TrainerParser" xml:space="preserve">
+    <value>Professions &amp; Class Trainer data parser</value>
+  </data>
+  <data name="VendorParser" xml:space="preserve">
+    <value>Vendor data parser</value>
+  </data>
 </root>

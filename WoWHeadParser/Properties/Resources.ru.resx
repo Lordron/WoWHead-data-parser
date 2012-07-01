@@ -165,4 +165,28 @@
   <data name="EntryCountLabel" xml:space="preserve">
     <value>Записей: {0}</value>
   </data>
+  <data name="ItemParser" xml:space="preserve">
+    <value>Парсер итемов</value>
+  </data>
+  <data name="NpcDataParser" xml:space="preserve">
+    <value>Парсер данных НИП</value>
+  </data>
+  <data name="NpcLocaleParser" xml:space="preserve">
+    <value>Парсер локалей НИП</value>
+  </data>
+  <data name="PageParser" xml:space="preserve">
+    <value>Парсе книжных страниц</value>
+  </data>
+  <data name="QuestDataParser" xml:space="preserve">
+    <value>Парсер локалей квестов</value>
+  </data>
+  <data name="QuestLocaleParser" xml:space="preserve">
+    <value>Парсер данных квестов</value>
+  </data>
+  <data name="TrainerParser" xml:space="preserve">
+    <value>Парсер тренеров профессий и классов</value>
+  </data>
+  <data name="VendorParser" xml:space="preserve">
+    <value>Парсер торговцев</value>
+  </data>
 </root>

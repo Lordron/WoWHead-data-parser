@@ -66,7 +66,7 @@ namespace WoWHeadParser
                 }
             }
             _currentCulture = new CultureInfo(stringCulture, true);
-            Reload(_currentCulture);
+            Reload();
 
             #endregion
 
@@ -328,7 +328,7 @@ namespace WoWHeadParser
             Settings.Default.Culture = selectedCulture;
             _currentCulture = new CultureInfo(selectedCulture, true);
 
-            Reload(_currentCulture);
+            Reload();
         }
 
         private void ExitMenuClick(object sender, EventArgs e)
@@ -351,6 +351,21 @@ namespace WoWHeadParser
         private void SetLabelText(string text)
         {
             progressLabel.ThreadSafeBegin(x => x.Text = text);
+        }
+
+        private void Reload()
+        {
+            Reload(_currentCulture);
+
+            int index = parserBox.SelectedIndex;
+
+            parserBox.Items.Clear();
+            foreach (DataParser parser in _parsers)
+            {
+                parserBox.Items.Add(parser.Name);
+            }
+
+            parserBox.SelectedIndex = index;
         }
 
         private void LoadWelfFiles()

@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using Sql;
 using WoWHeadParser.Page;
+using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
@@ -51,7 +52,7 @@ namespace WoWHeadParser.Parser.Parsers
             return new PageItem(id, builder.ToString());
         }
 
-        public override string Name { get { return "Book page data parser"; } }
+        public override string Name { get { return Resources.PageParser; } }
 
         public override string Address { get { return "object={0}"; } }
 
