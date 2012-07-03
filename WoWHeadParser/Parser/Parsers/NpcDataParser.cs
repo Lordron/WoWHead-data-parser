@@ -51,24 +51,24 @@ namespace WoWHeadParser.Parser.Parsers
 
         #region Health
 
-        private List<Dictionary<Locale, string>> healthDifficulty;
+        private List<Dictionary<Locale, Regex>> healthDifficulty;
 
-        private Dictionary<Locale, string> healthLocales = new Dictionary<Locale, string>
+        private Dictionary<Locale, Regex> healthLocales = new Dictionary<Locale, Regex>
         {
-            {Locale.Russia, "Здоровье"},
-            {Locale.English, "Health"},
-            {Locale.Germany, "Gesundheit"},
-            {Locale.France, "Vie"},
-            {Locale.Spain, "Salud"},
+            {Locale.Russia, new Regex("Здоровье: ([^<]+)</div></li>")},
+            {Locale.English, new Regex("Health: ([^<]+)</div></li>")},
+            {Locale.Germany, new Regex("Gesundheit: ([^<]+)</div></li>")},
+            {Locale.France, new Regex("Vie: ([^<]+)</div></li>")},
+            {Locale.Spain, new Regex("Salud: ([^<]+)</div></li>")},
         };
 
-        private Dictionary<Locale, string> healthNormaLocales = new Dictionary<Locale, string>
+        private Dictionary<Locale, Regex> healthNormaLocales = new Dictionary<Locale, Regex>
         {
-            {Locale.Russia, "Здоровье.+"},
-            {Locale.English, "Health.+"},
-            {Locale.Germany, "Gesundheit.+"},
-            {Locale.France, "Vie.+"},
-            {Locale.Spain, "Gesundheit.+"},
+            {Locale.Russia, new Regex("Здоровье.+: ([^<]+)</div></li>")},
+            {Locale.English, new Regex("Health.+: ([^<]+)</div></li>")},
+            {Locale.Germany, new Regex("Gesundheit.+: ([^<]+)</div></li>")},
+            {Locale.France, new Regex("Vie.+: ([^<]+)</div></li>")},
+            {Locale.Spain, new Regex("Salud.+: ([^<]+)</div></li>")},
         };
 
         private Dictionary<Locale, List<string>> difficultiesLocale = new Dictionary<Locale, List<string>>
@@ -126,7 +126,7 @@ namespace WoWHeadParser.Parser.Parsers
 
         public override void Prepare()
         {
-            healthDifficulty = new List<Dictionary<Locale, string>>
+            healthDifficulty = new List<Dictionary<Locale, Regex>>
             {
                 healthLocales,
                 healthNormaLocales,
@@ -345,11 +345,9 @@ namespace WoWHeadParser.Parser.Parsers
                 return count;
             }
 
-            foreach (Dictionary<Locale, string> kvp in healthDifficulty)
+            foreach (Dictionary<Locale, Regex> kvp in healthDifficulty)
             {
-                string pattern = string.Format("{0}: ([^<]+)</div></li>", kvp[Locale]);
-                matches = Regex.Matches(page, pattern, RegexOptions.Multiline);
-
+                matches = kvp[Locale].Matches(page);
                 if ((count = matches.Count) > 0)
                     break;
             }
