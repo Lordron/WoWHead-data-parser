@@ -113,12 +113,14 @@ namespace WoWHeadParser.Parser.Parsers
         private const string quotesPattern = "<li><div><span class=\"(.*?)\">(.*?)</span></div></li>";
         private const string healthPattern = @"<tr><td>([^<]+)</td><td style=&quot;text-align:right&quot;>([^<]+)</td>";
         private const string factionPattern = "color=(.*?)](.*?)\\[/color\\]";
+        private const string questPattern = "\"id\":(.*?),";
 
         private Regex moneyRegex = new Regex(moneyPattern);
         private Regex currencyRegex = new Regex(currencyPattern);
         private Regex quotesRegex = new Regex(quotesPattern);
         private Regex healthRegex = new Regex(healthPattern);
         private Regex factionRegex = new Regex(factionPattern);
+        private Regex questRegex = new Regex(questPattern);
 
         #endregion
 
@@ -193,6 +195,29 @@ namespace WoWHeadParser.Parser.Parsers
                 builder = new SqlBuilder("creature_faction");
                 builder.SetFieldsNames("faction_a", "faction_h");
                 builder.AppendFieldsValue(id, factionA, factionH);
+                content.Append(builder);
+            }
+
+            List<string> questIds;
+            if (QuestStart(page, out questIds))
+            {
+                builder = new SqlBuilder("creature_questrelation");
+                builder.SetFieldsNames("quest");
+                foreach (string questId in questIds)
+                {
+                    builder.AppendFieldsValue(id, questId);
+                }
+                content.Append(builder);
+            }
+
+            if (QuestEnd(page, out questIds))
+            {
+                builder = new SqlBuilder("creature_involvedrelation");
+                builder.SetFieldsNames("quest");
+                foreach (string questId in questIds)
+                {
+                    builder.AppendFieldsValue(id, questId);
+                }
                 content.Append(builder);
             }
 
@@ -482,6 +507,48 @@ namespace WoWHeadParser.Parser.Parsers
             }
 
             return factionA > -1 && factionH > -1;
+        }
+
+        private bool QuestStart(string page, out List<string> val)
+        {
+            val = new List<string>(16);
+
+            const string pattern = "template: 'quest', id: 'starts', name";
+            int startIndex = page.FastIndexOf(pattern);
+            if (startIndex == -1)
+                return false;
+
+            int endIndex = page.FastIndexOf("});", startIndex);
+            string template = page.Substring(startIndex, endIndex - startIndex);
+
+            MatchCollection matches = questRegex.Matches(template);
+            foreach (Match item in matches)
+            {
+                string questId = item.Groups[1].Value;
+                val.Add(questId);
+            }
+            return true;
+        }
+
+        private bool QuestEnd(string page, out List<string> val)
+        {
+            val = new List<string>(16);
+
+            const string pattern = "template: 'quest', id: 'ends', name";
+            int startIndex = page.FastIndexOf(pattern);
+            if (startIndex == -1)
+                return false;
+
+            int endIndex = page.FastIndexOf("});", startIndex);
+            string template = page.Substring(startIndex, endIndex - startIndex);
+
+            MatchCollection matches = questRegex.Matches(template);
+            foreach (Match item in matches)
+            {
+                string questId = item.Groups[1].Value;
+                val.Add(questId);
+            }
+            return true;
         }
 
         public override string PreParse()
