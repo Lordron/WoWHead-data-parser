@@ -21,7 +21,6 @@ namespace WoWHeadParser.Parser.Parsers
             {Locale.Spain, "Nivel"},
         };
 
-        private const int MaxDiffSize = 30;
         private const int MinLevelCount = 1;
         private const int MaxLevelCount = 2;
         private const int BossLevel = 9999;
@@ -108,6 +107,7 @@ namespace WoWHeadParser.Parser.Parsers
 
         #region Regex
 
+        private const string levelPattern = "Level: (.*?)\\[/li\\]";
         private const string moneyPattern = "money=(.*?)]";
         private const string currencyPattern = "currency=(.*?) amount=(.*?)]";
         private const string quotesPattern = "<li><div><span class=\"(.*?)\">(.*?)</span></div></li>";
@@ -116,6 +116,7 @@ namespace WoWHeadParser.Parser.Parsers
         private const string questPattern = "\"id\":(.*?),";
         private const string manaPattern = "Mana: (.*?)\\[/li\\]";
 
+        private Regex levelRegex = new Regex(levelPattern);
         private Regex moneyRegex = new Regex(moneyPattern);
         private Regex currencyRegex = new Regex(currencyPattern);
         private Regex quotesRegex = new Regex(quotesPattern);
@@ -239,30 +240,20 @@ namespace WoWHeadParser.Parser.Parsers
         {
             tuple = new Tuple<int, int>(-1, -1);
 
-            string pattern = string.Format("[li]{0}:", levelLocales[Locale]);
-
-            int startIndex = page.FastIndexOf(pattern) + pattern.Length;
-            if (startIndex == -1)
+            Match item = levelRegex.Match(page);
+            if (!item.Success)
                 return false;
 
-            int endIndex = page.FastIndexOf("[/li]", startIndex);
-            if (endIndex == -1)
-                return false;
-
-            int diff = endIndex - startIndex;
-            if (diff > MaxDiffSize)
-                return false;
-
-            string levelString = page.Substring(startIndex, diff);
+            string levelString = item.Groups[1].Value;
             if (levelString.FastIndexOf(BossLevelString) > -1)
             {
                 tuple = new Tuple<int, int>(BossLevel, BossLevel);
                 return true;
             }
 
-            string[] values = levelString.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-
             List<int> levels = new List<int>(MaxLevelCount);
+
+            string[] values = levelString.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             foreach (string value in values)
             {
                 int level;
