@@ -21,6 +21,12 @@ namespace WoWHeadParser.Parser.Parsers
             {Locale.Spain, "Nivel"},
         };
 
+        private const int MaxDiffSize = 30;
+        private const int MinLevelCount = 1;
+        private const int MaxLevelCount = 2;
+        private const int BossLevel = 9999;
+        private const string BossLevelString = "??";
+
         #endregion
 
         #region Text
@@ -59,13 +65,13 @@ namespace WoWHeadParser.Parser.Parsers
         private Dictionary<Locale, string> healthNormaLocales = new Dictionary<Locale, string>
         {
             {Locale.Russia, "Здоровье.+"},
-            {Locale.English, "Health (Normal)"},
-            {Locale.Germany, "Gesundheit (Normal)"},
-            {Locale.France, "Vie (Standard)"},
-            {Locale.Spain, "Gesundheit (Normal)"},
+            {Locale.English, "Health.+"},
+            {Locale.Germany, "Gesundheit.+"},
+            {Locale.France, "Vie.+"},
+            {Locale.Spain, "Gesundheit.+"},
         };
 
-        private Dictionary<Locale, List<string>> difficulty = new Dictionary<Locale, List<string>>
+        private Dictionary<Locale, List<string>> difficultiesLocale = new Dictionary<Locale, List<string>>
         {
             {Locale.Russia, new List<string> { "Обычный", "Героический", "10 нормал.", "25 нормал.", "10 героич.", "25 героич.", "Поиск Рейда на 25 человек" }},
             {Locale.English, new List<string> { "Normal", "Heroic", "10-player Normal", "25-player Normal", "10-player Heroic", "25-player Heroic", "25-player Raid Finder" }},
@@ -76,13 +82,43 @@ namespace WoWHeadParser.Parser.Parsers
 
         #endregion
 
-        #region Constants
+        #region Faction
 
-        private const int MaxDiffSize = 30;
-        private const int MinLevelCount = 1;
-        private const int MaxLevelCount = 2;
-        private const int BossLevel = 9999;
-        private const string BossLevelString = "??";
+        private const string FactionAlliance = "A";
+        private const int MinFactionCount = 1;
+        private const int MaxFactionCount = 2;
+
+        private Dictionary<string, FactionColor> factionColors = new Dictionary<string, FactionColor>
+        {
+            {"q", FactionColor.Yellow},
+            {"q2", FactionColor.Green},
+            {"q10", FactionColor.Red},
+        };
+
+        private Dictionary<Locale, string> reactLocales = new Dictionary<Locale, string>
+        {
+            {Locale.Russia, "Реакция"},
+            {Locale.English, "React"},
+            {Locale.Germany, "Einstellung"},
+            {Locale.France, "Réaction"},
+            {Locale.Spain, "Reacción"},
+        };
+
+        #endregion
+
+        #region Regex
+
+        private const string moneyPattern = "money=(.*?)]";
+        private const string currencyPattern = "currency=(.*?) amount=(.*?)]";
+        private const string quotesPattern = "<li><div><span class=\"(.*?)\">(.*?)</span></div></li>";
+        private const string healthPattern = @"<tr><td>([^<]+)</td><td style=&quot;text-align:right&quot;>([^<]+)</td>";
+        private const string factionPattern = "color=(.*?)](.*?)\\[/color\\]";
+
+        private Regex moneyRegex = new Regex(moneyPattern);
+        private Regex currencyRegex = new Regex(currencyPattern);
+        private Regex quotesRegex = new Regex(quotesPattern);
+        private Regex healthRegex = new Regex(healthPattern);
+        private Regex factionRegex = new Regex(factionPattern);
 
         #endregion
 
@@ -141,13 +177,22 @@ namespace WoWHeadParser.Parser.Parsers
             }
 
             int healthCount;
-            List<string> healths = new List<string>((int)Difficulty.Max);
-            List<string> difficulties = new List<string>((int)Difficulty.Max);
+            List<string> healths;
+            List<string> difficulties;
             if ((healthCount = Health(page, out difficulties, out healths)) > 0)
             {
                 builder = new SqlBuilder("creature_health");
                 builder.SetFieldsNames(difficulties, healthCount);
                 builder.AppendFieldsValue(id, healths, healthCount);
+                content.Append(builder);
+            }
+
+            int factionA, factionH;
+            if (Faction(page, out factionA, out factionH))
+            {
+                builder = new SqlBuilder("creature_faction");
+                builder.SetFieldsNames("faction_a", "faction_h");
+                builder.AppendFieldsValue(id, factionA, factionH);
                 content.Append(builder);
             }
 
@@ -185,7 +230,7 @@ namespace WoWHeadParser.Parser.Parsers
             List<int> levels = new List<int>(MaxLevelCount);
             foreach (string value in values)
             {
-                int level = 0;
+                int level;
                 if (!int.TryParse(value.Trim(), out level))
                     continue;
 
@@ -203,60 +248,48 @@ namespace WoWHeadParser.Parser.Parsers
         {
             val = -1;
 
-            const string pattern = "money=(.*?)]";
+            Match item = moneyRegex.Match(page);
+            if (!item.Success)
+                return false;
 
-            MatchCollection matches = Regex.Matches(page, pattern, RegexOptions.Multiline);
-            foreach (Match item in matches)
-            {
-                string stringMoney = item.Groups[1].Value;
-
-                if (!int.TryParse(stringMoney.Trim(), out val))
-                    continue;
-
-                return true;
-            }
-
-            return false;
+            string stringMoney = item.Groups[1].Value;
+            return int.TryParse(stringMoney.Trim(), out val);
         }
 
         private bool Currency(string page, out Tuple<int, int> tuple)
         {
             tuple = new Tuple<int, int>(-1, -1);
 
-            const string pattern = "currency=(.*?) amount=(.*?)]";
+            Match item = currencyRegex.Match(page);
+            if (!item.Success)
+                return false;
 
-            MatchCollection matches = Regex.Matches(page, pattern, RegexOptions.Multiline);
-            foreach (Match item in matches)
-            {
-                string currency = item.Groups[1].Value;
-                string count = item.Groups[2].Value;
+            GroupCollection groups = item.Groups;
+            string currency = groups[1].Value;
+            string count = groups[2].Value;
 
-                int currencyId = 0;
-                if (!int.TryParse(currency.Trim(), out currencyId))
-                    continue;
+            int currencyId;
+            if (!int.TryParse(currency.Trim(), out currencyId))
+                return false;
 
-                int currencyAmount = 0;
-                if (!int.TryParse(count.Trim(), out currencyAmount))
-                    continue;
+            int currencyAmount;
+            if (!int.TryParse(count.Trim(), out currencyAmount))
+                return false;
 
-                tuple = new Tuple<int, int>(currencyId, currencyAmount);
-                return true;
-            }
-
-            return false;
+            tuple = new Tuple<int, int>(currencyId, currencyAmount);
+            return true;
         }
 
         private bool Quotes(string page, out List<Tuple<string, int>> tuple)
         {
-            const string pattern = "<li><div><span class=\"(.*?)\">(.*?)</span></div></li>";
-
-            MatchCollection matches = Regex.Matches(page, pattern, RegexOptions.Multiline);
+            MatchCollection matches = quotesRegex.Matches(page);
 
             tuple = new List<Tuple<string, int>>(matches.Count);
             foreach (Match item in matches)
             {
-                string type = item.Groups[1].Value;
-                string text = item.Groups[2].Value;
+                GroupCollection groups = item.Groups;
+                string type = groups[1].Value;
+                string text = groups[2].Value;
 
                 tuple.Add(new Tuple<string, int>(text.HTMLEscapeSumbols(), textType[type.ToUpper()]));
             }
@@ -266,21 +299,19 @@ namespace WoWHeadParser.Parser.Parsers
 
         private int Health(string page, out List<string> difficulties, out List<string> healths)
         {
-            string pattern = @"<tr><td>([^<]+)</td><td style=&quot;text-align:right&quot;>([^<]+)</td>";
+            MatchCollection matches = healthRegex.Matches(page);
 
-            MatchCollection matches = Regex.Matches(page, pattern, RegexOptions.Multiline);
-
-            int count = -1;
-
-            if ((count = matches.Count) > 0)
+            int count = matches.Count;
+            if (count > 0)
             {
                 healths = new List<string>(count);
                 difficulties = new List<string>(count);
 
                 foreach (Match item in matches)
                 {
-                    string stringDifficulty = item.Groups[1].Value.HTMLEscapeSumbols().Trim();
-                    string health = item.Groups[2].Value.Replace(",", "");
+                    GroupCollection groups = item.Groups;
+                    string stringDifficulty = groups[1].Value.HTMLEscapeSumbols().Trim();
+                    string health = groups[2].Value.Replace(",", "");
                     Difficulty difficulty = GetDifficulty(stringDifficulty);
 
                     healths.Add(health);
@@ -291,11 +322,10 @@ namespace WoWHeadParser.Parser.Parsers
 
             foreach (Dictionary<Locale, string> kvp in healthDifficulty)
             {
-                pattern = string.Format("{0}: ([^<]+)</div></li>", kvp[Locale]);
+                string pattern = string.Format("{0}: ([^<]+)</div></li>", kvp[Locale]);
                 matches = Regex.Matches(page, pattern, RegexOptions.Multiline);
-                count = matches.Count;
 
-                if (count > 0)
+                if ((count = matches.Count) > 0)
                     break;
             }
 
@@ -323,19 +353,142 @@ namespace WoWHeadParser.Parser.Parsers
             if (string.IsNullOrEmpty(stringDifficulty))
                 return Difficulty.Normal;
 
-            List<string> difficulties = difficulty[Locale];
-            int difficultyIndex = difficulties.IndexOf(stringDifficulty);
+            List<string> difficulty = difficultiesLocale[Locale];
+            int difficultyIndex = difficulty.IndexOf(stringDifficulty);
             if (difficultyIndex == -1)
                 throw new ArgumentOutOfRangeException("difficultyIndex");
 
             return (Difficulty)difficultyIndex;
         }
 
+        private bool Faction(string page, out int factionA, out int factionH)
+        {
+            factionA = factionH = -1;
+
+            string pattern = string.Format("[li]{0}: ", reactLocales[Locale]);
+            int startIndex = page.FastIndexOf(pattern);
+            if (startIndex == -1)
+                return false;
+
+            int endIndex = page.FastIndexOf("[/li]", startIndex);
+            string colorString = page.Substring(startIndex, endIndex - startIndex);
+
+            List<Tuple<FactionColor, string>> factions = new List<Tuple<FactionColor, string>>(MaxFactionCount);
+
+            MatchCollection matches = factionRegex.Matches(colorString);
+            foreach (Match item in matches)
+            {
+                GroupCollection groups = item.Groups;
+                string color = groups[1].Value;
+                string faction = groups[2].Value;
+
+                factions.Add(new Tuple<FactionColor, string>(factionColors[color], faction));
+            }
+
+            int count = factions.Count;
+            if (count < MinFactionCount)
+                return false;
+
+            switch (count)
+            {
+                case MinFactionCount:
+                    {
+                        Tuple<FactionColor, string> faction = factions[0];
+                        switch (faction.Item1)
+                        {
+                            case FactionColor.Yellow:
+                                factionA = factionH = 7;
+                                break;
+                            case FactionColor.Red:
+                                factionA = factionH = 14;
+                                break;
+                            case FactionColor.Green:
+                                factionA = factionH = (faction.Item2.Equals(FactionAlliance) ? 1802 : 1801);
+                                break;
+                        }
+                    }
+                    break;
+                case MaxFactionCount:
+                    {
+                        FactionColor color1 = factions[0].Item1;
+                        FactionColor color2 = factions[1].Item1;
+                        if (color1.Equals(color2))
+                        {
+                            switch (color1)
+                            {
+                                case FactionColor.Yellow:
+                                    factionA = factionH = 7;
+                                    break;
+                                case FactionColor.Red:
+                                    factionA = factionH = 14;
+                                    break;
+                                case FactionColor.Green:
+                                    factionA = factionH = 35;
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            switch (color1)
+                            {
+                                case FactionColor.Red:
+                                    {
+                                        switch (color2)
+                                        {
+                                            case FactionColor.Green:
+                                                factionA = factionH = 1801;
+                                                break;
+                                            case FactionColor.Yellow:
+                                                factionA = 14;
+                                                factionH = 7;
+                                                break;
+                                        }
+                                        break;
+                                    }
+                                case FactionColor.Green:
+                                    {
+                                        switch (color2)
+                                        {
+                                            case FactionColor.Red:
+                                                factionA = factionH = 1802;
+                                                break;
+                                            case FactionColor.Yellow:
+                                                factionA = 35;
+                                                factionH = 7;
+                                                break;
+                                        }
+                                        break;
+                                    }
+                                case FactionColor.Yellow:
+                                    {
+                                        factionA = 7;
+                                        switch (color2)
+                                        {
+                                            case FactionColor.Red:
+                                                factionH = 14;
+                                                break;
+                                            case FactionColor.Green:
+                                                factionH = 35;
+                                                break;
+                                        }
+                                        break;
+                                    }
+                            }
+                        }
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("Faction count", count, "Bad value");
+            }
+
+            return factionA > -1 && factionH > -1;
+        }
+
         public override string PreParse()
         {
             StringBuilder content = new StringBuilder(1024);
 
-            #region Creature_currency_template
+            #region Creature_currency
 
             content.AppendLine(
  @"DROP TABLE IF EXISTS `creature_currency`;
@@ -391,6 +544,22 @@ CREATE TABLE `creature_health` (
 
             #endregion
 
+            content.AppendLine();
+
+            #region Creature_faction
+
+            content.AppendLine(
+ @"DROP TABLE IF EXISTS `creature_faction`;
+CREATE TABLE `creature_faction` (
+  `entry` int(10) NOT NULL,
+  `faction_a` int(10) NOT NULL default '0',
+  `faction_h` int(10) NOT NULL default '0',
+  PRIMARY KEY (`entry`)
+  ) ENGINE=MyISAM DEFAULT CHARSET=utf8;"
+ );
+
+            #endregion
+
             return content.AppendLine().ToString();
         }
 
@@ -410,6 +579,13 @@ CREATE TABLE `creature_health` (
             Heroic25,
             RaidFinder25,
             Max,
+        }
+
+        private enum FactionColor : byte
+        {
+            Red,
+            Yellow,
+            Green,
         }
     }
 }
