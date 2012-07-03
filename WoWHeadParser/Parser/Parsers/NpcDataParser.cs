@@ -114,6 +114,7 @@ namespace WoWHeadParser.Parser.Parsers
         private const string healthPattern = @"<tr><td>([^<]+)</td><td style=&quot;text-align:right&quot;>([^<]+)</td>";
         private const string factionPattern = "color=(.*?)](.*?)\\[/color\\]";
         private const string questPattern = "\"id\":(.*?),";
+        private const string manaPattern = "Mana: (.*?)\\[/li\\]";
 
         private Regex moneyRegex = new Regex(moneyPattern);
         private Regex currencyRegex = new Regex(currencyPattern);
@@ -121,6 +122,7 @@ namespace WoWHeadParser.Parser.Parsers
         private Regex healthRegex = new Regex(healthPattern);
         private Regex factionRegex = new Regex(factionPattern);
         private Regex questRegex = new Regex(questPattern);
+        private Regex manaRegex = new Regex(manaPattern);
 
         #endregion
 
@@ -183,9 +185,18 @@ namespace WoWHeadParser.Parser.Parsers
             List<string> difficulties;
             if ((healthCount = Health(page, out difficulties, out healths)) > 0)
             {
-                builder = new SqlBuilder("creature_health");
+                builder = new SqlBuilder("creature_power");
                 builder.SetFieldsNames(difficulties, healthCount);
                 builder.AppendFieldsValue(id, healths, healthCount);
+                content.Append(builder);
+            }
+
+            int mana;
+            if (Mana(page, out mana))
+            {
+                builder = new SqlBuilder("creature_power");
+                builder.SetFieldsNames("mana");
+                builder.AppendFieldsValue(id, mana);
                 content.Append(builder);
             }
 
@@ -243,7 +254,6 @@ namespace WoWHeadParser.Parser.Parsers
                 return false;
 
             string levelString = page.Substring(startIndex, diff);
-
             if (levelString.FastIndexOf(BossLevelString) > -1)
             {
                 tuple = new Tuple<int, int>(BossLevel, BossLevel);
@@ -369,6 +379,18 @@ namespace WoWHeadParser.Parser.Parsers
             }
 
             return count;
+        }
+
+        private bool Mana(string page, out int mana)
+        {
+            mana = -1;
+
+            Match item = manaRegex.Match(page);
+            if (!item.Success)
+                return false;
+
+            string manaString = item.Groups[1].Value.Replace(",", "");
+            return int.TryParse(manaString, out mana);
         }
 
         private Difficulty GetDifficulty(string stringDifficulty)
@@ -590,12 +612,13 @@ CREATE TABLE `creature_quotes` (
 
             content.AppendLine();
 
-            #region Creature_health
+            #region Creature_power
 
             content.AppendLine(
- @"DROP TABLE IF EXISTS `creature_health`;
-CREATE TABLE `creature_health` (
+ @"DROP TABLE IF EXISTS `creature_power`;
+CREATE TABLE `creature_power` (
   `entry` int(10) NOT NULL,
+  `Mana` int(10) NOT NULL default '0'
   `Normal` int(10) NOT NULL default '0',
   `Heroic` int(10) NOT NULL default '0',
   `Normal10` int(10) NOT NULL default '0',
