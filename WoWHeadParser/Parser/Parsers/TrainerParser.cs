@@ -8,23 +8,25 @@ namespace WoWHeadParser.Parser.Parsers
 {
     internal class TrainerParser : DataParser
     {
-        private Dictionary<TrainerType, string> _patterns = new Dictionary<TrainerType, string>
+        private Dictionary<TrainerType, Regex> _patterns = new Dictionary<TrainerType, Regex>
         {
-            {TrainerType.TypeNone, string.Empty},
-            {TrainerType.TypeClass, "{[^}]*\"id\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*"},
-            {TrainerType.TypeTradeskills, "{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*"},
+            {TrainerType.TypeNone, null},
+            {TrainerType.TypeClass, new Regex("{[^}]*\"id\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*")},
+            {TrainerType.TypeTradeskills, new Regex("{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*")},
         };
 
         private const string pattern = @"data: \[.*;";
+        private Regex dataRegex = new Regex(pattern);
 
         private const string trainerTypePattern = @"template: 'spell', id: ('[a-z\\-]+'), name: ";
+        private Regex trainerTypeRegex = new Regex(trainerTypePattern);
 
         public override PageItem Parse(string page, uint id)
         {
             int npcflag = 0x10;
             TrainerType type = TrainerType.TypeNone;
 
-            MatchCollection items = Regex.Matches(page, trainerTypePattern, RegexOptions.Multiline);
+            MatchCollection items = trainerTypeRegex.Matches(page);
             foreach (Match item in items)
             {
                 switch (item.Groups[1].Value)
@@ -51,12 +53,12 @@ namespace WoWHeadParser.Parser.Parsers
             if (type == TrainerType.TypeNone)
                 return new PageItem();
 
-            string subPattern = _patterns[type];
+            Regex subPattern = _patterns[type];
 
             SqlBuilder builder = new SqlBuilder("npc_trainer");
             builder.SetFieldsNames("spell", "spellcost", "reqlevel", "reqSkill", "reqSkillValue");
 
-            MatchCollection find = Regex.Matches(page, pattern);
+            MatchCollection find = dataRegex.Matches(page);
 
             int count = find.Count;
             if (count > 0)
@@ -64,7 +66,7 @@ namespace WoWHeadParser.Parser.Parsers
 
             for (int i = 0; i < count; ++i)
             {
-                MatchCollection matches = Regex.Matches(find[i].Value, subPattern);
+                MatchCollection matches = subPattern.Matches(find[i].Value);
 
                 int matchesCount = matches.Count;
                 for (int j = 0; j < matchesCount; ++j)
