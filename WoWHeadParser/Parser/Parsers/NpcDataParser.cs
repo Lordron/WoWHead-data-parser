@@ -12,13 +12,13 @@ namespace WoWHeadParser.Parser.Parsers
     {
         #region Level
 
-        private Dictionary<Locale, string> levelLocales = new Dictionary<Locale, string>
+        private Dictionary<Locale, Regex> levelLocales = new Dictionary<Locale, Regex>
         {
-            {Locale.Russia, "Уровень"},
-            {Locale.English, "Level"},
-            {Locale.Germany, "Stufe"},
-            {Locale.France, "Dévoreur"},
-            {Locale.Spain, "Nivel"},
+            {Locale.Russia, new Regex("Уровень: (.*?)\\[/li\\]")},
+            {Locale.English, new Regex("Level: (.*?)\\[/li\\]")},
+            {Locale.Germany, new Regex("Stufe: (.*?)\\[/li\\]")},
+            {Locale.France, new Regex("Niveau : (.*?)\\[/li\\]")},
+            {Locale.Spain, new Regex("Nivel: (.*?)\\[/li\\]")},
         };
 
         private const int MinLevelCount = 1;
@@ -48,9 +48,18 @@ namespace WoWHeadParser.Parser.Parsers
 
         #endregion
 
-        #region Health
+        #region Power
 
         private List<Dictionary<Locale, Regex>> healthDifficulty;
+
+        private Dictionary<Locale, Regex> manaLocales = new Dictionary<Locale, Regex>
+        {
+            {Locale.Russia, new Regex("Мана: (.*?)\\[/li\\]")},
+            {Locale.English, new Regex("Mana: (.*?)\\[/li\\]")},
+            {Locale.Germany, new Regex("Mana: (.*?)\\[/li\\]")},
+            {Locale.France, new Regex("Mana : (.*?)\\[/li\\]")},
+            {Locale.Spain, new Regex("Maná: (.*?)\\[/li\\]")},
+        };
 
         private Dictionary<Locale, Regex> healthLocales = new Dictionary<Locale, Regex>
         {
@@ -99,7 +108,7 @@ namespace WoWHeadParser.Parser.Parsers
             {Locale.Russia, new Regex("Реакция: (.*?)\\[/li\\]")},
             {Locale.English, new Regex("React: (.*?)\\[/li\\]")},
             {Locale.Germany, new Regex("Einstellung: (.*?)\\[/li\\]")},
-            {Locale.France, new Regex("Réaction: (.*?)\\[/li\\]")},
+            {Locale.France, new Regex("Réaction : (.*?)\\[/li\\]")},
             {Locale.Spain, new Regex("Reacción: (.*?)\\[/li\\]")},
         };
 
@@ -107,23 +116,19 @@ namespace WoWHeadParser.Parser.Parsers
 
         #region Regex
 
-        private const string levelPattern = "Level: (.*?)\\[/li\\]";
         private const string moneyPattern = "money=(.*?)]";
         private const string currencyPattern = "currency=(.*?) amount=(.*?)]";
         private const string quotesPattern = "<li><div><span class=\"(.*?)\">(.*?)</span></div></li>";
         private const string healthPattern = @"<tr><td>([^<]+)</td><td style=&quot;text-align:right&quot;>([^<]+)</td>";
         private const string factionPattern = "color=(.*?)](.*?)\\[/color\\]";
         private const string questPattern = "\"id\":(.*?),";
-        private const string manaPattern = "Mana: (.*?)\\[/li\\]";
 
-        private Regex levelRegex = new Regex(levelPattern);
         private Regex moneyRegex = new Regex(moneyPattern);
         private Regex currencyRegex = new Regex(currencyPattern);
         private Regex quotesRegex = new Regex(quotesPattern);
         private Regex healthRegex = new Regex(healthPattern);
         private Regex factionRegex = new Regex(factionPattern);
         private Regex questRegex = new Regex(questPattern);
-        private Regex manaRegex = new Regex(manaPattern);
 
         #endregion
 
@@ -240,7 +245,7 @@ namespace WoWHeadParser.Parser.Parsers
         {
             tuple = new Tuple<int, int>(BossLevel, BossLevel);
 
-            Match item = levelRegex.Match(page);
+            Match item = levelLocales[Locale].Match(page);
             if (!item.Success)
                 return false;
 
@@ -276,7 +281,10 @@ namespace WoWHeadParser.Parser.Parsers
                 return false;
 
             string stringMoney = item.Groups[1].Value;
-            return int.TryParse(stringMoney.Trim(), out val);
+            if (!int.TryParse(stringMoney.Trim(), out val))
+                return false;
+
+            return val > 0;
         }
 
         private bool Currency(string page, out Tuple<int, int> tuple)
@@ -373,7 +381,7 @@ namespace WoWHeadParser.Parser.Parsers
         {
             mana = -1;
 
-            Match item = manaRegex.Match(page);
+            Match item = manaLocales[Locale].Match(page);
             if (!item.Success)
                 return false;
 
