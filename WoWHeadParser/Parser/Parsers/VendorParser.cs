@@ -13,6 +13,7 @@ namespace WoWHeadParser.Parser.Parsers
     {
         private const string pattern = @"data: \[.*;";
         private const string costPattern = @"\[(\d+),(\d+)\]";
+        private Regex costRegex = new Regex(costPattern);
 
         private ItemExtendedCost _itemExtendedCost = null;
 
@@ -65,7 +66,7 @@ namespace WoWHeadParser.Parser.Parsers
 
                         if (costBlock.IndexOfAny(anyOf) != -1)
                         {
-                            MatchCollection matches = Regex.Matches(costBlock, costPattern);
+                            MatchCollection matches = costRegex.Matches(costBlock);
                             foreach (Match match in matches)
                             {
                                 cost = uint.Parse(match.Groups[1].Value);
