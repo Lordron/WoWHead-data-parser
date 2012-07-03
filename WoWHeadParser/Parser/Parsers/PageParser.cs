@@ -9,6 +9,7 @@ namespace WoWHeadParser.Parser.Parsers
     internal class PageParser : DataParser
     {
         private const string bookPattern = @"new Book\({ parent: '.+', pages: \['(?<page>.+)'\]}\)";
+        private Regex bookRegex = new Regex(bookPattern);
 
         public override PageItem Parse(string page, uint id)
         {
@@ -18,7 +19,7 @@ namespace WoWHeadParser.Parser.Parsers
             else
                 builder.SetFieldsNames("text", "next_page");
 
-            MatchCollection matches = Regex.Matches(page, bookPattern, RegexOptions.Multiline);
+            MatchCollection matches = bookRegex.Matches(page);
 
             for (int i = 0; i < matches.Count; ++i)
             {

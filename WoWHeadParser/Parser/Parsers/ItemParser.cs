@@ -28,7 +28,7 @@ namespace WoWHeadParser.Parser.Parsers
             builder.SetFieldsNames("Durability");
 
             int endIndex = page.FastIndexOf("<br />", startIndex);
-            string subsString = page.Substring(startIndex, (endIndex - startIndex));
+            string subsString = page.Substring(startIndex, endIndex - startIndex);
             {
                 string[] values = subsString.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
                 for (int i = 0; i < values.Length; ++i)

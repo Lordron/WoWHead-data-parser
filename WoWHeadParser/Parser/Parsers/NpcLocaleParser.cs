@@ -10,6 +10,7 @@ namespace WoWHeadParser.Parser.Parsers
     internal class NpcLocaleParser : DataParser
     {
         private const string pattern = @"data: \[.*;";
+        private Regex localeRegex = new Regex(pattern);
 
         public override PageItem Parse(string page, uint id)
         {
@@ -22,7 +23,7 @@ namespace WoWHeadParser.Parser.Parsers
 
             page = page.Substring("\'npcs\'");
 
-            MatchCollection find = Regex.Matches(page, pattern);
+            MatchCollection find = localeRegex.Matches(page);
             for (int i = 0; i < find.Count; ++i)
             {
                 Match item = find[i];

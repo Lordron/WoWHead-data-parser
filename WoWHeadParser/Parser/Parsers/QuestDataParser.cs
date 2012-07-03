@@ -10,6 +10,7 @@ namespace WoWHeadParser.Parser.Parsers
     internal class QuestLocaleParser : DataParser
     {
         private const string pattern = @"data: \[.*;";
+        private Regex localeRegex = new Regex(pattern);
 
         public override PageItem Parse(string page, uint id)
         {
@@ -27,7 +28,7 @@ namespace WoWHeadParser.Parser.Parsers
 
             page = page.Substring("\'quests\'");
 
-            MatchCollection find = Regex.Matches(page, pattern);
+            MatchCollection find = localeRegex.Matches(page);
             for (int i = 0; i < find.Count; ++i)
             {
                 Match item = find[i];
@@ -59,6 +60,7 @@ namespace WoWHeadParser.Parser.Parsers
     internal class QuestDataParser : DataParser
     {
         private const string pattern = @"data: \[.*;";
+        private Regex dataRegex = new Regex(pattern);
 
         public override PageItem Parse(string page, uint id)
         {
@@ -67,7 +69,7 @@ namespace WoWHeadParser.Parser.Parsers
 
             page = page.Substring("\'quests\'");
 
-            MatchCollection find = Regex.Matches(page, pattern);
+            MatchCollection find = dataRegex.Matches(page);
             for (int i = 0; i < find.Count; ++i)
             {
                 Match item = find[i];
