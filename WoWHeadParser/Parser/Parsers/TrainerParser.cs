@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text;
 using System.Text.RegularExpressions;
 using Sql;
 using WoWHeadParser.Page;
@@ -11,8 +12,23 @@ namespace WoWHeadParser.Parser.Parsers
         private Dictionary<TrainerType, Regex> _patterns = new Dictionary<TrainerType, Regex>
         {
             {TrainerType.TypeNone, null},
+            {TrainerType.TypeOther, new Regex("{[^}]*\"id\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*")},
             {TrainerType.TypeClass, new Regex("{[^}]*\"id\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*")},
             {TrainerType.TypeTradeskills, new Regex("{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*")},
+        };
+
+        private Dictionary<TrainerType, int> npcFlags = new Dictionary<TrainerType, int>
+        {
+            {TrainerType.TypeOther, 0x30},
+            {TrainerType.TypeClass, 0x30},
+            {TrainerType.TypeTradeskills, 0x50},
+        };
+
+        private Dictionary<TrainerType, int> trainerTypes = new Dictionary<TrainerType, int>
+        {
+            {TrainerType.TypeClass, 0},
+            {TrainerType.TypeTradeskills, 2},
+            {TrainerType.TypeOther, 0},
         };
 
         private const string pattern = @"data: \[.*;";
@@ -23,77 +39,87 @@ namespace WoWHeadParser.Parser.Parsers
 
         public override PageItem Parse(string page, uint id)
         {
-            int npcflag = 0x10;
-            TrainerType type = TrainerType.TypeNone;
+            StringBuilder content = new StringBuilder(4096);
 
             MatchCollection items = trainerTypeRegex.Matches(page);
             foreach (Match item in items)
             {
+                string template = string.Empty;
+                TrainerType type = TrainerType.TypeNone;
+
                 switch (item.Groups[1].Value)
                 {
-                    //case "\'teaches-other\'":
+                    case "\'teaches-other\'":
+                        type = TrainerType.TypeOther;
+                        break;
                     case "\'teaches-ability\'":
-                        npcflag = 0x30;
                         type = TrainerType.TypeClass;
                         break;
                     case "\'teaches-recipe\'":
-                        npcflag = 0x50;
                         type = TrainerType.TypeTradeskills;
                         break;
                     default:
                         continue;
                 }
 
+                if (type == TrainerType.TypeNone)
+                    return new PageItem();
+
                 int startIndex = item.Index;
                 int endIndex = page.FastIndexOf("});", startIndex);
 
-                page = page.Substring(startIndex, endIndex - startIndex + 3);
-            }
+                template = page.Substring(startIndex, endIndex - startIndex + 3);
 
-            if (type == TrainerType.TypeNone)
-                return new PageItem();
+                SqlBuilder builder = new SqlBuilder("npc_trainer");
+                builder.SetFieldsNames("spell", "spellcost", "reqlevel", "reqSkill", "reqSkillValue");
 
-            Regex subPattern = _patterns[type];
+                MatchCollection find = dataRegex.Matches(template);
 
-            SqlBuilder builder = new SqlBuilder("npc_trainer");
-            builder.SetFieldsNames("spell", "spellcost", "reqlevel", "reqSkill", "reqSkillValue");
+                int count = find.Count;
+                if (count > 0)
+                    builder.AppendSqlQuery(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | '{0}', `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcFlags[type], trainerTypes[type], id);
 
-            MatchCollection find = dataRegex.Matches(page);
+                Regex subPattern = _patterns[type];
 
-            int count = find.Count;
-            if (count > 0)
-                builder.AppendSqlQuery(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | '{0}', `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcflag, (int)type, id);
-
-            for (int i = 0; i < count; ++i)
-            {
-                MatchCollection matches = subPattern.Matches(find[i].Value);
-
-                int matchesCount = matches.Count;
-                for (int j = 0; j < matchesCount; ++j)
+                for (int i = 0; i < count; ++i)
                 {
-                    GroupCollection groups = matches[j].Groups;
+                    MatchCollection matches = subPattern.Matches(find[i].Value);
 
-                    string spellCost = (type == TrainerType.TypeTradeskills) ? groups[5].Value : groups[4].Value; // TODO: support zero cost
-                    switch (type)
+                    int matchesCount = matches.Count;
+                    for (int j = 0; j < matchesCount; ++j)
                     {
-                        case TrainerType.TypeTradeskills:
-                            {
-                                string reqSkill = (string.IsNullOrEmpty(groups[4].Value) ? "0" : groups[4].Value);
-                                string reqSkillValue = (string.IsNullOrEmpty(groups[2].Value) ? "0" : groups[2].Value);
-                                builder.AppendFieldsValue(id, groups[1].Value, spellCost, groups[3].Value, reqSkill, reqSkillValue);
-                            }
-                            break;
-                        case TrainerType.TypeClass:
-                            {
-                                string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? "0" : groups[3].Value);
-                                builder.AppendFieldsValue(id, groups[1].Value, spellCost, groups[2].Value, reqSkill, "0");
-                            }
-                            break;
+                        GroupCollection groups = matches[j].Groups;
+                        switch (type)
+                        {
+                            case TrainerType.TypeOther:
+                                {
+                                    string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? "0" : groups[3].Value);
+                                    builder.AppendFieldsValue(id, groups[1].Value, "0", groups[2].Value, reqSkill, "0");
+                                }
+                                break;
+                            case TrainerType.TypeClass:
+                                {
+                                    string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? "0" : groups[3].Value);
+                                    string spellCost = (string.IsNullOrEmpty(groups[4].Value) ? "0" : groups[4].Value);
+                                    builder.AppendFieldsValue(id, groups[1].Value, spellCost, groups[2].Value, reqSkill, "0");
+                                }
+                                break;
+                            case TrainerType.TypeTradeskills:
+                                {
+                                    string reqSkill = (string.IsNullOrEmpty(groups[4].Value) ? "0" : groups[4].Value);
+                                    string reqSkillValue = (string.IsNullOrEmpty(groups[2].Value) ? "0" : groups[2].Value);
+                                    string spellCost = (string.IsNullOrEmpty(groups[5].Value) ? "0" : groups[5].Value);
+                                    builder.AppendFieldsValue(id, groups[1].Value, spellCost, groups[3].Value, reqSkill, reqSkillValue);
+                                }
+                                break;
+                        }
                     }
                 }
+
+                content.Append(builder.ToString());
             }
 
-            return new PageItem(id, builder.ToString());
+            return new PageItem(id, content.ToString());
         }
 
         public override string Name { get { return Resources.TrainerParser; } }
@@ -109,6 +135,7 @@ namespace WoWHeadParser.Parser.Parsers
             TypeMounts = 1,
             TypeTradeskills = 2,
             TypePets = 3,
+            TypeOther = 4,
         }
     }
 }
