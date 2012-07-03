@@ -94,13 +94,13 @@ namespace WoWHeadParser.Parser.Parsers
             {"q10", FactionColor.Red},
         };
 
-        private Dictionary<Locale, string> reactLocales = new Dictionary<Locale, string>
+        private Dictionary<Locale, Regex> reactLocales = new Dictionary<Locale, Regex>
         {
-            {Locale.Russia, "Реакция"},
-            {Locale.English, "React"},
-            {Locale.Germany, "Einstellung"},
-            {Locale.France, "Réaction"},
-            {Locale.Spain, "Reacción"},
+            {Locale.Russia, new Regex("Реакция: (.*?)\\[/li\\]")},
+            {Locale.English, new Regex("React: (.*?)\\[/li\\]")},
+            {Locale.Germany, new Regex("Einstellung: (.*?)\\[/li\\]")},
+            {Locale.France, new Regex("Réaction: (.*?)\\[/li\\]")},
+            {Locale.Spain, new Regex("Reacción: (.*?)\\[/li\\]")},
         };
 
         #endregion
@@ -238,7 +238,7 @@ namespace WoWHeadParser.Parser.Parsers
 
         private bool Levels(string page, out Tuple<int, int> tuple)
         {
-            tuple = new Tuple<int, int>(-1, -1);
+            tuple = new Tuple<int, int>(BossLevel, BossLevel);
 
             Match item = levelRegex.Match(page);
             if (!item.Success)
@@ -246,10 +246,7 @@ namespace WoWHeadParser.Parser.Parsers
 
             string levelString = item.Groups[1].Value;
             if (levelString.FastIndexOf(BossLevelString) > -1)
-            {
-                tuple = new Tuple<int, int>(BossLevel, BossLevel);
                 return true;
-            }
 
             List<int> levels = new List<int>(MaxLevelCount);
 
@@ -401,13 +398,11 @@ namespace WoWHeadParser.Parser.Parsers
         {
             factionA = factionH = -1;
 
-            string pattern = string.Format("[li]{0}: ", reactLocales[Locale]);
-            int startIndex = page.FastIndexOf(pattern);
-            if (startIndex == -1)
+            Match blockItem = reactLocales[Locale].Match(page);
+            if (!blockItem.Success)
                 return false;
 
-            int endIndex = page.FastIndexOf("[/li]", startIndex);
-            string colorString = page.Substring(startIndex, endIndex - startIndex);
+            string colorString = blockItem.Groups[1].Value;
 
             List<Tuple<FactionColor, string>> factions = new List<Tuple<FactionColor, string>>(MaxFactionCount);
 
