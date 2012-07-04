@@ -77,7 +77,7 @@ namespace WoWHeadParser.Parser.Parsers
 
                 int count = find.Count;
                 if (count > 0)
-                    builder.AppendSqlQuery(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | '{0}', `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcFlags[type], trainerTypes[type], id);
+                    builder.AppendSqlQuery(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | '0x{0:X4}', `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcFlags[type], trainerTypes[type], id);
 
                 Regex subPattern = _patterns[type];
 

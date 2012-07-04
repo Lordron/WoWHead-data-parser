@@ -346,7 +346,10 @@ namespace WoWHeadParser.Parser.Parsers
                     Difficulty difficulty = GetDifficulty(stringDifficulty);
 
                     healths.Add(health);
-                    difficulties.Add(difficulty.ToString());
+                    if (difficulties.Contains(difficulty.ToString()))
+                        difficulties.Add((difficulty + 1).ToString());
+                    else
+                        difficulties.Add(difficulty.ToString());
                 }
                 return count;
             }
@@ -366,12 +369,14 @@ namespace WoWHeadParser.Parser.Parsers
 
             healths = new List<string>(count);
             difficulties = new List<string>(count);
-            foreach (Match item in matches)
+            for (int i = 0; i < count; ++i)
             {
+                Match item = matches[i];
                 string health = item.Groups[1].Value.Replace(",", "");
+                string difficulty = ((Difficulty)i).ToString();
 
                 healths.Add(health);
-                difficulties.Add("Normal");
+                difficulties.Add(difficulty);
             }
 
             return count;

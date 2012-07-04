@@ -45,7 +45,7 @@ namespace WoWHeadParser
         private const string pattern = "\"id\":([0-9]+),";
         private Regex idRegex = new Regex(pattern);
 
-        #region
+        #endregion
 
         public WelfCreator(CultureInfo culture)
         {
