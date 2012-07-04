@@ -40,6 +40,13 @@ namespace WoWHeadParser
 
         #endregion
 
+        #region Regex
+
+        private const string pattern = "\"id\":([0-9]+),";
+        private Regex idRegex = new Regex(pattern);
+
+        #region
+
         public WelfCreator(CultureInfo culture)
         {
             Thread.CurrentThread.CurrentUICulture = culture;
@@ -123,8 +130,7 @@ namespace WoWHeadParser
 
                 string page = client.DownloadString(address);
 
-                Regex pattern = new Regex("\"id\":([0-9]+),", RegexOptions.Multiline);
-                MatchCollection matches = pattern.Matches(page);
+                MatchCollection matches = idRegex.Matches(page);
 
                 int count = 0;
                 foreach (Match match in matches)
