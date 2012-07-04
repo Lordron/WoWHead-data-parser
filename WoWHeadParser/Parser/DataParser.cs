@@ -42,20 +42,16 @@ namespace WoWHeadParser.Parser
 
         public List<PageItem> Items = new List<PageItem>(2048);
 
-        public bool TryParse(Requests request)
+        public bool TryParse(string page, uint id)
         {
-            string page = request.ToString();
-            if (string.IsNullOrEmpty(page))
-                return false;
-
             PageItem item;
             try
             {
-                item = Parse(page, request.Id);
+                item = Parse(page, id);
             }
             catch (Exception e)
             {
-                Console.WriteLine("Error while parsing: Parser: {0}, Item: {1} - {2}", GetType().Name, request.Id, e);
+                Console.WriteLine("Error while parsing: Parser: {0}, Item: {1} - {2}", GetType().Name, id, e);
                 return false;
             }
             Items.Add(item);

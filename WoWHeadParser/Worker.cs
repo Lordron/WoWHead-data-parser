@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -20,6 +21,7 @@ namespace WoWHeadParser
         private List<uint> _entries;
         private ServicePoint _service;
         private SemaphoreSlim _semaphore;
+        private ConcurrentQueue<uint> _badIds;
 
         private const int SemaphoreCount = 100;
 
@@ -41,6 +43,7 @@ namespace WoWHeadParser
         public Worker()
         {
             _semaphore = new SemaphoreSlim(SemaphoreCount, SemaphoreCount);
+            _badIds = new ConcurrentQueue<uint>();
         }
 
         public Worker(EventHandler OnPageDownloadingComplete)
@@ -143,6 +146,24 @@ namespace WoWHeadParser
                     }
             }
 
+            if (type == ParsingType.TypeByList)
+            {
+                while (!_badIds.IsEmpty)
+                {
+                    if (!_isWorking)
+                        break;
+
+                    uint id;
+                    if (!_badIds.TryDequeue(out id))
+                        continue;
+
+                    _semaphore.Wait();
+
+                    Requests request = new Requests(_address, id, compress);
+                    request.Request.BeginGetResponse(RespCallback, request);
+                }
+            }
+
             while (_semaphore.CurrentCount != SemaphoreCount)
             {
                 Application.DoEvents();
@@ -154,13 +175,26 @@ namespace WoWHeadParser
         private void RespCallback(IAsyncResult iar)
         {
             Requests request = (Requests)iar.AsyncState;
-            if (request.EndGetResponse(iar))
-                _parser.TryParse(request);
+
+            bool ok = request.EndGetResponse(iar);
+            if (ok)
+            {
+                string page = request.ToString();
+                if (!string.IsNullOrEmpty(page))
+                    _parser.TryParse(page, request.Id);
+                else
+                {
+                    ok = false;
+                    _badIds.Enqueue(request.Id);
+                }
+            }
+            else
+                _badIds.Enqueue(request.Id);
 
             request.Dispose();
             _semaphore.Release();
 
-            if (PageDownloadingComplete != null)
+            if (ok && PageDownloadingComplete != null)
                 PageDownloadingComplete(null, EventArgs.Empty);
         }
 
