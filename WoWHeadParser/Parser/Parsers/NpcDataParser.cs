@@ -23,7 +23,7 @@ namespace WoWHeadParser.Parser.Parsers
 
         private const int MinLevelCount = 1;
         private const int MaxLevelCount = 2;
-        private const int BossLevel = 9999;
+        private const int BossLevel = 255;
         private const string BossLevelString = "??";
 
         #endregion
