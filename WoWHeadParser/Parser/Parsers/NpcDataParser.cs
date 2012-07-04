@@ -218,7 +218,7 @@ namespace WoWHeadParser.Parser.Parsers
             List<string> questIds;
             if (QuestStart(page, out questIds))
             {
-                builder = new SqlBuilder("creature_questrelation");
+                builder = new SqlBuilder("creature_questrelation", "id");
                 builder.SetFieldsNames("quest");
                 foreach (string questId in questIds)
                 {
@@ -229,7 +229,7 @@ namespace WoWHeadParser.Parser.Parsers
 
             if (QuestEnd(page, out questIds))
             {
-                builder = new SqlBuilder("creature_involvedrelation");
+                builder = new SqlBuilder("creature_involvedrelation", "id");
                 builder.SetFieldsNames("quest");
                 foreach (string questId in questIds)
                 {
