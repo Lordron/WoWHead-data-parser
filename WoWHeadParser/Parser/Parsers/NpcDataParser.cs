@@ -617,7 +617,7 @@ CREATE TABLE `creature_quotes` (
  @"DROP TABLE IF EXISTS `creature_power`;
 CREATE TABLE `creature_power` (
   `entry` int(10) NOT NULL,
-  `Mana` int(10) NOT NULL default '0'
+  `Mana` int(10) NOT NULL default '0',
   `Normal` int(10) NOT NULL default '0',
   `Heroic` int(10) NOT NULL default '0',
   `Normal10` int(10) NOT NULL default '0',
