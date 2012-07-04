@@ -15,7 +15,7 @@ namespace WoWHeadParser
         private uint _end;
         private bool _isWorking;
         private Uri _address;
-        private DataParser _parser;
+        private PageParser _parser;
         private DateTime _timeStart;
         private DateTime _timeEnd;
         private List<uint> _entries;
@@ -52,7 +52,7 @@ namespace WoWHeadParser
             PageDownloadingComplete += OnPageDownloadingComplete;
         }
 
-        public void Parser(DataParser parser)
+        public void Parser(PageParser parser)
         {
             if (parser == null)
                 throw new ArgumentNullException("parser");

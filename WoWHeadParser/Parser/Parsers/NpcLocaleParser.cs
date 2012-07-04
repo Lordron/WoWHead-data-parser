@@ -7,7 +7,7 @@ using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
-    internal class NpcLocaleParser : DataParser
+    internal class NpcLocaleParser : PageParser
     {
         private const string pattern = @"data: \[.*;";
         private Regex localeRegex = new Regex(pattern);

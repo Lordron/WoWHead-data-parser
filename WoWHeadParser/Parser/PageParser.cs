@@ -7,9 +7,9 @@ using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser
 {
-    public class DataParser
+    public class PageParser
     {
-        public DataParser()
+        public PageParser()
         {
             Prepare();
         }

@@ -7,7 +7,7 @@ using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
-    internal class TrainerParser : DataParser
+    internal class TrainerParser : PageParser
     {
         private Dictionary<TrainerType, Regex> _patterns = new Dictionary<TrainerType, Regex>
         {

@@ -8,7 +8,7 @@ using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
-    internal class NpcDataParser : DataParser
+    internal class NpcDataParser : PageParser
     {
         #region Level
 

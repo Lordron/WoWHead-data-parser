@@ -9,7 +9,7 @@ using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
-    internal class VendorParser : DataParser
+    internal class VendorParser : PageParser
     {
         private const string pattern = @"data: \[.*;";
         private const string costPattern = @"\[(\d+),(\d+)\]";

@@ -7,7 +7,7 @@ using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
-    internal class QuestLocaleParser : DataParser
+    internal class QuestLocaleParser : PageParser
     {
         private const string pattern = @"data: \[.*;";
         private Regex localeRegex = new Regex(pattern);
@@ -57,7 +57,7 @@ namespace WoWHeadParser.Parser.Parsers
         public override int MaxCount { get { return 32000; } }
     }
 
-    internal class QuestDataParser : DataParser
+    internal class QuestDataParser : PageParser
     {
         private const string pattern = @"data: \[.*;";
         private Regex dataRegex = new Regex(pattern);

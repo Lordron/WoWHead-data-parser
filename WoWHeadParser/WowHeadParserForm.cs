@@ -17,7 +17,7 @@ namespace WoWHeadParser
     {
         private Worker _worker;
         private List<uint> _entries;
-        private List<DataParser> _parsers;
+        private List<PageParser> _parsers;
 
         private CultureInfo _currentCulture;
 
@@ -40,7 +40,7 @@ namespace WoWHeadParser
             RichTextBoxWriter.Instance.OutputBox = consoleBox;
 
             _entries = new List<uint>(1024);
-            _parsers = new List<DataParser>(32);
+            _parsers = new List<PageParser>(32);
             _worker = new Worker(WorkerPageDownloaded);
         }
 
@@ -82,10 +82,10 @@ namespace WoWHeadParser
             for (int i = 0; i < types.Length; ++i)
             {
                 Type type = types[i];
-                if (!type.IsSubclassOf(typeof(DataParser)))
+                if (!type.IsSubclassOf(typeof(PageParser)))
                     continue;
 
-                DataParser parser = Activator.CreateInstance(type) as DataParser;
+                PageParser parser = Activator.CreateInstance(type) as PageParser;
                 if (parser == null)
                     continue;
 
@@ -143,7 +143,7 @@ namespace WoWHeadParser
 
         public void StartButtonClick(object sender, EventArgs e)
         {
-            DataParser parser = _parsers[parserBox.SelectedIndex];
+            PageParser parser = _parsers[parserBox.SelectedIndex];
             {
                 parser.Locale = (Locale)localeBox.SelectedItem;
                 _worker.Parser(parser);
@@ -360,7 +360,7 @@ namespace WoWHeadParser
             int index = parserBox.SelectedIndex;
 
             parserBox.Items.Clear();
-            foreach (DataParser parser in _parsers)
+            foreach (PageParser parser in _parsers)
             {
                 parserBox.Items.Add(parser.Name);
             }

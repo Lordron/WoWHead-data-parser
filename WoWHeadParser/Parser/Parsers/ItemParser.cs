@@ -6,7 +6,7 @@ using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
-    internal class ItemParser : DataParser
+    internal class ItemParser : PageParser
     {
         private Dictionary<Locale, string> _durabiliy = new Dictionary<Locale, string>
         {
