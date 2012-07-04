@@ -6,7 +6,7 @@ using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
-    internal class PageParser : DataParser
+    internal class BookPageParser : DataParser
     {
         private const string bookPattern = @"new Book\({ parent: '.+', pages: \['(?<page>.+)'\]}\)";
         private Regex bookRegex = new Regex(bookPattern);
