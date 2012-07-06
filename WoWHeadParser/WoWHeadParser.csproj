@@ -182,6 +182,7 @@
     <None Include="EntryList\item.welf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Include="EntryList\npc.welf" />
     <None Include="EntryList\trainer.welf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
