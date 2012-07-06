@@ -75,6 +75,7 @@ namespace WoWHeadParser
             this.optionsMenuItem = new System.Windows.Forms.MenuItem();
             this.languageMenuItem = new System.Windows.Forms.MenuItem();
             this.aboutMenuItem = new System.Windows.Forms.MenuItem();
+            this.subparsersListBox = new System.Windows.Forms.CheckedListBox();
             this.settingsBox.SuspendLayout();
             this.parsingControl.SuspendLayout();
             this.singleTab.SuspendLayout();
@@ -127,11 +128,11 @@ namespace WoWHeadParser
             // 
             // parsingControl
             // 
-            resources.ApplyResources(this.parsingControl, "parsingControl");
             this.parsingControl.Controls.Add(this.singleTab);
             this.parsingControl.Controls.Add(this.multipleTab);
             this.parsingControl.Controls.Add(this.listTab);
             this.parsingControl.Controls.Add(this.wowheadFilterTab);
+            resources.ApplyResources(this.parsingControl, "parsingControl");
             this.parsingControl.Multiline = true;
             this.parsingControl.Name = "parsingControl";
             this.parsingControl.SelectedIndex = 0;
@@ -139,24 +140,24 @@ namespace WoWHeadParser
             // 
             // singleTab
             // 
-            resources.ApplyResources(this.singleTab, "singleTab");
             this.singleTab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.singleTab.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.singleTab.Controls.Add(this.singleBox);
+            resources.ApplyResources(this.singleTab, "singleTab");
             this.singleTab.Name = "singleTab";
             // 
             // singleBox
             // 
-            resources.ApplyResources(this.singleBox, "singleBox");
             this.singleBox.Controls.Add(this.valueBox);
             this.singleBox.Controls.Add(this.valueLabel);
+            resources.ApplyResources(this.singleBox, "singleBox");
             this.singleBox.Name = "singleBox";
             this.singleBox.TabStop = false;
             // 
             // valueBox
             // 
-            resources.ApplyResources(this.valueBox, "valueBox");
             this.valueBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            resources.ApplyResources(this.valueBox, "valueBox");
             this.valueBox.Maximum = new decimal(new int[] {
             -2147483648,
             0,
@@ -181,8 +182,8 @@ namespace WoWHeadParser
             // 
             // multipleTab
             // 
-            resources.ApplyResources(this.multipleTab, "multipleTab");
             this.multipleTab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            resources.ApplyResources(this.multipleTab, "multipleTab");
             this.multipleTab.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.multipleTab.Controls.Add(this.multipleBox);
             this.multipleTab.ForeColor = System.Drawing.SystemColors.ControlText;
@@ -190,18 +191,18 @@ namespace WoWHeadParser
             // 
             // multipleBox
             // 
-            resources.ApplyResources(this.multipleBox, "multipleBox");
             this.multipleBox.Controls.Add(this.rangeStartLabel);
             this.multipleBox.Controls.Add(this.rangeStart);
             this.multipleBox.Controls.Add(this.rangeEndLabel);
             this.multipleBox.Controls.Add(this.rangeEnd);
+            resources.ApplyResources(this.multipleBox, "multipleBox");
             this.multipleBox.Name = "multipleBox";
             this.multipleBox.TabStop = false;
             // 
             // rangeStart
             // 
-            resources.ApplyResources(this.rangeStart, "rangeStart");
             this.rangeStart.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            resources.ApplyResources(this.rangeStart, "rangeStart");
             this.rangeStart.Maximum = new decimal(new int[] {
             -2147483648,
             0,
@@ -221,8 +222,8 @@ namespace WoWHeadParser
             // 
             // rangeEnd
             // 
-            resources.ApplyResources(this.rangeEnd, "rangeEnd");
             this.rangeEnd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            resources.ApplyResources(this.rangeEnd, "rangeEnd");
             this.rangeEnd.Maximum = new decimal(new int[] {
             -2147483648,
             0,
@@ -242,18 +243,18 @@ namespace WoWHeadParser
             // 
             // listTab
             // 
-            resources.ApplyResources(this.listTab, "listTab");
             this.listTab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.listTab.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.listTab.Controls.Add(this.listBox);
+            resources.ApplyResources(this.listTab, "listTab");
             this.listTab.Name = "listTab";
             // 
             // listBox
             // 
-            resources.ApplyResources(this.listBox, "listBox");
             this.listBox.Controls.Add(this.reloadButton);
             this.listBox.Controls.Add(this.welfBox);
             this.listBox.Controls.Add(this.entryCountLabel);
+            resources.ApplyResources(this.listBox, "listBox");
             this.listBox.Name = "listBox";
             this.listBox.TabStop = false;
             // 
@@ -278,9 +279,9 @@ namespace WoWHeadParser
             // 
             // wowheadFilterTab
             // 
-            resources.ApplyResources(this.wowheadFilterTab, "wowheadFilterTab");
             this.wowheadFilterTab.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.wowheadFilterTab.Controls.Add(this.notifyLabel);
+            resources.ApplyResources(this.wowheadFilterTab, "wowheadFilterTab");
             this.wowheadFilterTab.Name = "wowheadFilterTab";
             // 
             // notifyLabel
@@ -290,15 +291,15 @@ namespace WoWHeadParser
             // 
             // consoleGroupBox
             // 
-            resources.ApplyResources(this.consoleGroupBox, "consoleGroupBox");
             this.consoleGroupBox.Controls.Add(this.consoleBox);
+            resources.ApplyResources(this.consoleGroupBox, "consoleGroupBox");
             this.consoleGroupBox.Name = "consoleGroupBox";
             this.consoleGroupBox.TabStop = false;
             // 
             // consoleBox
             // 
-            resources.ApplyResources(this.consoleBox, "consoleBox");
             this.consoleBox.BackColor = System.Drawing.Color.Black;
+            resources.ApplyResources(this.consoleBox, "consoleBox");
             this.consoleBox.ForeColor = System.Drawing.Color.Cyan;
             this.consoleBox.Name = "consoleBox";
             this.consoleBox.ReadOnly = true;
@@ -320,8 +321,8 @@ namespace WoWHeadParser
             // 
             // abortButton
             // 
-            resources.ApplyResources(this.abortButton, "abortButton");
             this.abortButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+            resources.ApplyResources(this.abortButton, "abortButton");
             this.abortButton.Name = "abortButton";
             this.abortButton.UseVisualStyleBackColor = true;
             this.abortButton.Click += new System.EventHandler(this.AbortButtonClick);
@@ -357,57 +358,63 @@ namespace WoWHeadParser
             this.editMenuItem,
             this.languageMenuItem,
             this.aboutMenuItem});
-            resources.ApplyResources(this.mainMenu, "mainMenu");
             // 
             // fileMenuItem
             // 
-            resources.ApplyResources(this.fileMenuItem, "fileMenuItem");
             this.fileMenuItem.Index = 0;
             this.fileMenuItem.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.exitMenuItem});
+            resources.ApplyResources(this.fileMenuItem, "fileMenuItem");
             // 
             // exitMenuItem
             // 
-            resources.ApplyResources(this.exitMenuItem, "exitMenuItem");
             this.exitMenuItem.Index = 0;
+            resources.ApplyResources(this.exitMenuItem, "exitMenuItem");
             this.exitMenuItem.Click += new System.EventHandler(this.ExitMenuClick);
             // 
             // editMenuItem
             // 
-            resources.ApplyResources(this.editMenuItem, "editMenuItem");
             this.editMenuItem.Index = 1;
             this.editMenuItem.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
             this.launchMenuItem,
             this.separatorMenuItem,
             this.optionsMenuItem});
+            resources.ApplyResources(this.editMenuItem, "editMenuItem");
             // 
             // launchMenuItem
             // 
-            resources.ApplyResources(this.launchMenuItem, "launchMenuItem");
             this.launchMenuItem.Index = 0;
+            resources.ApplyResources(this.launchMenuItem, "launchMenuItem");
             this.launchMenuItem.Click += new System.EventHandler(this.WELFCreatorMenuClick);
             // 
             // separatorMenuItem
             // 
-            resources.ApplyResources(this.separatorMenuItem, "separatorMenuItem");
             this.separatorMenuItem.Index = 1;
+            resources.ApplyResources(this.separatorMenuItem, "separatorMenuItem");
             // 
             // optionsMenuItem
             // 
-            resources.ApplyResources(this.optionsMenuItem, "optionsMenuItem");
             this.optionsMenuItem.Index = 2;
+            resources.ApplyResources(this.optionsMenuItem, "optionsMenuItem");
             this.optionsMenuItem.Click += new System.EventHandler(this.OptionsMenuItemClick);
             // 
             // languageMenuItem
             // 
-            resources.ApplyResources(this.languageMenuItem, "languageMenuItem");
             this.languageMenuItem.Index = 2;
+            resources.ApplyResources(this.languageMenuItem, "languageMenuItem");
             // 
             // aboutMenuItem
             // 
-            resources.ApplyResources(this.aboutMenuItem, "aboutMenuItem");
             this.aboutMenuItem.Index = 3;
+            resources.ApplyResources(this.aboutMenuItem, "aboutMenuItem");
             this.aboutMenuItem.Click += new System.EventHandler(this.AboutMenuItemClick);
+            // 
+            // subparsersListBox
+            // 
+            this.subparsersListBox.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
+            this.subparsersListBox.FormattingEnabled = true;
+            resources.ApplyResources(this.subparsersListBox, "subparsersListBox");
+            this.subparsersListBox.Name = "subparsersListBox";
             // 
             // WoWHeadParserForm
             // 
@@ -416,6 +423,7 @@ namespace WoWHeadParser
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(192)))), ((int)(((byte)(192)))), ((int)(((byte)(255)))));
             this.CancelButton = this.abortButton;
+            this.Controls.Add(this.subparsersListBox);
             this.Controls.Add(this.consoleGroupBox);
             this.Controls.Add(this.progressLabel);
             this.Controls.Add(this.progressBar);
@@ -544,6 +552,7 @@ namespace WoWHeadParser
         private Button reloadButton;
         private MenuItem aboutMenuItem;
         private MenuItem languageMenuItem;
+        private CheckedListBox subparsersListBox;
     }
 }
 

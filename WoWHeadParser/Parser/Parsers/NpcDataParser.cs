@@ -10,6 +10,8 @@ namespace WoWHeadParser.Parser.Parsers
     [Parser(ParserType.Npc)]
     internal class NpcDataParser : PageParser
     {
+        private SubParsers parsers;
+
         public NpcDataParser(Locale locale, int flags)
             : base(locale, flags)
         {
@@ -20,6 +22,8 @@ namespace WoWHeadParser.Parser.Parsers
                 healthLocales,
                 healthNormaLocales,
             };
+
+            parsers = (SubParsers)flags;
         }
 
 
@@ -150,96 +154,124 @@ namespace WoWHeadParser.Parser.Parsers
             SqlBuilder builder;
             StringBuilder content = new StringBuilder(1024);
 
-            Tuple<int, int> levels;
-            if (Levels(page, out levels))
+            if (parsers.HasFlag(SubParsers.Level))
             {
-                builder = new SqlBuilder("creature_template");
-                builder.SetFieldsNames("minlevel", "maxlevel");
-                builder.AppendFieldsValue(id, levels.Item1, levels.Item2);
-                content.Append(builder);
-            }
-
-            int money;
-            if (Money(page, out money))
-            {
-                builder = new SqlBuilder("creature_template");
-                builder.SetFieldsNames("mingold", "maxgold");
-                builder.AppendFieldsValue(id, money, money);
-                content.Append(builder);
-            }
-
-            Tuple<int, int> currency;
-            if (Currency(page, out currency))
-            {
-                builder = new SqlBuilder("creature_currency");
-                builder.SetFieldsNames("currencyId", "currencyAmount");
-                builder.AppendFieldsValue(id, currency.Item1, currency.Item2);
-                content.Append(builder);
-            }
-
-            List<Tuple<string, int>> quotes;
-            if (Quotes(page, out quotes))
-            {
-                builder = new SqlBuilder("creature_quotes");
-                builder.SetFieldsNames("id", "type", textFields[Locale]);
-                for (int i = 0; i < quotes.Count; ++i)
+                Tuple<int, int> levels;
+                if (Levels(page, out levels))
                 {
-                    Tuple<string, int> quote = quotes[i];
-                    builder.AppendFieldsValue(id, i, quote.Item2, quote.Item1);
+                    builder = new SqlBuilder("creature_template");
+                    builder.SetFieldsNames("minlevel", "maxlevel");
+                    builder.AppendFieldsValue(id, levels.Item1, levels.Item2);
+                    content.Append(builder);
                 }
-                content.Append(builder);
             }
 
-            int healthCount;
-            List<string> healths;
-            List<string> difficulties;
-            if ((healthCount = Health(page, out difficulties, out healths)) > 0)
+            if (parsers.HasFlag(SubParsers.Money))
             {
-                builder = new SqlBuilder("creature_power");
-                builder.SetFieldsNames(difficulties, healthCount);
-                builder.AppendFieldsValue(id, healths, healthCount);
-                content.Append(builder);
-            }
-
-            int mana;
-            if (Mana(page, out mana))
-            {
-                builder = new SqlBuilder("creature_power");
-                builder.SetFieldsNames("mana");
-                builder.AppendFieldsValue(id, mana);
-                content.Append(builder);
-            }
-
-            int factionA, factionH;
-            if (Faction(page, out factionA, out factionH))
-            {
-                builder = new SqlBuilder("creature_faction");
-                builder.SetFieldsNames("faction_a", "faction_h");
-                builder.AppendFieldsValue(id, factionA, factionH);
-                content.Append(builder);
-            }
-
-            List<string> questIds;
-            if (QuestStart(page, out questIds))
-            {
-                builder = new SqlBuilder("creature_questrelation", "id");
-                builder.SetFieldsNames("quest");
-                foreach (string questId in questIds)
+                int money;
+                if (Money(page, out money))
                 {
-                    builder.AppendFieldsValue(id, questId);
+                    builder = new SqlBuilder("creature_template");
+                    builder.SetFieldsNames("mingold", "maxgold");
+                    builder.AppendFieldsValue(id, money, money);
+                    content.Append(builder);
                 }
-                content.Append(builder);
             }
 
-            if (QuestEnd(page, out questIds))
+            if (parsers.HasFlag(SubParsers.Currency))
             {
-                builder = new SqlBuilder("creature_involvedrelation", "id");
-                builder.SetFieldsNames("quest");
-                foreach (string questId in questIds)
+                Tuple<int, int> currency;
+                if (Currency(page, out currency))
                 {
-                    builder.AppendFieldsValue(id, questId);
+                    builder = new SqlBuilder("creature_currency");
+                    builder.SetFieldsNames("currencyId", "currencyAmount");
+                    builder.AppendFieldsValue(id, currency.Item1, currency.Item2);
+                    content.Append(builder);
                 }
-                content.Append(builder);
+            }
+
+            if (parsers.HasFlag(SubParsers.Quotes))
+            {
+                List<Tuple<string, int>> quotes;
+                if (Quotes(page, out quotes))
+                {
+                    builder = new SqlBuilder("creature_quotes");
+                    builder.SetFieldsNames("id", "type", textFields[Locale]);
+                    for (int i = 0; i < quotes.Count; ++i)
+                    {
+                        Tuple<string, int> quote = quotes[i];
+                        builder.AppendFieldsValue(id, i, quote.Item2, quote.Item1);
+                    }
+                    content.Append(builder);
+                }
+            }
+
+            if (parsers.HasFlag(SubParsers.Health))
+            {
+                int healthCount;
+                List<string> healths;
+                List<string> difficulties;
+                if ((healthCount = Health(page, out difficulties, out healths)) > 0)
+                {
+                    builder = new SqlBuilder("creature_power");
+                    builder.SetFieldsNames(difficulties, healthCount);
+                    builder.AppendFieldsValue(id, healths, healthCount);
+                    content.Append(builder);
+                }
+            }
+
+            if (parsers.HasFlag(SubParsers.Mana))
+            {
+                int mana;
+                if (Mana(page, out mana))
+                {
+                    builder = new SqlBuilder("creature_power");
+                    builder.SetFieldsNames("mana");
+                    builder.AppendFieldsValue(id, mana);
+                    content.Append(builder);
+                }
+            }
+
+            if (parsers.HasFlag(SubParsers.Faction))
+            {
+                int factionA, factionH;
+                if (Faction(page, out factionA, out factionH))
+                {
+                    builder = new SqlBuilder("creature_faction");
+                    builder.SetFieldsNames("faction_a", "faction_h");
+                    builder.AppendFieldsValue(id, factionA, factionH);
+                    content.Append(builder);
+                }
+            }
+
+            if (parsers.HasFlag(SubParsers.QuestStart))
+            {
+                List<string> questIds;
+                if (QuestStart(page, out questIds))
+                {
+                    builder = new SqlBuilder("creature_questrelation", "id");
+                    builder.SetFieldsNames("quest");
+                    foreach (string questId in questIds)
+                    {
+                        builder.AppendFieldsValue(id, questId);
+                    }
+                    content.Append(builder);
+                }
+            }
+
+            if (parsers.HasFlag(SubParsers.QuestEnd))
+            {
+                List<string> questIds;
+                if (QuestEnd(page, out questIds))
+                {
+                    builder = new SqlBuilder("creature_involvedrelation", "id");
+                    builder.SetFieldsNames("quest");
+                    foreach (string questId in questIds)
+                    {
+                        builder.AppendFieldsValue(id, questId);
+                    }
+                    content.Append(builder);
+                }
             }
 
             return new PageItem(id, content.ToString());
@@ -673,11 +705,18 @@ CREATE TABLE `creature_faction` (
             Green,
         }
 
-        public enum SubParsers : byte
+        [Flags]
+        public enum SubParsers : uint
         {
             Mana = 0x0001,
             Health = 0x0002,
             Money = 0x0004,
+            Currency = 0x0008,
+            Level = 0x0010,
+            Quotes = 0x0020,
+            Faction = 0x0040,
+            QuestStart = 0x0080,
+            QuestEnd = 0x0100,
         }
     }
 }

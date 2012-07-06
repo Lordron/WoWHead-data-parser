@@ -130,6 +130,15 @@
   <data name="rangeStartLabel.Text" xml:space="preserve">
     <value>Старт:</value>
   </data>
+  <data name="settingsBox.Text" xml:space="preserve">
+    <value>Настройки</value>
+  </data>
+  <data name="singleTab.Text" xml:space="preserve">
+    <value>Еденичный</value>
+  </data>
+  <data name="singleBox.Text" xml:space="preserve">
+    <value>Настройки парсера</value>
+  </data>
   <data name="valueBox.Location" type="System.Drawing.Point, System.Drawing">
     <value>54, 19</value>
   </data>
@@ -139,11 +148,11 @@
   <data name="valueLabel.Text" xml:space="preserve">
     <value>Число:</value>
   </data>
-  <data name="singleBox.Text" xml:space="preserve">
-    <value>Настройки парсера</value>
+  <data name="multipleTab.Text" xml:space="preserve">
+    <value>В диапазоне</value>
   </data>
-  <data name="singleTab.Text" xml:space="preserve">
-    <value>Еденичный</value>
+  <data name="multipleBox.Text" xml:space="preserve">
+    <value>Настройки парсера</value>
   </data>
   <data name="rangeStart.Location" type="System.Drawing.Point, System.Drawing">
     <value>54, 19</value>
@@ -151,11 +160,11 @@
   <data name="rangeEnd.Location" type="System.Drawing.Point, System.Drawing">
     <value>182, 19</value>
   </data>
-  <data name="multipleBox.Text" xml:space="preserve">
-    <value>Настройки парсера</value>
+  <data name="listTab.Text" xml:space="preserve">
+    <value>Список</value>
   </data>
-  <data name="multipleTab.Text" xml:space="preserve">
-    <value>В диапазоне</value>
+  <data name="listBox.Text" xml:space="preserve">
+    <value>Настройки парсера</value>
   </data>
   <data name="reloadButton.Text" xml:space="preserve">
     <value>Перезагрузка</value>
@@ -166,23 +175,14 @@
   <data name="entryCountLabel.Text" xml:space="preserve">
     <value>Записей: 0</value>
   </data>
-  <data name="listBox.Text" xml:space="preserve">
-    <value>Настройки парсера</value>
-  </data>
-  <data name="listTab.Text" xml:space="preserve">
-    <value>Список</value>
+  <data name="wowheadFilterTab.Text" xml:space="preserve">
+    <value>WoW Head Фильтр</value>
   </data>
   <data name="notifyLabel.Size" type="System.Drawing.Size, System.Drawing">
     <value>331, 13</value>
   </data>
   <data name="notifyLabel.Text" xml:space="preserve">
     <value>Эта страница используется только для локалей НПС и квестов</value>
-  </data>
-  <data name="wowheadFilterTab.Text" xml:space="preserve">
-    <value>WoW Head Фильтр</value>
-  </data>
-  <data name="settingsBox.Text" xml:space="preserve">
-    <value>Настройки</value>
   </data>
   <data name="consoleGroupBox.Text" xml:space="preserve">
     <value>Консоль</value>
@@ -193,20 +193,20 @@
   <data name="startButton.Text" xml:space="preserve">
     <value>Старт</value>
   </data>
+  <data name="fileMenuItem.Text" xml:space="preserve">
+    <value>Файл</value>
+  </data>
   <data name="exitMenuItem.Text" xml:space="preserve">
     <value>Выход</value>
   </data>
-  <data name="fileMenuItem.Text" xml:space="preserve">
-    <value>Файл</value>
+  <data name="editMenuItem.Text" xml:space="preserve">
+    <value>Правка</value>
   </data>
   <data name="launchMenuItem.Text" xml:space="preserve">
     <value>Запустить .welf creator</value>
   </data>
   <data name="optionsMenuItem.Text" xml:space="preserve">
     <value>Настройки</value>
-  </data>
-  <data name="editMenuItem.Text" xml:space="preserve">
-    <value>Правка</value>
   </data>
   <data name="languageMenuItem.Text" xml:space="preserve">
     <value>Язык</value>

@@ -136,6 +136,16 @@ namespace WoWHeadParser
             Settings.Default.LastParser = index;
 
             welfBox.SelectedItem = string.Format("{0}.welf", _parserTypes[index].ToString().ToLower());
+
+            subparsersListBox.Items.Clear();
+            Type subParsers = _parsers[index].GetNestedType("SubParsers");
+            if (subParsers != null)
+            {
+                foreach (Enum val in Enum.GetValues(subParsers))
+                {
+                    subparsersListBox.Items.Add(val, true);
+                }
+            }
         }
 
         public void StartButtonClick(object sender, EventArgs e)
@@ -144,7 +154,7 @@ namespace WoWHeadParser
             if (cInfo == null)
                 return;
 
-            int flags = 0;
+            int flags = GetSubparsers();
             PageParser parser = (PageParser)cInfo.Invoke(new [] { localeBox.SelectedItem, flags });
             if (parser == null)
                 return;
@@ -417,6 +427,18 @@ namespace WoWHeadParser
         private DialogResult ShowMessageBox(MessageType type, params object[] args)
         {
             return MessageManager.ShowMessage(type, Text, args);
+        }
+
+        private int GetSubparsers()
+        {
+            int subParsers = 0;
+            for (int i = 0; i < subparsersListBox.Items.Count; ++i)
+            {
+                if (subparsersListBox.GetItemChecked(i))
+                    subParsers += 1 << i;
+            }
+
+            return subParsers;
         }
     }
 }
