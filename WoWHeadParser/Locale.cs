@@ -8,6 +8,5 @@
         Germany,
         Spain,
         France,
-        Portugal,
     }
 }

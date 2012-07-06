@@ -5,24 +5,25 @@ using Newtonsoft.Json.Linq;
 using Sql;
 using WoWHeadParser.DBFileStorage;
 using WoWHeadParser.Page;
-using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
+    [Parser(ParserType.Vendor)]
     internal class VendorParser : PageParser
     {
-        private const string pattern = @"data: \[.*;";
-        private const string costPattern = @"\[(\d+),(\d+)\]";
-        private Regex costRegex = new Regex(costPattern);
-
-        private ItemExtendedCost _itemExtendedCost = null;
-
-        public override void Prepare()
+        public VendorParser(Locale locale, int flags)
+            : base(locale, flags)
         {
             _itemExtendedCost = DBFileLoader.GetLoader<ItemExtendedCost>();
             if (_itemExtendedCost == null)
                 throw new ArgumentNullException("_itemExtendedCost");
         }
+
+        private const string pattern = @"data: \[.*;";
+        private const string costPattern = @"\[(\d+),(\d+)\]";
+        private Regex costRegex = new Regex(costPattern);
+
+        private ItemExtendedCost _itemExtendedCost = null;
 
         public override PageItem Parse(string page, uint id)
         {
@@ -99,10 +100,6 @@ namespace WoWHeadParser.Parser.Parsers
             return @"SET @UNK_COST := 9999999;" + Environment.NewLine;
         }
 
-        public override string Name { get { return Resources.VendorParser; } }
-
         public override string Address { get { return "npc={0}"; } }
-
-        public override string WelfName { get { return "vendor"; } }
     }
 }

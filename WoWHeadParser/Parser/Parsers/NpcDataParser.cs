@@ -4,12 +4,22 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Sql;
 using WoWHeadParser.Page;
-using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
+    [Parser(ParserType.Npc)]
     internal class NpcDataParser : PageParser
     {
+        public NpcDataParser(Locale locale, int flags)
+            : base(locale, flags)
+        {
+            healthDifficulty = new List<Dictionary<Locale, Regex>>
+            {
+                healthLocales,
+                healthNormaLocales,
+            };
+        }
+
         #region Level
 
         private Dictionary<Locale, Regex> levelLocales = new Dictionary<Locale, Regex>
@@ -131,15 +141,6 @@ namespace WoWHeadParser.Parser.Parsers
         private Regex questRegex = new Regex(questPattern);
 
         #endregion
-
-        public override void Prepare()
-        {
-            healthDifficulty = new List<Dictionary<Locale, Regex>>
-            {
-                healthLocales,
-                healthNormaLocales,
-            };
-        }
 
         public override PageItem Parse(string page, uint id)
         {
@@ -650,11 +651,7 @@ CREATE TABLE `creature_faction` (
             return content.AppendLine().ToString();
         }
 
-        public override string Name { get { return Resources.NpcDataParser; } }
-
         public override string Address { get { return "npc={0}"; } }
-
-        public override string WelfName { get { return "npc"; } }
 
         private enum Difficulty : byte
         {

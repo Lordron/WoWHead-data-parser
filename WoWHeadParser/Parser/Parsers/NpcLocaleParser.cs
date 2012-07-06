@@ -3,12 +3,17 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sql;
 using WoWHeadParser.Page;
-using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
+    [Parser(ParserType.NpcLocale)]
     internal class NpcLocaleParser : PageParser
     {
+        public NpcLocaleParser(Locale locale, int flags)
+            : base(locale, flags)
+        {
+        }
+
         private const string pattern = @"data: \[.*;";
         private Regex localeRegex = new Regex(pattern);
 
@@ -48,8 +53,6 @@ namespace WoWHeadParser.Parser.Parsers
 
             return new PageItem(id, builder.ToString());
         }
-
-        public override string Name { get { return Resources.NpcLocaleParser; } }
 
         public override string Address { get { return "npcs?filter=cr=37:37;crs=1:4;crv={0}:{1}"; } }
 

@@ -2,12 +2,17 @@
 using System.Collections.Generic;
 using Sql;
 using WoWHeadParser.Page;
-using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
+    [Parser(ParserType.Item)]
     internal class ItemParser : PageParser
     {
+        public ItemParser(Locale locale, int flags)
+            : base(locale, flags)
+        {
+        }
+
         private Dictionary<Locale, string> _durabiliy = new Dictionary<Locale, string>
         {
             {Locale.Old, @"Durability"},
@@ -45,10 +50,6 @@ namespace WoWHeadParser.Parser.Parsers
             return new PageItem(id, builder.ToString());
         }
 
-        public override string Name { get { return Resources.ItemParser; } }
-
         public override string Address { get { return "item={0}?power"; } }
-
-        public override string WelfName { get { return "item"; } }
     }
 }

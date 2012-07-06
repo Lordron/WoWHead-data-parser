@@ -3,12 +3,17 @@ using System.Text;
 using System.Text.RegularExpressions;
 using Sql;
 using WoWHeadParser.Page;
-using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
+    [Parser(ParserType.Trainer)]
     internal class TrainerParser : PageParser
     {
+        public TrainerParser(Locale locale, int flags)
+            : base(locale, flags)
+        {
+        }
+
         private Dictionary<TrainerType, Regex> _patterns = new Dictionary<TrainerType, Regex>
         {
             {TrainerType.TypeNone, null},
@@ -122,11 +127,7 @@ namespace WoWHeadParser.Parser.Parsers
             return new PageItem(id, content.ToString());
         }
 
-        public override string Name { get { return Resources.TrainerParser; } }
-
         public override string Address { get { return "npc={0}"; } }
-
-        public override string WelfName { get { return "trainer"; } }
 
         private enum TrainerType : sbyte
         {

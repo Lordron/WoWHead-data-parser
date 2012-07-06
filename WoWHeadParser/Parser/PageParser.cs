@@ -9,16 +9,23 @@ namespace WoWHeadParser.Parser
 {
     public class PageParser
     {
-        public PageParser()
+        private Locale _locale;
+
+        public Locale Locale
         {
-            Prepare();
+            get { return _locale > Locale.Old ? _locale : Locale.English; }
+            set { _locale = value; }
+        }
+
+        public int Flags { get; private set; }
+
+        public PageParser(Locale locale, int flags)
+        {
+            Flags = flags;
+            Locale = locale;
         }
 
         #region Virtual
-
-        public virtual void Prepare()
-        {
-        }
 
         public virtual string PreParse()
         {
@@ -30,13 +37,9 @@ namespace WoWHeadParser.Parser
             return new PageItem(id, page);
         }
 
-        public virtual string Address { get { return string.Empty; } }
-
-        public virtual string Name { get { return string.Empty; } }
-
         public virtual int MaxCount { get { return 0; } }
 
-        public virtual string WelfName { get { return string.Empty; } }
+        public virtual string Address { get { return string.Empty; } }
 
         #endregion
 
@@ -44,18 +47,17 @@ namespace WoWHeadParser.Parser
 
         public bool TryParse(string page, uint id)
         {
-            PageItem item;
             try
             {
-                item = Parse(page, id);
+                PageItem item = Parse(page, id);
+                Items.Add(item);
+                return true;
             }
             catch (Exception e)
             {
                 Console.WriteLine("Error while parsing: Parser: {0}, Item: {1} - {2}", GetType().Name, id, e);
                 return false;
             }
-            Items.Add(item);
-            return true;
         }
 
         public void Sort()
@@ -79,15 +81,7 @@ namespace WoWHeadParser.Parser
 
         #region Locales
 
-        private Locale _locale;
-
-        public Locale Locale 
-        {
-            get { return _locale > Locale.Old ? _locale : Locale.English; }
-            set { _locale = value; }
-        }
-
-        public Dictionary<Locale, string> Locales = new Dictionary<Locale, string>
+        private Dictionary<Locale, string> _locales = new Dictionary<Locale, string>
         {
             {Locale.Russia, "loc8"},
             {Locale.Germany, "loc3"},
@@ -97,7 +91,7 @@ namespace WoWHeadParser.Parser
 
         public bool HasLocales { get { return _locale > Locale.English; } }
 
-        public string LocalePosfix { get { return Locales[Locale]; } }
+        public string LocalePosfix { get { return _locales[Locale]; } }
 
         #endregion
     }

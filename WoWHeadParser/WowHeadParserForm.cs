@@ -17,7 +17,8 @@ namespace WoWHeadParser
     {
         private Worker _worker;
         private List<uint> _entries;
-        private List<PageParser> _parsers;
+        private List<Type> _parsers;
+        private List<ParserType> _parserTypes;
 
         private CultureInfo _currentCulture;
 
@@ -40,7 +41,8 @@ namespace WoWHeadParser
             RichTextBoxWriter.Instance.OutputBox = consoleBox;
 
             _entries = new List<uint>(1024);
-            _parsers = new List<PageParser>(32);
+            _parsers = new List<Type>((int)ParserType.Max);
+            _parserTypes = new List<ParserType>((int)ParserType.Max);
             _worker = new Worker(WorkerPageDownloaded);
         }
 
@@ -48,23 +50,14 @@ namespace WoWHeadParser
         {
             #region Language loading
 
+            string stringCulture = Settings.Default.Culture;
+
             foreach (string language in _language)
             {
-                MenuItem item = new MenuItem(language, LanguageMenuItemClick);
+                MenuItem item = new MenuItem(language, LanguageMenuItemClick) { Checked = stringCulture.Equals(language) };
                 languageMenuItem.MenuItems.Add(item);
             }
 
-            string stringCulture = Settings.Default.Culture;
-            {
-                foreach (MenuItem item in languageMenuItem.MenuItems)
-                {
-                    if (!item.Text.Equals(stringCulture))
-                        continue;
-
-                    item.Checked = true;
-                    break;
-                }
-            }
             _currentCulture = new CultureInfo(stringCulture, true);
             Reload();
 
@@ -85,12 +78,18 @@ namespace WoWHeadParser
                 if (!type.IsSubclassOf(typeof(PageParser)))
                     continue;
 
-                PageParser parser = Activator.CreateInstance(type) as PageParser;
-                if (parser == null)
-                    continue;
+                ParserAttribute[] attributes = type.GetCustomAttributes(typeof(ParserAttribute), true) as ParserAttribute[];
+                if (attributes == null)
+                    throw new InvalidOperationException(); // Each parsers should be marked with this attribute
 
-                parserBox.Items.Add(parser.Name);
-                _parsers.Add(parser);
+                foreach (ParserAttribute attribute in attributes)
+                {
+                    ParserType parserType = attribute.Type;
+                    parserBox.Items.Add(GetNameByParserType(parserType));
+                    _parserTypes.Add(parserType);
+                }
+
+                _parsers.Add(type);
             }
 
             #endregion
@@ -99,8 +98,7 @@ namespace WoWHeadParser
 
             foreach (Locale locale in Enum.GetValues(typeof(Locale)))
             {
-                if (locale != Locale.Portugal)
-                    localeBox.Items.Add(locale);
+                localeBox.Items.Add(locale);
             }
 
             #endregion
@@ -113,17 +111,16 @@ namespace WoWHeadParser
 
             #region Load from settings
 
-            int lastParser = Settings.Default.LastParser;
-            if (lastParser < parserBox.Items.Count)
-                parserBox.SelectedIndex = lastParser;
+            int index = -1;
+            if ((index = Settings.Default.LastParser) < parserBox.Items.Count)
+                parserBox.SelectedIndex = index;
             else
-                Console.WriteLine(Resources.Error_while_loading_last_parser, lastParser);
+                Console.WriteLine(Resources.Error_while_loading_last_parser, index);
 
-            int lastLocale = Settings.Default.LastLocale;
-            if (lastLocale < localeBox.Items.Count)
-                localeBox.SelectedIndex = lastLocale;
+            if ((index = Settings.Default.LastLocale) < localeBox.Items.Count)
+                localeBox.SelectedIndex = index;
             else
-                Console.WriteLine(Resources.Error_while_loading_last_locale, lastLocale);
+                Console.WriteLine(Resources.Error_while_loading_last_locale, index);
 
             #endregion
         }
@@ -138,16 +135,21 @@ namespace WoWHeadParser
             int index = parserBox.SelectedIndex;
             Settings.Default.LastParser = index;
 
-            welfBox.SelectedItem = string.Format("{0}.welf", _parsers[index].WelfName);
+            welfBox.SelectedItem = string.Format("{0}.welf", _parserTypes[index].ToString().ToLower());
         }
 
         public void StartButtonClick(object sender, EventArgs e)
         {
-            PageParser parser = _parsers[parserBox.SelectedIndex];
-            {
-                parser.Locale = (Locale)localeBox.SelectedItem;
-                _worker.Parser(parser);
-            }
+            ConstructorInfo cInfo = _parsers[parserBox.SelectedIndex].GetConstructor(new[] { typeof(Locale), typeof(int) });
+            if (cInfo == null)
+                return;
+
+            int flags = 0;
+            PageParser parser = (PageParser)cInfo.Invoke(new object[] { localeBox.SelectedItem, flags });
+            if (parser == null)
+                return;
+
+            _worker.Parser(parser);
 
             ParsingType type = (ParsingType)parsingControl.SelectedIndex;
 
@@ -360,13 +362,42 @@ namespace WoWHeadParser
             int index = parserBox.SelectedIndex;
 
             parserBox.Items.Clear();
-            foreach (PageParser parser in _parsers)
+
+            foreach (ParserType type in _parserTypes)
             {
-                parserBox.Items.Add(parser.Name);
+                parserBox.Items.Add(GetNameByParserType(type));
             }
 
             parserBox.SelectedIndex = index;
         }
+
+        #region Parsers names
+
+        private string GetNameByParserType(ParserType type)
+        {
+            switch (type)
+            {
+                case ParserType.Page:
+                    return Resources.PageParser;
+                case ParserType.Item:
+                    return Resources.ItemParser;
+                case ParserType.Npc:
+                    return Resources.NpcDataParser;
+                case ParserType.NpcLocale:
+                    return Resources.NpcLocaleParser;
+                case ParserType.QuestData:
+                    return Resources.QuestDataParser;
+                case ParserType.QuestLocale:
+                    return Resources.QuestLocaleParser;
+                case ParserType.Trainer:
+                    return Resources.TrainerParser;
+                case ParserType.Vendor:
+                    return Resources.VendorParser;
+            }
+            return string.Empty;
+        }
+
+        #endregion
 
         private void LoadWelfFiles()
         {

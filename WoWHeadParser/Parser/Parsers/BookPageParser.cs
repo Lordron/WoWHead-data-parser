@@ -2,12 +2,17 @@
 using System.Text.RegularExpressions;
 using Sql;
 using WoWHeadParser.Page;
-using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
+    [Parser(ParserType.Page)]
     internal class BookPageParser : PageParser
     {
+        public BookPageParser(Locale locale, int flags)
+            : base(locale, flags)
+        {
+        }
+
         private const string bookPattern = @"new Book\({ parent: '.+', pages: \['(?<page>.+)'\]}\)";
         private Regex bookRegex = new Regex(bookPattern);
 
@@ -20,7 +25,6 @@ namespace WoWHeadParser.Parser.Parsers
                 builder.SetFieldsNames("text", "next_page");
 
             MatchCollection matches = bookRegex.Matches(page);
-
             for (int i = 0; i < matches.Count; ++i)
             {
                 Match item = matches[i];
@@ -53,10 +57,6 @@ namespace WoWHeadParser.Parser.Parsers
             return new PageItem(id, builder.ToString());
         }
 
-        public override string Name { get { return Resources.PageParser; } }
-
         public override string Address { get { return "object={0}"; } }
-
-        public override string WelfName { get { return "page"; } }
     }
 }

@@ -3,12 +3,17 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Sql;
 using WoWHeadParser.Page;
-using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser.Parsers
 {
+    [Parser(ParserType.QuestLocale)]
     internal class QuestLocaleParser : PageParser
     {
+        public QuestLocaleParser(Locale locale, int flags)
+            : base(locale, flags)
+        {
+        }
+
         private const string pattern = @"data: \[.*;";
         private Regex localeRegex = new Regex(pattern);
 
@@ -50,15 +55,19 @@ namespace WoWHeadParser.Parser.Parsers
             return new PageItem(id, builder.ToString());
         }
 
-        public override string Name { get { return Resources.QuestLocaleParser; } }
-
         public override string Address { get { return "quests?filter=cr=30:30;crs=1:4;crv={0}:{1}"; } }
 
         public override int MaxCount { get { return 32000; } }
     }
 
+    [Parser(ParserType.QuestData)]
     internal class QuestDataParser : PageParser
     {
+        public QuestDataParser(Locale locale, int flags)
+            : base(locale, flags)
+        {
+        }
+
         private const string pattern = @"data: \[.*;";
         private Regex dataRegex = new Regex(pattern);
 
@@ -98,8 +107,6 @@ namespace WoWHeadParser.Parser.Parsers
 
             return new PageItem(id, builder.ToString());
         }
-
-        public override string Name { get { return Resources.QuestDataParser; } }
 
         public override string Address { get { return "quests?filter=cr=30:30;crs=1:4;crv={0}:{1}"; } }
 
