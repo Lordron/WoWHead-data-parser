@@ -145,7 +145,7 @@ namespace WoWHeadParser
                 return;
 
             int flags = 0;
-            PageParser parser = (PageParser)cInfo.Invoke(new object[] { localeBox.SelectedItem, flags });
+            PageParser parser = (PageParser)cInfo.Invoke(new [] { localeBox.SelectedItem, flags });
             if (parser == null)
                 return;
 
