@@ -12,6 +12,8 @@ namespace WoWHeadParser.Parser.Parsers
         public NpcLocaleParser(Locale locale, int flags)
             : base(locale, flags)
         {
+            this.Address = "npcs?filter=cr=37:37;crs=1:4;crv={0}:{1}";
+            this.MaxCount = 59000;
         }
 
         private const string pattern = @"data: \[.*;";
@@ -53,9 +55,5 @@ namespace WoWHeadParser.Parser.Parsers
 
             return new PageItem(id, builder.ToString());
         }
-
-        public override string Address { get { return "npcs?filter=cr=37:37;crs=1:4;crv={0}:{1}"; } }
-
-        public override int MaxCount { get { return 59000; } }
     }
 }

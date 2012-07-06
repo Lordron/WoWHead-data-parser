@@ -12,6 +12,7 @@ namespace WoWHeadParser.Parser.Parsers
         public TrainerParser(Locale locale, int flags)
             : base(locale, flags)
         {
+            this.Address = "npc={0}";
         }
 
         private Dictionary<TrainerType, Regex> _patterns = new Dictionary<TrainerType, Regex>
@@ -126,8 +127,6 @@ namespace WoWHeadParser.Parser.Parsers
 
             return new PageItem(id, content.ToString());
         }
-
-        public override string Address { get { return "npc={0}"; } }
 
         private enum TrainerType : sbyte
         {

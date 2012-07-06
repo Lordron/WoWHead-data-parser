@@ -11,6 +11,7 @@ namespace WoWHeadParser.Parser.Parsers
         public ItemParser(Locale locale, int flags)
             : base(locale, flags)
         {
+            this.Address = "item={0}?power";
         }
 
         private Dictionary<Locale, string> _durabiliy = new Dictionary<Locale, string>
@@ -49,7 +50,5 @@ namespace WoWHeadParser.Parser.Parsers
 
             return new PageItem(id, builder.ToString());
         }
-
-        public override string Address { get { return "item={0}?power"; } }
     }
 }

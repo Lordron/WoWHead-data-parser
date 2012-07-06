@@ -13,12 +13,15 @@ namespace WoWHeadParser.Parser.Parsers
         public NpcDataParser(Locale locale, int flags)
             : base(locale, flags)
         {
+            this.Address = "npc={0}";
+
             healthDifficulty = new List<Dictionary<Locale, Regex>>
             {
                 healthLocales,
                 healthNormaLocales,
             };
         }
+
 
         #region Level
 
@@ -651,8 +654,6 @@ CREATE TABLE `creature_faction` (
             return content.AppendLine().ToString();
         }
 
-        public override string Address { get { return "npc={0}"; } }
-
         private enum Difficulty : byte
         {
             Normal,
@@ -670,6 +671,13 @@ CREATE TABLE `creature_faction` (
             Red,
             Yellow,
             Green,
+        }
+
+        public enum SubParsers : byte
+        {
+            Mana = 0x0001,
+            Health = 0x0002,
+            Money = 0x0004,
         }
     }
 }

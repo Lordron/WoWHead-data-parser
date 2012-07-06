@@ -14,6 +14,8 @@ namespace WoWHeadParser.Parser.Parsers
         public VendorParser(Locale locale, int flags)
             : base(locale, flags)
         {
+            this.Address = "npc={0}";
+
             _itemExtendedCost = DBFileLoader.GetLoader<ItemExtendedCost>();
             if (_itemExtendedCost == null)
                 throw new ArgumentNullException("_itemExtendedCost");
@@ -99,7 +101,5 @@ namespace WoWHeadParser.Parser.Parsers
         {
             return @"SET @UNK_COST := 9999999;" + Environment.NewLine;
         }
-
-        public override string Address { get { return "npc={0}"; } }
     }
 }

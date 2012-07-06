@@ -11,6 +11,7 @@ namespace WoWHeadParser.Parser.Parsers
         public BookPageParser(Locale locale, int flags)
             : base(locale, flags)
         {
+            this.Address = "object={0}";
         }
 
         private const string bookPattern = @"new Book\({ parent: '.+', pages: \['(?<page>.+)'\]}\)";
@@ -56,7 +57,5 @@ namespace WoWHeadParser.Parser.Parsers
 
             return new PageItem(id, builder.ToString());
         }
-
-        public override string Address { get { return "object={0}"; } }
     }
 }

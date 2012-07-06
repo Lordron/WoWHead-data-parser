@@ -19,13 +19,15 @@ namespace WoWHeadParser.Parser
 
         public int Flags { get; private set; }
 
+        public string Address;
+
+        public int MaxCount;
+
         public PageParser(Locale locale, int flags)
         {
             Flags = flags;
             Locale = locale;
         }
-
-        #region Virtual
 
         public virtual string PreParse()
         {
@@ -36,12 +38,6 @@ namespace WoWHeadParser.Parser
         {
             return new PageItem(id, page);
         }
-
-        public virtual int MaxCount { get { return 0; } }
-
-        public virtual string Address { get { return string.Empty; } }
-
-        #endregion
 
         public List<PageItem> Items = new List<PageItem>(2048);
 
@@ -60,7 +56,7 @@ namespace WoWHeadParser.Parser
             }
         }
 
-        public void Sort()
+        private void Sort()
         {
             SortOrder sortOrder = (SortOrder)Settings.Default.SortOrder;
             if (sortOrder > SortOrder.None)
@@ -75,6 +71,7 @@ namespace WoWHeadParser.Parser
             if (!string.IsNullOrEmpty(preParse))
                 content.Append(preParse);
 
+            Sort();
             Items.ForEach(x => content.Append(x.ToString()));
             return content.ToString();
         }

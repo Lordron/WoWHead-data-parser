@@ -12,6 +12,8 @@ namespace WoWHeadParser.Parser.Parsers
         public QuestLocaleParser(Locale locale, int flags)
             : base(locale, flags)
         {
+            this.Address = "quests?filter=cr=30:30;crs=1:4;crv={0}:{1}";
+            this.MaxCount = 32000;
         }
 
         private const string pattern = @"data: \[.*;";
@@ -54,10 +56,6 @@ namespace WoWHeadParser.Parser.Parsers
 
             return new PageItem(id, builder.ToString());
         }
-
-        public override string Address { get { return "quests?filter=cr=30:30;crs=1:4;crv={0}:{1}"; } }
-
-        public override int MaxCount { get { return 32000; } }
     }
 
     [Parser(ParserType.QuestData)]
@@ -66,6 +64,8 @@ namespace WoWHeadParser.Parser.Parsers
         public QuestDataParser(Locale locale, int flags)
             : base(locale, flags)
         {
+            this.Address = "quests?filter=cr=30:30;crs=1:4;crv={0}:{1}";
+            this.MaxCount = 32000;
         }
 
         private const string pattern = @"data: \[.*;";
@@ -107,9 +107,5 @@ namespace WoWHeadParser.Parser.Parsers
 
             return new PageItem(id, builder.ToString());
         }
-
-        public override string Address { get { return "quests?filter=cr=30:30;crs=1:4;crv={0}:{1}"; } }
-
-        public override int MaxCount { get { return 32000; } }
     }
 }
