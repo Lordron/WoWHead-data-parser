@@ -9,7 +9,6 @@ namespace Sql
 {
     public enum SqlQueryType : byte
     {
-        None,
         Update,
         Replace,
         Insert,
@@ -62,9 +61,9 @@ namespace Sql
             WriteWithoutHeader = Settings.Default.WithoutHeader;
             AppendDeleteQuery = Settings.Default.AppendDeleteQuery;
             AllowNullValue = Settings.Default.AllowEmptyValues;
-            QueryType = (SqlQueryType)Settings.Default.QueryType;
+            QueryType = Settings.Default.QueryType;
 
-            if (QueryType <= SqlQueryType.None || QueryType >= SqlQueryType.Max)
+            if (QueryType >= SqlQueryType.Max)
                 throw new InvalidQueryTypeException(QueryType);
         }
 
