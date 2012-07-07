@@ -25,10 +25,10 @@ namespace WoWHeadParser.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
-        public int QueryType {
+        [global::System.Configuration.DefaultSettingValueAttribute("Update")]
+        public global::Sql.SqlQueryType QueryType {
             get {
-                return ((int)(this["QueryType"]));
+                return ((global::Sql.SqlQueryType)(this["QueryType"]));
             }
             set {
                 this["QueryType"] = value;
@@ -61,10 +61,10 @@ namespace WoWHeadParser.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int SortOrder {
+        [global::System.Configuration.DefaultSettingValueAttribute("None")]
+        public global::System.Windows.Forms.SortOrder SortOrder {
             get {
-                return ((int)(this["SortOrder"]));
+                return ((global::System.Windows.Forms.SortOrder)(this["SortOrder"]));
             }
             set {
                 this["SortOrder"] = value;

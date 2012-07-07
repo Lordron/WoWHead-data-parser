@@ -58,7 +58,7 @@ namespace WoWHeadParser.Parser
 
         private void Sort()
         {
-            SortOrder sortOrder = (SortOrder)Settings.Default.SortOrder;
+            SortOrder sortOrder = Settings.Default.SortOrder;
             if (sortOrder > SortOrder.None)
                 Items.Sort(new PageItemComparer(sortOrder));
         }

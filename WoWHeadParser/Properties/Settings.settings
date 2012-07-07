@@ -2,8 +2,8 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="WoWHeadParser.Properties" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="QueryType" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
+    <Setting Name="QueryType" Type="Sql.SqlQueryType" Scope="User">
+      <Value Profile="(Default)">Update</Value>
     </Setting>
     <Setting Name="AppendDeleteQuery" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
@@ -11,8 +11,8 @@
     <Setting Name="AllowEmptyValues" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="SortOrder" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">0</Value>
+    <Setting Name="SortOrder" Type="System.Windows.Forms.SortOrder" Scope="User">
+      <Value Profile="(Default)">None</Value>
     </Setting>
     <Setting Name="Append" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

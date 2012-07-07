@@ -20,24 +20,24 @@ namespace WoWHeadParser
         {
             foreach (SqlQueryType type in Enum.GetValues(typeof(SqlQueryType)))
             {
-                if (type > SqlQueryType.None && type < SqlQueryType.Max)
+                if (type < SqlQueryType.Max)
                     sqlQueryTypeBox.Items.Add(type);
             }
-            sqlQueryTypeBox.SelectedItem = (SqlQueryType)Settings.Default.QueryType;
+            sqlQueryTypeBox.SelectedItem = Settings.Default.QueryType;
 
             foreach (SortOrder sort in Enum.GetValues(typeof(SortOrder)))
             {
                 sortDirectionBox.Items.Add(sort);
             }
-            sortDirectionBox.SelectedItem = (SortOrder)Settings.Default.SortOrder;
+            sortDirectionBox.SelectedItem = Settings.Default.SortOrder;
         }
 
         private void OkButtonClick(object sender, EventArgs e)
         {
             Settings.Default.AllowEmptyValues = allowNullValCheckBox.Checked;
             Settings.Default.AppendDeleteQuery = appendDeleteQueryCheckBox.Checked;
-            Settings.Default.QueryType = sqlQueryTypeBox.SelectedIndex + 1;
-            Settings.Default.SortOrder = sortDirectionBox.SelectedIndex;
+            Settings.Default.QueryType = (SqlQueryType)sqlQueryTypeBox.SelectedItem;
+            Settings.Default.SortOrder = (SortOrder)sortDirectionBox.SelectedItem;
             Settings.Default.Append = appendSqlCheckBox.Checked;
             Settings.Default.WithoutHeader = withoutHeaderCheckBox.Checked;
             Settings.Default.DataCompression = dataCompressionCheckBox.Checked;
