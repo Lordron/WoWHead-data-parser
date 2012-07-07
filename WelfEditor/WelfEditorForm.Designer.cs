@@ -175,10 +175,14 @@
             // 
             this.totalIdBox.Enabled = false;
             this.totalIdBox.Location = new System.Drawing.Point(219, 98);
+            this.totalIdBox.Maximum = new decimal(new int[] {
+            2147483647,
+            0,
+            0,
+            0});
             this.totalIdBox.Name = "totalIdBox";
             this.totalIdBox.Size = new System.Drawing.Size(120, 20);
             this.totalIdBox.TabIndex = 3;
-            this.totalIdBox.Maximum = int.MaxValue;
             // 
             // openFileDialog
             // 
@@ -197,6 +201,7 @@
             this.Controls.Add(this.totalIdBox);
             this.Controls.Add(this.editGroupBox);
             this.Controls.Add(this.idListView);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
             this.Menu = this.mainMenu;
             this.Name = "WelfEditorForm";
