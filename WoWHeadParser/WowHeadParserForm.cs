@@ -16,7 +16,6 @@ namespace WoWHeadParser
     public partial class WoWHeadParserForm : Form
     {
         private Worker _worker;
-        private List<uint> _entries;
         private List<Type> _parsers;
         private List<ParserType> _parserTypes;
 
@@ -40,7 +39,6 @@ namespace WoWHeadParser
 
             RichTextBoxWriter.Instance.OutputBox = consoleBox;
 
-            _entries = new List<uint>(1024);
             _parsers = new List<Type>((int)ParserType.Max);
             _parserTypes = new List<ParserType>((int)ParserType.Max);
             _worker = new Worker(WorkerPageDownloaded);
@@ -135,7 +133,7 @@ namespace WoWHeadParser
             int index = parserBox.SelectedIndex;
             Settings.Default.LastParser = index;
 
-            welfBox.SelectedItem = string.Format("{0}.welf", _parserTypes[index].ToString().ToLower());
+            welfBox.SelectedItem = _parserTypes[index].ToString().ToLower();
 
             subparsersListBox.Items.Clear();
             Type subParsers = _parsers[index].GetNestedType("SubParsers");
@@ -173,8 +171,9 @@ namespace WoWHeadParser
                     }
                 case ParsingType.TypeByList:
                     {
-                        numericUpDown.Maximum = progressBar.Maximum = _entries.Count;
-                        _worker.SetValue(_entries);
+                        List<uint> entries = GetEntriesList();
+                        numericUpDown.Maximum = progressBar.Maximum = entries.Count;
+                        _worker.SetValue(entries);
                         break;
                     }
                 case ParsingType.TypeByMultipleValue:
@@ -264,40 +263,18 @@ namespace WoWHeadParser
         private void WelfBoxSelectedIndexChanged(object sender, EventArgs e)
         {
             string path = string.Format("{0}\\{1}", WelfFolder, welfBox.SelectedItem);
-
             if (!File.Exists(path))
             {
                 ShowMessageBox(MessageType.WelfFileNotFound, path);
                 return;
             }
 
-            _entries.Clear();
-
-            try
+            using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
+            using (BinaryReader reader = new BinaryReader(stream))
             {
-                using (StreamReader reader = new StreamReader(path))
-                {
-                    string text = reader.ReadToEnd();
-                    string[] values = text.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-                    for (int i = 0; i < values.Length; ++i)
-                    {
-                        string s = values[i];
-
-                        uint value;
-                        if (!uint.TryParse(s, out value))
-                            continue;
-
-                        _entries.Add(value);
-                    }
-                }
+                int count = reader.ReadInt32();
+                entryCountLabel.Text = string.Format(Resources.EntryCountLabel, count);
             }
-            catch (Exception exception)
-            {
-                Console.WriteLine(Resources.Error_while_loading_welf_file, path, exception.Message);
-                return;
-            }
-
-            entryCountLabel.Text = string.Format(Resources.EntryCountLabel, _entries.Count);
         }
 
         private void WELFCreatorMenuClick(object sender, EventArgs e)
@@ -431,14 +408,46 @@ namespace WoWHeadParser
 
         private int GetSubparsers()
         {
-            int subParsers = 0;
+            int mask = 0;
             for (int i = 0; i < subparsersListBox.Items.Count; ++i)
             {
                 if (subparsersListBox.GetItemChecked(i))
-                    subParsers += 1 << i;
+                    mask += 1 << i;
             }
 
-            return subParsers;
+            return mask;
+        }
+
+        private List<uint> GetEntriesList()
+        {
+            string path = string.Format("{0}\\{1}", WelfFolder, welfBox.SelectedItem);
+            if (!File.Exists(path))
+            {
+                ShowMessageBox(MessageType.WelfFileNotFound, path);
+                return null;
+            }
+
+            try
+            {
+                using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
+                using (BinaryReader reader = new BinaryReader(stream))
+                {
+                    int count = reader.ReadInt32();
+                    List<uint> entries = new List<uint>(count);
+                    for (int i = 0; i < count; ++i)
+                    {
+                        uint entry = reader.ReadUInt32();
+                        entries.Add(entry);
+                    }
+
+                    return entries;
+                }
+            }
+            catch (Exception exception)
+            {
+                Console.WriteLine(Resources.Error_while_loading_welf_file, path, exception.Message);
+                return null;
+            }
         }
     }
 }
