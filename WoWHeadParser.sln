@@ -3,16 +3,40 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWHeadParser", "WoWHeadParser\WoWHeadParser.csproj", "{0BD8D6AC-696B-444C-89CD-3FC736F63D30}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WelfEditor", "WelfEditor\WelfEditor.csproj", "{2AA6699F-FD75-4E12-9017-81D939BA8E64}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Debug|Mixed Platforms = Debug|Mixed Platforms
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
+		Release|Mixed Platforms = Release|Mixed Platforms
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0BD8D6AC-696B-444C-89CD-3FC736F63D30}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BD8D6AC-696B-444C-89CD-3FC736F63D30}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BD8D6AC-696B-444C-89CD-3FC736F63D30}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{0BD8D6AC-696B-444C-89CD-3FC736F63D30}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
 		{0BD8D6AC-696B-444C-89CD-3FC736F63D30}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{0BD8D6AC-696B-444C-89CD-3FC736F63D30}.Debug|x86.Build.0 = Debug|Any CPU
+		{0BD8D6AC-696B-444C-89CD-3FC736F63D30}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BD8D6AC-696B-444C-89CD-3FC736F63D30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BD8D6AC-696B-444C-89CD-3FC736F63D30}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{0BD8D6AC-696B-444C-89CD-3FC736F63D30}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{0BD8D6AC-696B-444C-89CD-3FC736F63D30}.Release|x86.ActiveCfg = Release|Any CPU
 		{0BD8D6AC-696B-444C-89CD-3FC736F63D30}.Release|x86.Build.0 = Release|Any CPU
+		{2AA6699F-FD75-4E12-9017-81D939BA8E64}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AA6699F-FD75-4E12-9017-81D939BA8E64}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AA6699F-FD75-4E12-9017-81D939BA8E64}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{2AA6699F-FD75-4E12-9017-81D939BA8E64}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{2AA6699F-FD75-4E12-9017-81D939BA8E64}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2AA6699F-FD75-4E12-9017-81D939BA8E64}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AA6699F-FD75-4E12-9017-81D939BA8E64}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AA6699F-FD75-4E12-9017-81D939BA8E64}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{2AA6699F-FD75-4E12-9017-81D939BA8E64}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{2AA6699F-FD75-4E12-9017-81D939BA8E64}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
