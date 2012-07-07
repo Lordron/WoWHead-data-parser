@@ -150,7 +150,7 @@ namespace WelfEditor
 
         private void Save(string fileName)
         {
-            using (FileStream stream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.Write))
+            using (FileStream stream = new FileStream(fileName, FileMode.Create, FileAccess.Write))
             using (BinaryWriter writer = new BinaryWriter(stream))
             {
                 writer.Write(_entries.Count);
@@ -194,6 +194,8 @@ namespace WelfEditor
             saveFileDialog.FileName = openFileDialog.FileName;
             if (saveFileDialog.ShowDialog() == DialogResult.OK)
                 Save(saveFileDialog.FileName);
+
+            Clear();
         }
 
         private void ListCacheVirtualItems(object sender, CacheVirtualItemsEventArgs e)
