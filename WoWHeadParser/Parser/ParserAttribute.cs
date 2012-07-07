@@ -2,7 +2,7 @@
 
 namespace WoWHeadParser.Parser
 {
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class ParserAttribute : Attribute
     {
         public ParserType Type { get; private set; }
