@@ -114,7 +114,6 @@ namespace WoWHeadParser
             resources.ApplyResources(this.localeBox, "localeBox");
             this.localeBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.localeBox.Name = "localeBox";
-            this.localeBox.SelectedIndexChanged += new System.EventHandler(this.LocaleBoxSelectedIndexChanged);
             // 
             // settingsBox
             // 

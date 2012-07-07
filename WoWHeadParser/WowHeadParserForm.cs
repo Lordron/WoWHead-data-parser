@@ -123,16 +123,9 @@ namespace WoWHeadParser
             #endregion
         }
 
-        private void LocaleBoxSelectedIndexChanged(object sender, EventArgs e)
-        {
-            Settings.Default.LastLocale = localeBox.SelectedIndex;
-        }
-
         private void ParserBoxSelectedIndexChanged(object sender, EventArgs e)
         {
             int index = parserBox.SelectedIndex;
-            Settings.Default.LastParser = index;
-
             welfBox.SelectedItem = _parserTypes[index].ToString().ToLower();
 
             subparsersListBox.Items.Clear();
@@ -323,7 +316,7 @@ namespace WoWHeadParser
         private void ExitMenuClick(object sender, EventArgs e)
         {
             Application.Exit();
-            Settings.Default.Save();
+            Save();
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -334,6 +327,13 @@ namespace WoWHeadParser
 
         protected override void OnClosed(EventArgs e)
         {
+            Save();
+        }
+
+        private void Save()
+        {
+            Settings.Default.LastLocale = localeBox.SelectedIndex;
+            Settings.Default.LastParser = parserBox.SelectedIndex;
             Settings.Default.Save();
         }
 
