@@ -210,7 +210,7 @@ namespace WoWHeadParser
             }
 
             abortButton.Enabled = true;
-            settingsBox.Enabled = startButton.Enabled = false;
+            subparsersListBox.Enabled = settingsBox.Enabled = startButton.Enabled = false;
             numericUpDown.Value = progressBar.Value = 0;
             SetLabelText(Resources.Label_Working);
 
@@ -243,7 +243,7 @@ namespace WoWHeadParser
             }
 
             abortButton.Enabled = false;
-            settingsBox.Enabled = startButton.Enabled = true;
+            subparsersListBox.Enabled = settingsBox.Enabled = startButton.Enabled = true;
             numericUpDown.Value = progressBar.Value = 0;
 
             _worker.Reset();

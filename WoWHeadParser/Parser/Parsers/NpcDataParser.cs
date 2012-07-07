@@ -17,12 +17,6 @@ namespace WoWHeadParser.Parser.Parsers
         {
             this.Address = "npc={0}";
 
-            healthDifficulty = new List<Dictionary<Locale, Regex>>
-            {
-                healthLocales,
-                healthNormaLocales,
-            };
-
             parsers = (SubParsers)flags;
         }
 
@@ -67,8 +61,6 @@ namespace WoWHeadParser.Parser.Parsers
 
         #region Power
 
-        private List<Dictionary<Locale, Regex>> healthDifficulty;
-
         private Dictionary<Locale, Regex> manaLocales = new Dictionary<Locale, Regex>
         {
             {Locale.Russia, new Regex("Мана: (.*?)\\[/li\\]")},
@@ -78,22 +70,13 @@ namespace WoWHeadParser.Parser.Parsers
             {Locale.Spain, new Regex("Maná: (.*?)\\[/li\\]")},
         };
 
-        private Dictionary<Locale, Regex> healthLocales = new Dictionary<Locale, Regex>
-        {
-            {Locale.Russia, new Regex("Здоровье: ([^<]+)</div></li>")},
-            {Locale.English, new Regex("Health: ([^<]+)</div></li>")},
-            {Locale.Germany, new Regex("Gesundheit: ([^<]+)</div></li>")},
-            {Locale.France, new Regex("Vie: ([^<]+)</div></li>")},
-            {Locale.Spain, new Regex("Salud: ([^<]+)</div></li>")},
-        };
-
         private Dictionary<Locale, Regex> healthNormaLocales = new Dictionary<Locale, Regex>
         {
-            {Locale.Russia, new Regex("Здоровье.+: ([^<]+)</div></li>")},
-            {Locale.English, new Regex("Health.+: ([^<]+)</div></li>")},
-            {Locale.Germany, new Regex("Gesundheit.+: ([^<]+)</div></li>")},
-            {Locale.France, new Regex("Vie.+: ([^<]+)</div></li>")},
-            {Locale.Spain, new Regex("Salud.+: ([^<]+)</div></li>")},
+            {Locale.Russia, new Regex("Здоровье(.*?): ([^<]+)</div></li>")},
+            {Locale.English, new Regex("Health(.*?): ([^<]+)</div></li>")},
+            {Locale.Germany, new Regex("Gesundheit(.*?): ([^<]+)</div></li>")},
+            {Locale.France, new Regex("Vie(.*?): ([^<]+)</div></li>")},
+            {Locale.Spain, new Regex("Salud(.*?): ([^<]+)</div></li>")},
         };
 
         private Dictionary<Locale, List<string>> difficultiesLocale = new Dictionary<Locale, List<string>>
@@ -366,10 +349,10 @@ namespace WoWHeadParser.Parser.Parsers
 
         private int Health(string page, out List<string> difficulties, out List<string> healths)
         {
-            MatchCollection matches = healthRegex.Matches(page);
+            int count;
 
-            int count = matches.Count;
-            if (count > 0)
+            MatchCollection matches = healthRegex.Matches(page);
+            if ((count = matches.Count) > 0)
             {
                 healths = new List<string>(count);
                 difficulties = new List<string>(count);
@@ -390,32 +373,24 @@ namespace WoWHeadParser.Parser.Parsers
                 return count;
             }
 
-            foreach (Dictionary<Locale, Regex> kvp in healthDifficulty)
-            {
-                matches = kvp[Locale].Matches(page);
-                if ((count = matches.Count) > 0)
-                    break;
-            }
-
-            if (count == 0)
+            Match match = healthNormaLocales[Locale].Match(page);
+            if (!match.Success)
             {
                 healths = difficulties = null;
                 return -1;
             }
 
-            healths = new List<string>(count);
-            difficulties = new List<string>(count);
-            for (int i = 0; i < count; ++i)
+            healths = new List<string>(1);
+            difficulties = new List<string>(1);
             {
-                Match item = matches[i];
-                string health = item.Groups[1].Value.Replace(",", "");
-                string difficulty = ((Difficulty)i).ToString();
+                string health = match.Groups[2].Value.Replace(",", "");
+                string difficulty = "Normal";
 
                 healths.Add(health);
                 difficulties.Add(difficulty);
             }
 
-            return count;
+            return 1;
         }
 
         private bool Mana(string page, out int mana)
