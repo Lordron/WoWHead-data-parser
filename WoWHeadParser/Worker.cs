@@ -145,6 +145,11 @@ namespace WoWHeadParser
                     }
             }
 
+            while (_semaphore.CurrentCount != SemaphoreCount)
+            {
+                Application.DoEvents();
+            }
+
             if (type == ParsingType.TypeByList)
             {
                 while (!_badIds.IsEmpty)
@@ -175,25 +180,17 @@ namespace WoWHeadParser
         {
             Requests request = (Requests)iar.AsyncState;
 
-            bool ok = request.EndGetResponse(iar);
-            if (ok)
-            {
-                string page = request.ToString();
-                if (!string.IsNullOrEmpty(page))
-                    _parser.TryParse(page, request.Id);
-                else
-                {
-                    ok = false;
-                    _badIds.Enqueue(request.Id);
-                }
-            }
+            string page;
+            bool endGetResponse = request.EndGetResponse(iar, out page);
+            if (endGetResponse)
+                _parser.TryParse(page, request.Id);
             else
                 _badIds.Enqueue(request.Id);
 
             request.Dispose();
             _semaphore.Release();
 
-            if (ok && PageDownloadingComplete != null)
+            if (endGetResponse && PageDownloadingComplete != null)
                 PageDownloadingComplete(null, EventArgs.Empty);
         }
 

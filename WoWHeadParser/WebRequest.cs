@@ -70,16 +70,18 @@ namespace WoWHeadParser
                 Request.Headers.Add("Accept-Encoding", "gzip,deflate");
         }
 
-        public bool EndGetResponse(IAsyncResult asyncResult)
+        public bool EndGetResponse(IAsyncResult asyncResult, out string page)
         {
             try
             {
                 Response = (HttpWebResponse)Request.EndGetResponse(asyncResult);
+                page = ToString();
                 return true;
             }
             catch
             {
                 Console.WriteLine(Resources.Error_Cannot_get_response, Uri);
+                page = string.Empty;
                 return false;
             }
         }
@@ -104,29 +106,21 @@ namespace WoWHeadParser
             if (Response == null)
                 return string.Empty;
 
-            try
+            Stream stream = Response.GetResponseStream();
+            switch (Response.ContentEncoding)
             {
-                Stream stream = Response.GetResponseStream();
-                switch (Response.ContentEncoding)
-                {
-                    case "gzip":
-                        stream = new GZipStream(stream, CompressionMode.Decompress);
-                        break;
-                    case "deflate":
-                        stream = new DeflateStream(stream, CompressionMode.Decompress);
-                        break;
-                }
-
-                using (BufferedStream buffer = new BufferedStream(stream))
-                using (StreamReader reader = new StreamReader(buffer))
-                {
-                    return reader.ReadToEnd();
-                }
+                case "gzip":
+                    stream = new GZipStream(stream, CompressionMode.Decompress);
+                    break;
+                case "deflate":
+                    stream = new DeflateStream(stream, CompressionMode.Decompress);
+                    break;
             }
-            catch
+
+            using (BufferedStream buffer = new BufferedStream(stream))
+            using (StreamReader reader = new StreamReader(buffer))
             {
-                Console.WriteLine(Resources.Error_Cannot_get_response, Uri);
-                return string.Empty;
+                return reader.ReadToEnd();
             }
         }
     }
