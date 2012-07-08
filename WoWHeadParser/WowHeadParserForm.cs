@@ -255,7 +255,7 @@ namespace WoWHeadParser
 
         private void WelfBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            string path = string.Format("{0}\\{1}", WelfFolder, welfBox.SelectedItem);
+            string path = string.Format("{0}\\{1}.welf", WelfFolder, welfBox.SelectedItem);
             if (!File.Exists(path))
             {
                 ShowMessageBox(MessageType.WelfFileNotFound, path);
@@ -394,7 +394,7 @@ namespace WoWHeadParser
             FileInfo[] files = info.GetFiles("*.welf");
             foreach(FileInfo file in files)
             {
-                welfBox.Items.Add(file.Name);
+                welfBox.Items.Add(file.Name.Replace(file.Extension, string.Empty));
             }
 
             if (files.Length > 0)
@@ -420,7 +420,7 @@ namespace WoWHeadParser
 
         private List<uint> GetEntriesList()
         {
-            string path = string.Format("{0}\\{1}", WelfFolder, welfBox.SelectedItem);
+            string path = string.Format("{0}\\{1}.welf", WelfFolder, welfBox.SelectedItem);
             if (!File.Exists(path))
             {
                 ShowMessageBox(MessageType.WelfFileNotFound, path);
