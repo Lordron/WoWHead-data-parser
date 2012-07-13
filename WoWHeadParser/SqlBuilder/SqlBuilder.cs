@@ -13,7 +13,6 @@ namespace Sql
         Replace,
         Insert,
         InsertIgnore,
-        Max,
     }
 
     public class SqlBuilder
@@ -62,9 +61,6 @@ namespace Sql
             AppendDeleteQuery = Settings.Default.AppendDeleteQuery;
             AllowNullValue = Settings.Default.AllowEmptyValues;
             QueryType = Settings.Default.QueryType;
-
-            if (QueryType >= SqlQueryType.Max)
-                throw new InvalidQueryTypeException(QueryType);
         }
 
         /// <summary>

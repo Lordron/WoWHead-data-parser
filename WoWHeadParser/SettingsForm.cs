@@ -18,18 +18,8 @@ namespace WoWHeadParser
 
         protected override void OnLoad(EventArgs e)
         {
-            foreach (SqlQueryType type in Enum.GetValues(typeof(SqlQueryType)))
-            {
-                if (type < SqlQueryType.Max)
-                    sqlQueryTypeBox.Items.Add(type);
-            }
-            sqlQueryTypeBox.SelectedItem = Settings.Default.QueryType;
-
-            foreach (SortOrder sort in Enum.GetValues(typeof(SortOrder)))
-            {
-                sortDirectionBox.Items.Add(sort);
-            }
-            sortDirectionBox.SelectedItem = Settings.Default.SortOrder;
+            sqlQueryTypeBox.SetEnumValues<SqlQueryType>(Settings.Default.QueryType);
+            sortDirectionBox.SetEnumValues<SortOrder>(Settings.Default.SortOrder);
         }
 
         private void OkButtonClick(object sender, EventArgs e)

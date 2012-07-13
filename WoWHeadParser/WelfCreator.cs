@@ -58,27 +58,8 @@ namespace WoWHeadParser
 
         protected override void OnLoad(EventArgs e)
         {
-            #region Locale loading
-
-            foreach (Locale locale in Enum.GetValues(typeof(Locale)))
-            {
-                languageBox.Items.Add(locale);
-            }
-
-            languageBox.SelectedItem = Locale.English;
-
-            #endregion
-
-            #region ObjectType loading
-
-            foreach (ObjectType locale in Enum.GetValues(typeof(ObjectType)))
-            {
-                typeBox.Items.Add(locale);
-            }
-
-            typeBox.SelectedItem = ObjectType.TypeNpc;
-
-            #endregion
+            languageBox.SetEnumValues<Locale>(0);
+            typeBox.SetEnumValues<ObjectType>(0);
         }
 
         private void StartButtonClick(object sender, EventArgs e)

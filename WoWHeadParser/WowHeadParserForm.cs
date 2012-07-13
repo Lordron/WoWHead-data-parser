@@ -90,35 +90,20 @@ namespace WoWHeadParser
                 _parsers.Add(type);
             }
 
+            int index = Settings.Default.LastParser;
+            parserBox.SelectedIndex = index < parserBox.Items.Count  ? index : 0;
+
             #endregion
 
             #region Locale loading
 
-            foreach (Locale locale in Enum.GetValues(typeof(Locale)))
-            {
-                localeBox.Items.Add(locale);
-            }
+            localeBox.SetEnumValues<Locale>(Settings.Default.LastLocale);
 
             #endregion
 
             #region Welf files loading
 
             LoadWelfFiles();
-
-            #endregion
-
-            #region Load from settings
-
-            int index = -1;
-            if ((index = Settings.Default.LastParser) < parserBox.Items.Count)
-                parserBox.SelectedIndex = index;
-            else
-                Console.WriteLine(Resources.Error_while_loading_last_parser, index);
-
-            if ((index = Settings.Default.LastLocale) < localeBox.Items.Count)
-                localeBox.SelectedIndex = index;
-            else
-                Console.WriteLine(Resources.Error_while_loading_last_locale, index);
 
             #endregion
         }

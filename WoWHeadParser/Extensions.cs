@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -124,6 +125,33 @@ namespace WoWHeadParser
                 control.BeginInvoke(action, control);
             else
                 action(control);
+        }
+
+        public static void SetEnumValues<T>(this ComboBox comboBox, int index = 0)
+        {
+            if (comboBox == null)
+                throw new ArgumentNullException("comboBox");
+
+            foreach (object value in Enum.GetValues(typeof(T)))
+            {
+                comboBox.Items.Add(value);
+            }
+
+            comboBox.SelectedIndex = index < comboBox.Items.Count ? index : 0;
+        }
+
+        public static void SetEnumValues<T>(this ComboBox comboBox, object item = null)
+        {
+            if (comboBox == null)
+                throw new ArgumentNullException("comboBox");
+
+            foreach (object value in Enum.GetValues(typeof(T)))
+            {
+                comboBox.Items.Add(value);
+            }
+
+            if (item != null)
+                comboBox.SelectedItem = item;
         }
     }
 }

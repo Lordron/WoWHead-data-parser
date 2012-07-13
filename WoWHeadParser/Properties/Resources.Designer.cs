@@ -106,24 +106,6 @@ namespace WoWHeadParser.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Error while loading last locale from settings! Unknown locale index {0}.
-        /// </summary>
-        internal static string Error_while_loading_last_locale {
-            get {
-                return ResourceManager.GetString("Error_while_loading_last_locale", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Error while loading last parser from settings! Unknown parser index {0}.
-        /// </summary>
-        internal static string Error_while_loading_last_parser {
-            get {
-                return ResourceManager.GetString("Error_while_loading_last_parser", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Error while loading welf file {0} - {1}.
         /// </summary>
         internal static string Error_while_loading_welf_file {
