@@ -34,8 +34,6 @@ namespace WoWHeadParser.Parser.Parsers
             SqlBuilder builder = new SqlBuilder("npc_vendor");
             builder.SetFieldsNames("item", "maxcount", "incrtime", "ExtendedCost");
 
-            page = page.Substring("\'sells\'");
-
             MatchCollection find = Regex.Matches(page, pattern);
             for (int i = 0; i < find.Count; ++i)
             {
