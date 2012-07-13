@@ -67,6 +67,12 @@ namespace WoWHeadParser
 
             #endregion
 
+            #region Welf files loading
+
+            LoadWelfFiles();
+
+            #endregion
+
             #region Parsers loading
 
             Type[] types = Assembly.GetExecutingAssembly().GetTypes();
@@ -98,12 +104,6 @@ namespace WoWHeadParser
             #region Locale loading
 
             localeBox.SetEnumValues<Locale>(Settings.Default.LastLocale);
-
-            #endregion
-
-            #region Welf files loading
-
-            LoadWelfFiles();
 
             #endregion
         }
