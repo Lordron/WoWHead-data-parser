@@ -20,7 +20,7 @@ namespace WoWHeadParser.Parser.Parsers
             {TrainerType.TypeNone, null},
             {TrainerType.TypeOther, new Regex("{[^}]*\"id\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*")},
             {TrainerType.TypeClass, new Regex("{[^}]*\"id\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*")},
-            {TrainerType.TypeTradeskills, new Regex("{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"level\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*")},
+            {TrainerType.TypeTradeskills, new Regex("{[^}]*\"id\":(\\d+)[^}]*\"learnedat\":(\\d+)[^}]*\"skill\":\\[(\\d+)?\\][^}]*\"trainingcost\":(\\d+)[^}]*")},
         };
 
         private Dictionary<TrainerType, int> npcFlags = new Dictionary<TrainerType, int>
@@ -36,6 +36,8 @@ namespace WoWHeadParser.Parser.Parsers
             {TrainerType.TypeTradeskills, 2},
             {TrainerType.TypeOther, 0},
         };
+
+        private const string Zero = "0";
 
         private const string pattern = @"data: \[.*;";
         private Regex dataRegex = new Regex(pattern);
@@ -99,23 +101,23 @@ namespace WoWHeadParser.Parser.Parsers
                         {
                             case TrainerType.TypeOther:
                                 {
-                                    string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? "0" : groups[3].Value);
-                                    builder.AppendFieldsValue(id, groups[1].Value, "0", groups[2].Value, reqSkill, "0");
+                                    string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? Zero : groups[3].Value);
+                                    builder.AppendFieldsValue(id, groups[1].Value, Zero, groups[2].Value, reqSkill, Zero);
                                 }
                                 break;
                             case TrainerType.TypeClass:
                                 {
-                                    string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? "0" : groups[3].Value);
-                                    string spellCost = (string.IsNullOrEmpty(groups[4].Value) ? "0" : groups[4].Value);
-                                    builder.AppendFieldsValue(id, groups[1].Value, spellCost, groups[2].Value, reqSkill, "0");
+                                    string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? Zero : groups[3].Value);
+                                    string spellCost = (string.IsNullOrEmpty(groups[4].Value) ? Zero : groups[4].Value);
+                                    builder.AppendFieldsValue(id, groups[1].Value, spellCost, groups[2].Value, reqSkill, Zero);
                                 }
                                 break;
                             case TrainerType.TypeTradeskills:
                                 {
-                                    string reqSkill = (string.IsNullOrEmpty(groups[4].Value) ? "0" : groups[4].Value);
-                                    string reqSkillValue = (string.IsNullOrEmpty(groups[2].Value) ? "0" : groups[2].Value);
-                                    string spellCost = (string.IsNullOrEmpty(groups[5].Value) ? "0" : groups[5].Value);
-                                    builder.AppendFieldsValue(id, groups[1].Value, spellCost, groups[3].Value, reqSkill, reqSkillValue);
+                                    string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? Zero : groups[3].Value);
+                                    string reqSkillValue = (string.IsNullOrEmpty(groups[2].Value) ? Zero : groups[2].Value);
+                                    string spellCost = (string.IsNullOrEmpty(groups[4].Value) ? Zero : groups[4].Value);
+                                    builder.AppendFieldsValue(id, groups[1].Value, spellCost, Zero, reqSkill, reqSkillValue);
                                 }
                                 break;
                         }
