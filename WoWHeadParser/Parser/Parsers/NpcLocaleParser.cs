@@ -28,8 +28,6 @@ namespace WoWHeadParser.Parser.Parsers
             else
                 builder.SetFieldsNames("name", "subname");
 
-            page = page.Substring("\'npcs\'");
-
             MatchCollection find = localeRegex.Matches(page);
             for (int i = 0; i < find.Count; ++i)
             {
