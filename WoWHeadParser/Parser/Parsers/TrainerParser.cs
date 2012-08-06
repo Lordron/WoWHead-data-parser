@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 using System.Text.RegularExpressions;
-using Sql;
-using WoWHeadParser.Page;
 
 namespace WoWHeadParser.Parser.Parsers
 {
@@ -13,6 +10,8 @@ namespace WoWHeadParser.Parser.Parsers
             : base(locale, flags)
         {
             this.Address = "npc={0}";
+
+            Builder.Setup("npc_trainer", "entry", true, "spell", "spellcost", "reqlevel", "reqSkill", "reqSkillValue");
         }
 
         private Dictionary<TrainerType, Regex> _patterns = new Dictionary<TrainerType, Regex>
@@ -45,14 +44,11 @@ namespace WoWHeadParser.Parser.Parsers
         private const string trainerTypePattern = @"template: 'spell', id: ('[a-z\\-]+'), name: ";
         private Regex trainerTypeRegex = new Regex(trainerTypePattern);
 
-        public override PageItem Parse(string page, uint id)
+        public override void Parse(string page, uint id)
         {
-            StringBuilder content = new StringBuilder(4096);
-
             MatchCollection items = trainerTypeRegex.Matches(page);
             foreach (Match item in items)
             {
-                string template = string.Empty;
                 TrainerType type = TrainerType.TypeNone;
 
                 switch (item.Groups[1].Value)
@@ -71,63 +67,52 @@ namespace WoWHeadParser.Parser.Parsers
                 }
 
                 if (type == TrainerType.TypeNone)
-                    return new PageItem();
+                    return;
 
                 int startIndex = item.Index;
                 int endIndex = page.FastIndexOf("});", startIndex);
 
-                template = page.Substring(startIndex, endIndex - startIndex + 3);
+                string template = page.Substring(startIndex, endIndex - startIndex + 3);
 
-                SqlBuilder builder = new SqlBuilder("npc_trainer");
-                builder.SetFieldsNames("spell", "spellcost", "reqlevel", "reqSkill", "reqSkillValue");
+                Match find = dataRegex.Match(template);
+                if (!find.Success)
+                    continue;
 
-                MatchCollection find = dataRegex.Matches(template);
+                Builder.SetKey(id);
+                Builder.AppendSqlQuery(id, @"UPDATE `creature_template` SET `npcflag` = `npcflag` | 0x{0:X4}, `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcFlags[type], trainerTypes[type], id);
 
-                int count = find.Count;
-                if (count > 0)
-                    builder.AppendSqlQuery(@"UPDATE `creature_template` SET `npcflag` = `npcflag` | 0x{0:X4}, `trainer_type` = '{1}' WHERE `entry` = '{2}';", npcFlags[type], trainerTypes[type], id);
-
-                Regex subPattern = _patterns[type];
-
-                for (int i = 0; i < count; ++i)
+                MatchCollection matches = _patterns[type].Matches(find.Value);
+                foreach (Match match in matches)
                 {
-                    MatchCollection matches = subPattern.Matches(find[i].Value);
-
-                    int matchesCount = matches.Count;
-                    for (int j = 0; j < matchesCount; ++j)
+                    GroupCollection groups = match.Groups;
+                    switch (type)
                     {
-                        GroupCollection groups = matches[j].Groups;
-                        switch (type)
-                        {
-                            case TrainerType.TypeOther:
-                                {
-                                    string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? Zero : groups[3].Value);
-                                    builder.AppendFieldsValue(id, groups[1].Value, Zero, groups[2].Value, reqSkill, Zero);
-                                }
-                                break;
-                            case TrainerType.TypeClass:
-                                {
-                                    string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? Zero : groups[3].Value);
-                                    string spellCost = (string.IsNullOrEmpty(groups[4].Value) ? Zero : groups[4].Value);
-                                    builder.AppendFieldsValue(id, groups[1].Value, spellCost, groups[2].Value, reqSkill, Zero);
-                                }
-                                break;
-                            case TrainerType.TypeTradeskills:
-                                {
-                                    string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? Zero : groups[3].Value);
-                                    string reqSkillValue = (string.IsNullOrEmpty(groups[2].Value) ? Zero : groups[2].Value);
-                                    string spellCost = (string.IsNullOrEmpty(groups[4].Value) ? Zero : groups[4].Value);
-                                    builder.AppendFieldsValue(id, groups[1].Value, spellCost, Zero, reqSkill, reqSkillValue);
-                                }
-                                break;
-                        }
+                        case TrainerType.TypeOther:
+                            {
+                                string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? Zero : groups[3].Value);
+                                Builder.AppendValues(groups[1].Value, Zero, groups[2].Value, reqSkill, Zero);
+                            }
+                            break;
+                        case TrainerType.TypeClass:
+                            {
+                                string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? Zero : groups[3].Value);
+                                string spellCost = (string.IsNullOrEmpty(groups[4].Value) ? Zero : groups[4].Value);
+                                Builder.AppendValues(groups[1].Value, spellCost, groups[2].Value, reqSkill, Zero);
+                            }
+                            break;
+                        case TrainerType.TypeTradeskills:
+                            {
+                                string reqSkill = (string.IsNullOrEmpty(groups[3].Value) ? Zero : groups[3].Value);
+                                string reqSkillValue = (string.IsNullOrEmpty(groups[2].Value) ? Zero : groups[2].Value);
+                                string spellCost = (string.IsNullOrEmpty(groups[4].Value) ? Zero : groups[4].Value);
+                                Builder.AppendValues(groups[1].Value, spellCost, Zero, reqSkill, reqSkillValue);
+                            }
+                            break;
                     }
+
+                    Builder.Flush();
                 }
-
-                content.Append(builder.ToString());
             }
-
-            return new PageItem(id, content.ToString());
         }
 
         private enum TrainerType : sbyte

@@ -2,9 +2,7 @@
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Sql;
 using WoWHeadParser.DBFileStorage;
-using WoWHeadParser.Page;
 
 namespace WoWHeadParser.Parser.Parsers
 {
@@ -19,6 +17,8 @@ namespace WoWHeadParser.Parser.Parsers
             _itemExtendedCost = DBFileLoader.GetLoader<ItemExtendedCost>();
             if (_itemExtendedCost == null)
                 throw new ArgumentNullException("_itemExtendedCost");
+
+            Builder.Setup("npc_vendor", "entry", false, "item", "maxcount", "incrtime", "ExtendedCost");
         }
 
         private const string pattern = @"data: \[.*;";
@@ -27,13 +27,10 @@ namespace WoWHeadParser.Parser.Parsers
 
         private ItemExtendedCost _itemExtendedCost = null;
 
-        public override PageItem Parse(string page, uint id)
+        private char[] _anyOf = new[] { '[', ']', '{', '}' };
+
+        public override void Parse(string page, uint id)
         {
-            char[] anyOf = new [] { '[', ']', '{', '}' };
-
-            SqlBuilder builder = new SqlBuilder("npc_vendor");
-            builder.SetFieldsNames("item", "maxcount", "incrtime", "ExtendedCost");
-
             MatchCollection find = Regex.Matches(page, pattern);
             for (int i = 0; i < find.Count; ++i)
             {
@@ -65,7 +62,7 @@ namespace WoWHeadParser.Parser.Parsers
                         if (costBlock.Equals("0"))
                             continue;
 
-                        if (costBlock.IndexOfAny(anyOf) != -1)
+                        if (costBlock.IndexOfAny(_anyOf) != -1)
                         {
                             MatchCollection matches = costRegex.Matches(costBlock);
                             foreach (Match match in matches)
@@ -80,7 +77,7 @@ namespace WoWHeadParser.Parser.Parsers
                     }
 
                     maxcount = maxcount.Equals("-1") ? "0" : maxcount;
-                    string incrTime = maxcount.Equals("0") ? "0" : "3600";
+                    int incrTime = maxcount.Equals("0") ? 0 : 3600;
 
                     uint extendedCost = 0;
                     if (hasExtendedCost && cost > 0 && count > 0)
@@ -88,16 +85,11 @@ namespace WoWHeadParser.Parser.Parsers
                     else if (!hasExtendedCost)
                         extendedCost = 9999999;
 
-                    builder.AppendFieldsValue(id, entry, maxcount, incrTime, (extendedCost != 9999999) ? extendedCost.ToString() : "@UNK_COST");
+                    Builder.SetKey(id);
+                    Builder.AppendValues(entry, maxcount, incrTime, extendedCost);
+                    Builder.Flush();
                 }
             }
-
-            return new PageItem(id, builder.ToString());
-        }
-
-        public override string PreParse()
-        {
-            return @"SET @UNK_COST := 9999999;" + Environment.NewLine;
         }
     }
 }

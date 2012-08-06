@@ -357,7 +357,7 @@ namespace WoWHeadParser
                     return Resources.NpcDataParser;
                 case ParserType.NpcLocale:
                     return Resources.NpcLocaleParser;
-                case ParserType.QuestData:
+                case ParserType.Quest:
                     return Resources.QuestDataParser;
                 case ParserType.QuestLocale:
                     return Resources.QuestLocaleParser;

@@ -7,7 +7,7 @@ namespace WoWHeadParser.Parser
         Item,
         Npc,
         NpcLocale,
-        QuestData,
+        Quest,
         QuestLocale,
         Trainer,
         Vendor,

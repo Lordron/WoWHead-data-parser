@@ -1,8 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Sql;
-using WoWHeadParser.Page;
 
 namespace WoWHeadParser.Parser.Parsers
 {
@@ -14,20 +12,18 @@ namespace WoWHeadParser.Parser.Parsers
         {
             this.Address = "npcs?filter=cr=37:37;crs=1:4;crv={0}:{1}";
             this.MaxCount = 59000;
+
+            if (HasLocales)
+                Builder.Setup("locales_creature", "entry", false, string.Format("name_{0}", LocalePosfix), string.Format("subname_{0}", LocalePosfix));
+            else
+                Builder.Setup("creature_template", "entry", false, "name", "subname");
         }
 
         private const string pattern = @"data: \[.*;";
         private Regex localeRegex = new Regex(pattern);
 
-        public override PageItem Parse(string page, uint id)
+        public override void Parse(string page, uint id)
         {
-            SqlBuilder builder = new SqlBuilder(HasLocales ? "locales_creature" : "creature_template");
-
-            if (HasLocales) 
-                builder.SetFieldsNames(string.Format("name_{0}", LocalePosfix), string.Format("subname_{0}", LocalePosfix));
-            else
-                builder.SetFieldsNames("name", "subname");
-
             MatchCollection find = localeRegex.Matches(page);
             for (int i = 0; i < find.Count; ++i)
             {
@@ -47,11 +43,11 @@ namespace WoWHeadParser.Parser.Parsers
                     string name = nameToken == null ? string.Empty : nameToken.ToString().HTMLEscapeSumbols();
                     string subName = subNameToken == null ? string.Empty : subNameToken.ToString().HTMLEscapeSumbols();
 
-                    builder.AppendFieldsValue(entry, name, subName);
+                    Builder.SetKey(entry);
+                    Builder.AppendValues(name, subName);
+                    Builder.Flush();
                 }
             }
-
-            return new PageItem(id, builder.ToString());
         }
     }
 }

@@ -1,27 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Windows.Forms;
-using WoWHeadParser.Page;
+using Sql;
 using WoWHeadParser.Properties;
 
 namespace WoWHeadParser.Parser
 {
     public class PageParser
     {
-        private Locale _locale;
+        public int Flags;
 
-        public Locale Locale
-        {
-            get { return _locale > Locale.Old ? _locale : Locale.English; }
-            set { _locale = value; }
-        }
-
-        public int Flags { get; private set; }
+        public int MaxCount;
 
         public string Address;
 
-        public int MaxCount;
+        public StringBuilder Content = new StringBuilder(1024);
 
         public PageParser(Locale locale, int flags)
         {
@@ -29,54 +22,50 @@ namespace WoWHeadParser.Parser
             Locale = locale;
         }
 
-        public virtual string PreParse()
+        public virtual void Parse(string page, uint id)
         {
-            return string.Empty;
         }
 
-        public virtual PageItem Parse(string page, uint id)
+        public virtual void PutStringData()
         {
-            return new PageItem(id, page);
+            Content.Append(Builder.ToString());
         }
 
-        public List<PageItem> Items = new List<PageItem>(2048);
-
-        public bool TryParse(string page, uint id)
+        public void TryParse(string page, uint id)
         {
-            try
+            //try
             {
-                PageItem item = Parse(page, id);
-                Items.Add(item);
-                return true;
+                Parse(page, id);
             }
-            catch (Exception e)
+            //catch (Exception e)
             {
-                Console.WriteLine("Error while parsing: Parser: {0}, Item: {1} - {2}", GetType().Name, id, e);
-                return false;
+                //Console.WriteLine("Error while parsing: Parser: {0}, Item Id: {1} - {2}", GetType().Name, id, e);
             }
-        }
-
-        private void Sort()
-        {
-            SortOrder sortOrder = Settings.Default.SortOrder;
-            if (sortOrder > SortOrder.None)
-                Items.Sort(new PageItemComparer(sortOrder));
         }
 
         public override string ToString()
         {
-            StringBuilder content = new StringBuilder(Items.Count * 1024);
-
-            string preParse = PreParse().TrimStart();
-            if (!string.IsNullOrEmpty(preParse))
-                content.Append(preParse);
-
-            Sort();
-            Items.ForEach(x => content.Append(x.ToString()));
-            return content.ToString();
+            PutStringData();
+            return Content.ToString();
         }
 
+        #region Sql Builder
+
+        protected static SqlBuilderSettings _builderSettings = new SqlBuilderSettings(Settings.Default.QueryType, Settings.Default.WithoutHeader, Settings.Default.AllowEmptyValues, Settings.Default.AppendDeleteQuery);
+
+        public SqlBuilder Builder = new SqlBuilder(_builderSettings);
+
+        #endregion
+
         #region Locales
+
+        public Locale Locale
+        {
+            get { return _locale > Locale.Old ? _locale : Locale.English; }
+            set { _locale = value; }
+        }
+
+        private Locale _locale;
 
         private Dictionary<Locale, string> _locales = new Dictionary<Locale, string>
         {

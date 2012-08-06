@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Sql;
-using WoWHeadParser.Page;
 
 namespace WoWHeadParser.Parser.Parsers
 {
@@ -12,6 +10,8 @@ namespace WoWHeadParser.Parser.Parsers
             : base(locale, flags)
         {
             this.Address = "item={0}?power";
+
+            Builder.Setup("item_template", "entry", false, "Durability");
         }
 
         private Dictionary<Locale, string> _durabiliy = new Dictionary<Locale, string>
@@ -24,14 +24,11 @@ namespace WoWHeadParser.Parser.Parsers
             {Locale.France, @"Durabilité"},
         };
 
-        public override PageItem Parse(string page, uint id)
+        public override void Parse(string page, uint id)
         {
             int startIndex = page.FastIndexOf(_durabiliy[Locale]);
             if (startIndex == -1)
-                return new PageItem();
-
-            SqlBuilder builder = new SqlBuilder("item_template");
-            builder.SetFieldsNames("Durability");
+                return;
 
             int endIndex = page.FastIndexOf("<br />", startIndex);
             string subsString = page.Substring(startIndex, endIndex - startIndex);
@@ -43,12 +40,12 @@ namespace WoWHeadParser.Parser.Parsers
                     if (!int.TryParse(values[i].Trim(), out durability))
                         continue;
 
-                    builder.AppendFieldsValue(id, durability);
+                    Builder.SetKey(id);
+                    Builder.AppendValue(durability);
+                    Builder.Flush();
                     break;
                 }
             }
-
-            return new PageItem(id, builder.ToString());
         }
     }
 }

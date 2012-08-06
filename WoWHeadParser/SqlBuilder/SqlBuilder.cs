@@ -7,278 +7,349 @@ using WoWHeadParser.Properties;
 
 namespace Sql
 {
-    public enum SqlQueryType : byte
-    {
-        Update,
-        Replace,
-        Insert,
-        InsertIgnore,
-    }
-
+    /// <summary>
+    /// Represent a simple SQL Builder
+    /// </summary>
     public class SqlBuilder
     {
         /// <summary>
-        /// Gets a sql query type
+        /// Gets a <see cref="Sql.SqlBuilderSettings"/> that contain settings of the current <see cref="Sql.SqlBuilder"/>
         /// </summary>
-        public SqlQueryType QueryType { get; private set; }
-
-        /// <summary>
-        /// Gets a value indicating whether to allow null values
-        /// </summary>
-        public bool AllowNullValue { get; private set; }
-
-        /// <summary>
-        /// Gets a value indicating whether to allow append delete query
-        /// </summary>
-        public bool AppendDeleteQuery { get; private set; }
-
-        /// <summary>
-        /// Gets a value indication whether to allow append header to insert and replace query
-        /// </summary>
-        public bool WriteWithoutHeader { get; private set; }
+        public SqlBuilderSettings BuilderSettings;
 
         private string _tableName = string.Empty;
 
         private string _keyName = string.Empty;
 
-        private List<string> _fields = new List<string>(64);
+        private object _key;
 
-        private List<SqlItem> _items = new List<SqlItem>(64);
+        private SqlItem _sqlItem;
 
-        private StringBuilder _content = new StringBuilder(8196);
+        private int _itemCount = -1;
+
+        private bool _hasPreparedQueries = false;
+
+        private List<string> _tableFields;
+
+        private Dictionary<object, List<string>> _querys;
+
+        private Dictionary<object, List<SqlItem>> _items = new Dictionary<object, List<SqlItem>>();
+
+        //private SortedDictionary<object, List<SqlItem>> _items = new SortedDictionary<object, List<SqlItem>>(new SqlItemComparer(Settings.Default.SortOrder));
 
         /// <summary>
-        /// Initial Sql builder
+        /// Initialize <see cref="Sql.SqlBuilder"/> with specific <see cref="Sql.SqlBuilderSettings"/>
+        /// </summary>
+        /// <param name="settings"><see cref="Sql.SqlBuilderSettings"/> of the current <see cref="Sql.SqlBuilder"/></param>
+        public SqlBuilder(SqlBuilderSettings settings)
+        {
+            BuilderSettings = settings;
+        }
+
+        /// <summary>
+        /// Setup <see cref="Sql.SqlBuilder"/>
         /// </summary>
         /// <param name="tableName">Table name (like creature_template, creature etc.)</param>
-        /// <param name="keyName">Key name (like entry, id, guid etc.)</param>
-        public SqlBuilder(string tableName, string keyName)
+        /// <param name="key">Key name from table</param>
+        /// <param name="hasPreparedQueries">Value indicating whether to create a query storage/param>
+        /// <param name="fields">Fields name</param>
+        public void Setup(string tableName, string key, bool hasPreparedQueries, params string[] fields)
         {
-            _tableName = tableName;
-            _keyName = keyName;
+            if (string.IsNullOrEmpty(tableName))
+                throw new ArgumentNullException("tableName");
 
-            WriteWithoutHeader = Settings.Default.WithoutHeader;
-            AppendDeleteQuery = Settings.Default.AppendDeleteQuery;
-            AllowNullValue = Settings.Default.AllowEmptyValues;
-            QueryType = Settings.Default.QueryType;
+            if (string.IsNullOrEmpty(key))
+                throw new ArgumentNullException("key");
+
+            if (fields == null)
+                throw new ArgumentNullException("fields");
+
+            Setup(tableName, key, hasPreparedQueries, fields, fields.Length);
         }
 
         /// <summary>
-        /// Initial Sql builder
+        /// Setup <see cref="Sql.SqlBuilder"/>
+        /// </summary>
         /// <param name="tableName">Table name (like creature_template, creature etc.)</param>
-        /// </summary>
-        public SqlBuilder(string tableName)
-                : this(tableName, "entry")
+        /// <param name="key">Key name from table</param>
+        /// <param name="hasPreparedQueries">Value indicating whether to create a query storage/param>
+        /// <param name="fields">Fields name</param>
+        public void Setup(string tableName, string key, bool hasPreparedQueries, IEnumerable<string> fields)
         {
+            if (string.IsNullOrEmpty(tableName))
+                throw new ArgumentNullException("tableName");
+
+            if (string.IsNullOrEmpty(key))
+                throw new ArgumentNullException("key");
+
+            if (fields == null)
+                throw new ArgumentNullException("fields");
+
+            Setup(tableName, key, hasPreparedQueries, fields, fields.Count());
         }
 
         /// <summary>
-        /// Append fields names
+        /// Setup <see cref="Sql.SqlBuilder"/>
         /// </summary>
-        /// <param name="args">fields name array</param>
-        public void SetFieldsNames(params string[] args)
-        {
-            if (args == null)
-                throw new ArgumentNullException();
-
-            _fields.AddRange(args);
-        }
-
-        /// <summary>
-        /// Append fields names
-        /// </summary>
-        /// <param name="args">Sequance</param>
+        /// <param name="tableName">Table name (like creature_template, creature etc.)</param>
+        /// <param name="key">Key name from table</param>
+        /// <param name="fields">Sequance</param>
+        /// <param name="hasPreparedQueries">Value indicating whether to create a query storage/param>
         /// <param name="count">A specified mumber of contiguous elements from the start of a sequance</param>
-        public void SetFieldsNames(IEnumerable<string> args, int count)
+        public void Setup(string tableName, string key, bool hasPreparedQueries, IEnumerable<string> fields, int count)
         {
-            if (args == null)
-                throw new ArgumentNullException();
+            if (string.IsNullOrEmpty(tableName))
+                throw new ArgumentNullException("tableName");
+
+            if (string.IsNullOrEmpty(key))
+                throw new ArgumentNullException("key");
+
+            if (fields == null)
+                throw new ArgumentNullException("fields");
 
             if (count == -1)
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException("count");
 
-            _fields.AddRange(args.Take(count));
+            _keyName = key;
+            _tableName = tableName;
+
+            _tableFields = fields.ToList();
+
+            _itemCount = count;
+            _sqlItem = new SqlItem(_itemCount);
+
+            if ((_hasPreparedQueries = hasPreparedQueries))
+                _querys = new Dictionary<object, List<string>>(1024);
         }
 
         /// <summary>
-        /// Append fields names
+        /// Set key
         /// </summary>
-        /// <param name="args">fields name array</param>
-        public void SetFieldsName(string format, params object[] args)
+        /// <param name="key">Key value</param>
+        public void SetKey(object key)
         {
-            if (args == null || string.IsNullOrEmpty(format))
-                throw new ArgumentNullException();
+            if (key == null)
+                throw new ArgumentNullException("key");
 
-            string field = string.Format(format, args);
-            _fields.Add(field);
-        }
+            if (!_items.ContainsKey(key))
+                _items.Add(key, new List<SqlItem>(32));
 
-        /// <summary>
-        /// Append key and fields value 
-        /// </summary>
-        /// <param name="key">key value</param>
-        /// <param name="args">string fields values array</param>
-        public void AppendFieldsValue(object key, params string[] args)
-        {
-            if (key == null || args == null)
-                throw new ArgumentNullException();
-
-            List<string> values = new List<string>(args);
-            _items.Add(new SqlItem(key, values));
-        }
-
-        /// <summary>
-        /// Append key and fields value 
-        /// </summary>
-        /// <param name="key">key value</param>
-        /// <param name="args">object fields values array</param>
-        public void AppendFieldsValue(object key, params object[] args)
-        {
-            if (key == null || args == null)
-                throw new ArgumentNullException();
-
-            List<string> values = new List<string>(args.Length);
-            for (int i = 0; i < args.Length; ++i)
+            if (_hasPreparedQueries)
             {
-                values.Add(args[i].ToString());
+                if (!_querys.ContainsKey(key))
+                    _querys.Add(key, new List<string>(2));
             }
 
-            _items.Add(new SqlItem(key, values));
+            _key = key;
         }
 
         /// <summary>
-        /// Append key and fields value 
+        /// Append value 
         /// </summary>
-        /// <param name="key">key value</param>
-        /// <param name="args">object fields values array</param>
-        /// <param name="count">A specified mumber of contiguous elements from the start of a sequance</param>
-        public void AppendFieldsValue(object key, IEnumerable<string> args, int count)
+        /// <param name="value">Value</param>
+        public void AppendValue(object value)
         {
-            if (key == null || args == null)
-                throw new ArgumentNullException();
+            if (value == null)
+                throw new ArgumentNullException("value");
+
+            _sqlItem.AddValue(value);
+        }
+
+        /// <summary>
+        /// Append values
+        /// </summary>
+        /// <param name="values">Values</param>
+        public void AppendValues(params object[] values)
+        {
+            if (values == null)
+                throw new ArgumentNullException("value");
+
+            _sqlItem.AddValues(values);
+        }
+
+        /// <summary>
+        /// Append values
+        /// </summary>
+        /// <param name="values">Values</param>
+        public void AppendValues(IEnumerable<object> values)
+        {
+            AppendValues(values, values.Count());
+        }
+
+        /// <summary>
+        /// Append values
+        /// </summary>
+        /// <param name="values">Values</param>
+        /// <param name="count">A specified mumber of contiguous elements from the start of a sequance</param>
+        public void AppendValues(IEnumerable<object> values, int count)
+        {
+            if (values == null)
+                throw new ArgumentNullException("value");
 
             if (count == -1)
-                throw new ArgumentOutOfRangeException();
+                throw new ArgumentOutOfRangeException("count");
 
-            List<string> values = new List<string>(args.Take(count));
-
-            _items.Add(new SqlItem(key, values));
+            AppendValues(values.Take(count));
         }
 
         /// <summary>
-        /// Append sql query
+        /// Append prepared sql query
         /// </summary>
         /// <param name="query"></param>
-        public void AppendSqlQuery(string query, params object[] args)
+        public void AppendSqlQuery(object key, string format, params object[] args)
         {
-            if (args == null || string.IsNullOrWhiteSpace(query))
-                throw new ArgumentNullException();
+            if (key == null)
+                throw new ArgumentNullException("key");
 
-            _content.AppendLine(string.Format(query, args));
+            if (string.IsNullOrEmpty(format))
+                throw new ArgumentNullException("query");
+
+            if (args == null)
+                throw new ArgumentNullException("args");
+
+            if (!_hasPreparedQueries)
+                throw new InvalidOperationException("_hasPreparedQueries");
+
+            string query = string.Format(format, args);
+            if (!_querys[key].Contains(query))
+                _querys[key].Add(query);
         }
 
-        public bool Empty
+        /// <summary>
+        /// Flush <see cref="Sql.SqlBuilder"/>
+        /// </summary>
+        public void Flush()
         {
-            get { return _items.Count <= 0; }
+            _items[_key].Add(_sqlItem);
+            _sqlItem = new SqlItem(_itemCount);
         }
+
+        /// <summary>
+        /// Gets the number of elements actually contained in the Dictionary
+        /// </summary>
+        public int Count { get { return _items.Count; } }
 
         /// <summary>
         /// Build sql query
         /// </summary>
         public override string ToString()
         {
-            if (Empty)
+            if (Count <= 0)
                 return string.Empty;
 
-            _content.Capacity = 2048 * _items.Count;
+            StringBuilder content = new StringBuilder(256 * _items.Count);
 
-            switch (QueryType)
+            switch (BuilderSettings.QueryType)
             {
                 case SqlQueryType.Update:
-                    return BuildUpdateQuery();
+                    BuildUpdateQuery(content);
+                    break;
                 case SqlQueryType.Replace:
                 case SqlQueryType.Insert:
                 case SqlQueryType.InsertIgnore:
-                    return BuildReplaceInsertQuery();
-                default:
-                    return string.Empty;
+                    BuildReplaceInsertQuery(content);
+                    break;
             }
+
+            return content.ToString();
         }
 
-        private string BuildUpdateQuery()
+        private void BuildUpdateQuery(StringBuilder content)
         {
-            for (int i = 0; i < _items.Count; ++i)
+            foreach (KeyValuePair<object, List<SqlItem>> kvp in _items)
             {
-                bool notEmpty = false;
+                object key = kvp.Key;
+                List<SqlItem> items = kvp.Value;
 
-                SqlItem item = _items[i];
-
-                StringBuilder contentInternal = new StringBuilder(1024);
+                AppendQuery(key, content);
+                foreach(SqlItem item in items)
                 {
-                    contentInternal.AppendFormat("UPDATE `{0}` SET ", _tableName);
-                    for (int j = 0; j < item.Count; ++j)
+                    bool isEmpty = true;
+
+                    StringBuilder contentInternal = new StringBuilder(1024);
                     {
-                        if (!AllowNullValue && string.IsNullOrWhiteSpace(item[j]))
-                            continue;
+                        contentInternal.AppendFormat("UPDATE `{0}` SET ", _tableName);
+                        for (int j = 0; j < _itemCount; ++j)
+                        {
+                            if (!BuilderSettings.AllowNullValue && string.IsNullOrWhiteSpace(item[j]))
+                                continue;
 
-                        contentInternal.AppendFormat(NumberFormatInfo.InvariantInfo, "`{0}` = '{1}', ", _fields[j], item[j]);
-                        notEmpty = true;
+                            contentInternal.AppendFormat(NumberFormatInfo.InvariantInfo, "`{0}` = {2}{1}{2}, ", _tableFields[j], item[j], item.PutIntoQuote(j) ? @"'" : string.Empty);
+                            isEmpty = false;
+                        }
+                        contentInternal.Remove(contentInternal.Length - 2, 2);
+                        contentInternal.AppendFormat(" WHERE `{0}` = {1};", _keyName, key).AppendLine();
+
+                        if (!isEmpty)
+                            content.Append(contentInternal.ToString());
                     }
-                    contentInternal.Remove(contentInternal.Length - 2, 2);
-                    contentInternal.AppendFormat(" WHERE `{0}` = {1};", _keyName, item.Key).AppendLine();
-
-                    if (notEmpty)
-                        _content.Append(contentInternal.ToString());
                 }
+                content.AppendLine();
             }
-
-            return _content.ToString();
         }
 
-        private string BuildReplaceInsertQuery()
+        private void BuildReplaceInsertQuery(StringBuilder content)
         {
-            if (AppendDeleteQuery)
-                _content.AppendFormat("DELETE FROM `{0}` WHERE `{1}` = '{2}';", _tableName, _keyName, _items[0].Key).AppendLine();
-
-            switch (QueryType)
+            foreach (KeyValuePair<object, List<SqlItem>> kvp in _items)
             {
-                case SqlQueryType.Insert:
-                    _content.AppendFormat("INSERT INTO `{0}`", _tableName);
-                    break;
-                case SqlQueryType.InsertIgnore:
-                    _content.AppendFormat("INSERT IGNORE INTO `{0}`", _tableName);
-                    break;
-                case SqlQueryType.Replace:
-                    _content.AppendFormat("REPLACE INTO `{0}`", _tableName);
-                    break;
-            }
+                object key = kvp.Key;
+                List<SqlItem> items = kvp.Value;
 
-            if (!WriteWithoutHeader)
-            {
-                _content.AppendFormat(" (`{0}`, ", _keyName);
+                AppendQuery(key, content);
+                if (BuilderSettings.AppendDeleteQuery)
+                    content.AppendFormat("DELETE FROM `{0}` WHERE `{1}` = {2};", _tableName, _keyName, key).AppendLine();
 
-                for (int i = 0; i < _fields.Count; ++i)
-                    _content.AppendFormat("`{0}`, ", _fields[i]);
-
-                _content.Remove(_content.Length - 2, 2);
-                _content.Append(")");
-            }
-            _content.AppendLine(" VALUES");
-
-            for (int i = 0; i < _items.Count; ++i)
-            {
-                SqlItem item = _items[i];
-
-                _content.AppendFormat("('{0}', ", item.Key);
-                for (int j = 0; j < item.Count; ++j)
+                switch (BuilderSettings.QueryType)
                 {
-                    _content.AppendFormat(NumberFormatInfo.InvariantInfo, "'{0}', ", item[j]);
+                    case SqlQueryType.Insert:
+                        content.AppendFormat("INSERT INTO `{0}`", _tableName);
+                        break;
+                    case SqlQueryType.InsertIgnore:
+                        content.AppendFormat("INSERT IGNORE INTO `{0}`", _tableName);
+                        break;
+                    case SqlQueryType.Replace:
+                        content.AppendFormat("REPLACE INTO `{0}`", _tableName);
+                        break;
                 }
-                _content.Remove(_content.Length - 2, 2);
-                _content.AppendFormat("){0}", i < _items.Count - 1 ? "," : ";").AppendLine();
-            }
 
-            return _content + Environment.NewLine;
+                if (!BuilderSettings.WriteWithoutHeader)
+                {
+                    content.AppendFormat(" (`{0}`, ", _keyName);
+
+                    for (int i = 0; i < _tableFields.Count; ++i)
+                        content.AppendFormat("`{0}`{1}", _tableFields[i], (i < _tableFields.Count - 1) ? ", " : ")");
+                }
+                content.AppendLine(" VALUES");
+
+                for (int i = 0; i < items.Count; ++i)
+                {
+                    SqlItem item = items[i];
+
+                    content.AppendFormat("({0}, ", key);
+                    for (int j = 0; j < _itemCount; ++j)
+                    {
+                        content.AppendFormat(NumberFormatInfo.InvariantInfo, "{2}{0}{2}{1}", item[j], (j < _itemCount - 1) ? ", " : string.Empty, item.PutIntoQuote(j) ? @"'" : string.Empty);
+                    }
+
+                    content.AppendFormat("){0}", i < items.Count - 1 ? "," : ";").AppendLine();
+                }
+                content.AppendLine();
+            }
+        }
+
+        private void AppendQuery(object key, StringBuilder content)
+        {
+            if (!_hasPreparedQueries)
+                return;
+
+            if (!_querys.ContainsKey(key))
+                return;
+
+            foreach (string query in _querys[key])
+            {
+                if (!string.IsNullOrEmpty(query))
+                    content.AppendLine(query);
+            }
         }
     }
 }

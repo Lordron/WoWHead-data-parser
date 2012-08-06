@@ -25,6 +25,8 @@ namespace WoWHeadParser
 
         private const int SemaphoreCount = 100;
 
+        private object _locker = new object();
+
         #region Locales
 
         private Dictionary<Locale, string> _locales = new Dictionary<Locale, string>
@@ -182,11 +184,13 @@ namespace WoWHeadParser
 
             string page;
             bool endGetResponse = request.EndGetResponse(iar, out page);
-            if (endGetResponse)
-                _parser.TryParse(page, request.Id);
-            else
-                _badIds.Enqueue(request.Id);
-
+            lock (_locker)
+            {
+                if (endGetResponse)
+                    _parser.TryParse(page, request.Id);
+                else
+                    _badIds.Enqueue(request.Id);
+            }
             request.Dispose();
             _semaphore.Release();
 
@@ -202,8 +206,8 @@ namespace WoWHeadParser
 
         public void Reset()
         {
+            _parser = null;
             _isWorking = false;
-            _parser.Items.Clear();
             _service.ConnectionLeaseTimeout = 0;
 
             GC.Collect();
@@ -211,16 +215,18 @@ namespace WoWHeadParser
 
         public void Dispose()
         {
+            _parser = null;
             _semaphore.Dispose();
             _service.ConnectionLeaseTimeout = 0;
         }
 
         public override string ToString()
         {
-            StringBuilder content = new StringBuilder(_parser.Items.Count * 1024);
+            StringBuilder content = new StringBuilder(_parser.Builder.Count * 256);
 
-            content.AppendFormat(@"-- Dump of {0} ({1}), Total object count: {2}", _timeEnd, _timeEnd - _timeStart, _parser.Items.Count).AppendLine();
-            content.Append(_parser);
+            content.AppendFormat(@"-- Dump of {0} ({1}), Total object count: {2}", _timeEnd, _timeEnd - _timeStart, _parser.Builder.Count).AppendLine();
+            content.AppendLine();
+            content.AppendLine(_parser.ToString());
 
             return content.ToString();
         }

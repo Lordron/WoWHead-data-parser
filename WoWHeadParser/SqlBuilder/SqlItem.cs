@@ -1,33 +1,52 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Sql
 {
-    public class SqlItem
+    public struct SqlItem
     {
-        private List<string> _values = new List<string>(64);
+        private int _pos;
+        private object[] _values;
 
-        public object Key { get; private set; }
-
-        /// <summary>
-        /// Gets the number of elements actually contained in the list
-        /// </summary>
-        public int Count { get { return _values.Count; } }
-
-        public SqlItem(object key, List<string> values)
+        public SqlItem(int count)
         {
-            Key = key;
-            _values = values;
+            if (count == -1)
+                throw new ArgumentOutOfRangeException("count");
+
+            _pos = 0;
+            _values = new object[count];
+        }
+
+        public void AddValue(object value)
+        {
+            _values[_pos++] = value;
+        }
+
+        public void AddValues(params object[] values)
+        {
+            for (int i = 0; i < values.Length; ++i)
+            {
+                _values[_pos++] = values[i];
+            }
+        }
+
+        public bool PutIntoQuote(int x)
+        {
+            object obj = _values[x];
+            return (obj is char) || (obj is string) || (obj is float) || (obj is double);
         }
 
         public string this[int x]
         {
             get
             {
-                if (x >= Count)
-                    throw new IndexOutOfRangeException();
+                if (x < 0 || x >= _pos)
+                    throw new IndexOutOfRangeException("x");
 
-                return _values[x];
+                object obj = _values[x];
+                if (obj == null)
+                    throw new ArgumentNullException("obj");
+
+                return obj.ToString();
             }
         }
     }

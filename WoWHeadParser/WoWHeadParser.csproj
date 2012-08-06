@@ -101,8 +101,6 @@
     <Compile Include="DBFileStorage\DBFileLoader.cs" />
     <Compile Include="DBFileStorage\IDBFileLoader.cs" />
     <Compile Include="Messages\MessageManager.cs" />
-    <Compile Include="Page\PageItem.cs" />
-    <Compile Include="Page\PageItemComparer.cs" />
     <Compile Include="DBFileStorage\ItemExtendedCost.cs" />
     <Compile Include="Locale.cs" />
     <Compile Include="Messages\Message.cs" />
@@ -111,6 +109,7 @@
     <Compile Include="Parser\Parsers\NpcDataParser.cs" />
     <Compile Include="Parser\Parsers\NpcLocaleParser.cs" />
     <Compile Include="Parser\Parsers\QuestDataParser.cs" />
+    <Compile Include="Parser\Parsers\QuestLocaleParser.cs" />
     <Compile Include="Parser\Parsers\TrainerParser.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Parser\Parsers\BookPageParser.cs" />
@@ -125,9 +124,11 @@
     <Compile Include="SettingsForm.Designer.cs">
       <DependentUpon>SettingsForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="SqlBuilder\SqlBuilderException.cs" />
-    <Compile Include="SqlBuilder\SqlItem.cs" />
     <Compile Include="SqlBuilder\SqlBuilder.cs" />
+    <Compile Include="SqlBuilder\SqlBuilderSettings.cs" />
+    <Compile Include="SqlBuilder\SqlItem.cs" />
+    <Compile Include="SqlBuilder\SqlItemComparer.cs" />
+    <Compile Include="SqlBuilder\SqlQueryType.cs" />
     <Compile Include="WebRequest.cs" />
     <Compile Include="WelfCreator.cs">
       <SubType>Form</SubType>
