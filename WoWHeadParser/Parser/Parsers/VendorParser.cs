@@ -21,74 +21,53 @@ namespace WoWHeadParser.Parser.Parsers
             Builder.Setup("npc_vendor", "entry", false, "item", "maxcount", "incrtime", "ExtendedCost");
         }
 
-        private const string pattern = @"data: \[.*;";
-        private const string costPattern = @"\[(\d+),(\d+)\]";
-        private Regex costRegex = new Regex(costPattern);
+        private const string pattern = @"new Listview\({template: 'item', id: 'sells', name: .+, data: (?<vendor>.+)}\)";
+        private Regex templateRegex = new Regex(pattern);
 
         private ItemExtendedCost _itemExtendedCost = null;
 
-        private char[] _anyOf = new[] { '[', ']', '{', '}' };
-
         public override void Parse(string page, uint id)
         {
-            MatchCollection find = Regex.Matches(page, pattern);
-            for (int i = 0; i < find.Count; ++i)
+            Match item = templateRegex.Match(page);
+            if (!item.Success)
+                return;
+
+            string text = item.Groups["vendor"].Value;
+            VendorItem[] vendorItems = JsonConvert.DeserializeObject<VendorItem[]>(text);
+            foreach (VendorItem vendorItem in vendorItems)
             {
-                Match item = find[i];
-                string text = item.Value.Replace("data: ", "").Replace("});", "");
-                JArray serialization = JsonConvert.DeserializeObject<JArray>(text);
+                int maxCount = vendorItem.Avail == -1 ? 0 : vendorItem.Avail;
+                int incrTime = maxCount == 0 ? 0 : 3600;
 
-                for (int j = 0; j < serialization.Count; ++j)
+                uint price = 0, count = 0;
+
+                dynamic[] costArray = vendorItem.Cost;
+                foreach (dynamic cost in costArray)
                 {
-                    JObject jobj = (JObject)serialization[j];
-                    JToken maxcountToken = jobj["avail"];
-
-                    string entry = jobj["id"].ToString();
-                    string maxcount = maxcountToken == null ? string.Empty : maxcountToken.ToString();
-
-                    object obj = jobj["cost"];
-                    if (!(obj is JArray))
-                        continue;
-
-                    uint cost = 0;
-                    uint count = 0;
-                    bool hasExtendedCost = false;
-
-                    JArray array = obj as JArray;
-                    foreach (JToken token in array)
+                    if (cost is JArray)
                     {
-                        string costBlock = token.ToString().Replace("\r\n", "").Replace(" ", "");
-
-                        if (costBlock.Equals("0"))
-                            continue;
-
-                        if (costBlock.IndexOfAny(_anyOf) != -1)
+                        foreach (dynamic token in cost)
                         {
-                            MatchCollection matches = costRegex.Matches(costBlock);
-                            foreach (Match match in matches)
+                            JArray extendedCosts = token as JArray;
                             {
-                                cost = uint.Parse(match.Groups[1].Value);
-                                count = uint.Parse(match.Groups[2].Value);
-                                hasExtendedCost = true;
+                                price = uint.Parse(extendedCosts[0].ToString());
+                                count = uint.Parse(extendedCosts[1].ToString());
                             }
                         }
-                        else
-                            hasExtendedCost = true;
                     }
-
-                    maxcount = maxcount.Equals("-1") ? "0" : maxcount;
-                    int incrTime = maxcount.Equals("0") ? 0 : 3600;
-
-                    uint extendedCost = 0;
-                    if (hasExtendedCost && cost > 0 && count > 0)
-                        extendedCost = _itemExtendedCost.GetExtendedCost(cost, count);
-                    else if (!hasExtendedCost)
-                        extendedCost = 9999999;
-
-                    Builder.SetKey(id);
-                    Builder.AppendValues(entry, maxcount, incrTime, extendedCost);
-                    Builder.Flush();
+                    else
+                        price = (uint)cost;
                 }
+
+                uint extendedCost = 0;
+                if (price > 0 && count > 0)
+                    extendedCost = _itemExtendedCost.GetExtendedCost(price, count);
+                else if (price == 0)
+                    extendedCost = 9999999;
+
+                Builder.SetKey(id);
+                Builder.AppendValues(vendorItem.Id, maxCount, incrTime, extendedCost);
+                Builder.Flush();
             }
         }
     }
