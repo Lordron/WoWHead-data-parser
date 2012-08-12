@@ -109,6 +109,7 @@
     <Compile Include="Parser\Parsers\NpcDataParser.cs" />
     <Compile Include="Parser\Parsers\NpcLocaleParser.cs" />
     <Compile Include="Parser\Parsers\QuestDataParser.cs" />
+    <Compile Include="Parser\Parsers\QuestLocaleItem.cs" />
     <Compile Include="Parser\Parsers\QuestLocaleParser.cs" />
     <Compile Include="Parser\Parsers\TrainerParser.cs" />
     <Compile Include="Extensions.cs" />

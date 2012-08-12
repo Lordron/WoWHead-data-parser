@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace WoWHeadParser.Parser.Parsers
 {
@@ -19,32 +18,23 @@ namespace WoWHeadParser.Parser.Parsers
                 Builder.Setup("quest_template", "id", false, "title");
         }
 
-        private const string pattern = @"data: \[.*;";
+        private const string pattern = @"new Listview\({template: 'quest', id: 'quests', data: (?<quest>.+)}\)";
         private Regex localeRegex = new Regex(pattern);
 
         public override void Parse(string page, uint id)
         {
-            page = page.Substring("\'quests\'");
+            Match item = localeRegex.Match(page);
+            if (!item.Success)
+                return;
 
-            MatchCollection find = localeRegex.Matches(page);
-            for (int i = 0; i < find.Count; ++i)
+            string text = item.Groups["quest"].Value;
+            QuestLocaleItem[] questLocaleItems = JsonConvert.DeserializeObject<QuestLocaleItem[]>(text);
+
+            foreach (QuestLocaleItem localeItem in questLocaleItems)
             {
-                Match item = find[i];
-                string text = item.Value.Replace("data: ", "").Replace("});", "");
-                JArray serialiation = (JArray)JsonConvert.DeserializeObject(text);
-
-                for (int j = 0; j < serialiation.Count; ++j)
-                {
-                    JObject jobj = (JObject)serialiation[j];
-                    JToken nameToken = jobj["name"];
-
-                    string entry = jobj["id"].ToString();
-                    string name = nameToken == null ? string.Empty : nameToken.ToString().HTMLEscapeSumbols();
-
-                    Builder.SetKey(entry);
-                    Builder.AppendValue(name);
-                    Builder.Flush();
-                }
+                Builder.SetKey(localeItem.Id);
+                Builder.AppendValue(localeItem.Name);
+                Builder.Flush();
             }
         }
     }
