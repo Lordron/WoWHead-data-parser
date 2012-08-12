@@ -1,14 +1,15 @@
 ﻿
 namespace WoWHeadParser.Parser.Parsers
 {
-    public class QuestLocaleItem
+    public class NpcLocaleItem
     {
         public uint Id;
         public string Name;
+        public string Tag;
 
         public override bool Equals(object obj)
         {
-            if (!(obj is QuestLocaleItem))
+            if (!(obj is NpcLocaleItem))
                 return false;
 
             QuestLocaleItem item = (QuestLocaleItem)obj;

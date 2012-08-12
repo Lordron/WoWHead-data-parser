@@ -30,26 +30,6 @@ namespace WoWHeadParser
                     .Replace(@"<br />", @"$B");
         }
 
-        public static string Substring(this string input, string check)
-        {
-            const string pattern = "template: '.+', id: ('[a-z\\-]+'), data: ";
-            MatchCollection matches = Regex.Matches(input, pattern, RegexOptions.Multiline);
-            foreach (Match item in matches)
-            {
-                string type = item.Groups[1].Value;
-
-                if (!type.Equals(check))
-                    continue;
-
-                int start = item.Index;
-                int end = input.FastIndexOf("});", start);
-
-                input = input.Substring(start, end - start + 3);
-            }
-
-            return input;
-        }
-
         public static int FastIndexOf(this string source, string pattern, int startIndex = 0)
         {
             if (pattern == null)

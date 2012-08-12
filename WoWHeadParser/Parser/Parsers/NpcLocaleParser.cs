@@ -1,6 +1,5 @@
 ﻿using System.Text.RegularExpressions;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace WoWHeadParser.Parser.Parsers
 {
@@ -19,34 +18,22 @@ namespace WoWHeadParser.Parser.Parsers
                 Builder.Setup("creature_template", "entry", false, "name", "subname");
         }
 
-        private const string pattern = @"data: \[.*;";
+        private const string pattern = @"new Listview\({template: 'npc', id: 'npcs', data: (?<npc>.+)}\)";
         private Regex localeRegex = new Regex(pattern);
 
         public override void Parse(string page, uint id)
         {
-            MatchCollection find = localeRegex.Matches(page);
-            for (int i = 0; i < find.Count; ++i)
+            Match item = localeRegex.Match(page);
+            if (!item.Success)
+                return;
+
+            string text = item.Groups["npc"].Value;
+            NpcLocaleItem[] localeItems = JsonConvert.DeserializeObject<NpcLocaleItem[]>(text);
+            foreach (NpcLocaleItem localeItem in localeItems)
             {
-                Match item = find[i];
-
-                string text = item.Value.Replace("data: ", string.Empty).Replace("});", string.Empty);
-                JArray serialization = (JArray)JsonConvert.DeserializeObject(text);
-
-                for (int j = 0; j < serialization.Count; ++j)
-                {
-                    JObject jobj = (JObject)serialization[j];
-
-                    JToken nameToken = jobj["name"];
-                    JToken subNameToken = jobj["tag"];
-
-                    string entry = jobj["id"].ToString();
-                    string name = nameToken == null ? string.Empty : nameToken.ToString().HTMLEscapeSumbols();
-                    string subName = subNameToken == null ? string.Empty : subNameToken.ToString().HTMLEscapeSumbols();
-
-                    Builder.SetKey(entry);
-                    Builder.AppendValues(name, subName);
-                    Builder.Flush();
-                }
+                Builder.SetKey(localeItem.Id);
+                Builder.AppendValues(localeItem.Name.HTMLEscapeSumbols(), string.IsNullOrEmpty(localeItem.Tag) ? string.Empty : localeItem.Tag.HTMLEscapeSumbols());
+                Builder.Flush();
             }
         }
     }

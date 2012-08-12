@@ -33,7 +33,7 @@ namespace WoWHeadParser.Parser.Parsers
             foreach (QuestLocaleItem localeItem in questLocaleItems)
             {
                 Builder.SetKey(localeItem.Id);
-                Builder.AppendValue(localeItem.Name);
+                Builder.AppendValue(localeItem.Name.HTMLEscapeSumbols());
                 Builder.Flush();
             }
         }
