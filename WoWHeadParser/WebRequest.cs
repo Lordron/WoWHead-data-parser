@@ -9,10 +9,13 @@ namespace WoWHeadParser
 {
     public class Requests : IDisposable
     {
+        public static bool Compress { get; set; }
+
         public uint Id { get; private set; }
-        public Uri Uri { get; private set; }
         public HttpWebRequest Request { get; private set; }
-        public HttpWebResponse Response { get; private set; }
+
+        private Uri _uri;
+        private HttpWebResponse _response;
 
         #region User Agents
 
@@ -46,27 +49,27 @@ namespace WoWHeadParser
 
         #endregion
 
-        public Requests(Uri address, uint id, bool compress)
+        public Requests(Uri address, uint id)
         {
             Id = id;
-            Uri = new Uri(string.Format(address.OriginalString, id));
+            _uri = new Uri(string.Format(address.OriginalString, id));
 
-            Request = (HttpWebRequest)WebRequest.Create(Uri);
+            Request = (HttpWebRequest)WebRequest.Create(_uri);
             Request.UserAgent = GetRandomUserAgent();
             Request.KeepAlive = true;
-            if (compress)
+            if (Compress)
                 Request.Headers.Add("Accept-Encoding", "gzip,deflate");
         }
 
-        public Requests(Uri address, uint ids, uint ide, bool compress)
+        public Requests(Uri address, uint ids, uint ide)
         {
             Id = ids;
-            Uri = new Uri(string.Format(address.OriginalString, ids, ide));
+            _uri = new Uri(string.Format(address.OriginalString, ids, ide));
 
-            Request = (HttpWebRequest)WebRequest.Create(Uri);
+            Request = (HttpWebRequest)WebRequest.Create(_uri);
             Request.UserAgent = GetRandomUserAgent();
             Request.KeepAlive = true;
-            if (compress)
+            if (Compress)
                 Request.Headers.Add("Accept-Encoding", "gzip,deflate");
         }
 
@@ -74,13 +77,13 @@ namespace WoWHeadParser
         {
             try
             {
-                Response = (HttpWebResponse)Request.EndGetResponse(asyncResult);
+                _response = (HttpWebResponse)Request.EndGetResponse(asyncResult);
                 page = ToString();
                 return true;
             }
             catch
             {
-                Console.WriteLine(Resources.Error_Cannot_get_response, Uri);
+                Console.WriteLine(Resources.Error_Cannot_get_response, _uri);
                 page = string.Empty;
                 return false;
             }
@@ -97,17 +100,17 @@ namespace WoWHeadParser
 
             if (Request != null)
                 Request.Abort();
-            if (Response != null)
-                Response.Close();
+            if (_response != null)
+                _response.Close();
         }
 
         public override string ToString()
         {
-            if (Response == null)
+            if (_response == null)
                 return string.Empty;
 
-            Stream stream = Response.GetResponseStream();
-            switch (Response.ContentEncoding)
+            Stream stream = _response.GetResponseStream();
+            switch (_response.ContentEncoding)
             {
                 case "gzip":
                     stream = new GZipStream(stream, CompressionMode.Decompress);

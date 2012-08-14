@@ -196,8 +196,10 @@ namespace WoWHeadParser
 
         private void BackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
         {
+            Requests.Compress = Settings.Default.DataCompression;
+
             ParsingType type = (ParsingType)e.Argument;
-            _worker.Start(type, Settings.Default.DataCompression);
+            _worker.Start(type);
         }
 
         private void WorkerPageDownloaded(object sender, EventArgs e)

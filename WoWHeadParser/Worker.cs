@@ -85,7 +85,7 @@ namespace WoWHeadParser
             _entries = entries;
         }
 
-        public void Start(ParsingType type, bool compress)
+        public void Start(ParsingType type)
         {
             if (_isWorking)
                 throw new InvalidOperationException("_isWorking");
@@ -99,7 +99,7 @@ namespace WoWHeadParser
                     {
                         _semaphore.Wait();
 
-                        Requests request = new Requests(_address, _start, compress);
+                        Requests request = new Requests(_address, _start);
                         request.Request.BeginGetResponse(RespCallback, request);
                         break;
                     }
@@ -112,7 +112,7 @@ namespace WoWHeadParser
 
                             _semaphore.Wait();
 
-                            Requests request = new Requests(_address, entry, compress);
+                            Requests request = new Requests(_address, entry);
                             request.Request.BeginGetResponse(RespCallback, request);
                         }
                         break;
@@ -126,7 +126,7 @@ namespace WoWHeadParser
 
                             _semaphore.Wait();
 
-                            Requests request = new Requests(_address, _entries[i], compress);
+                            Requests request = new Requests(_address, _entries[i]);
                             request.Request.BeginGetResponse(RespCallback, request);
                         }
                         break;
@@ -140,7 +140,7 @@ namespace WoWHeadParser
 
                             _semaphore.Wait();
 
-                            Requests request = new Requests(_address, (entry * 200), ((entry + 1) * 200), compress);
+                            Requests request = new Requests(_address, (entry * 200), ((entry + 1) * 200));
                             request.Request.BeginGetResponse(RespCallback, request);
                         }
                         break;
@@ -165,7 +165,7 @@ namespace WoWHeadParser
 
                     _semaphore.Wait();
 
-                    Requests request = new Requests(_address, id, compress);
+                    Requests request = new Requests(_address, id);
                     request.Request.BeginGetResponse(RespCallback, request);
                 }
             }
