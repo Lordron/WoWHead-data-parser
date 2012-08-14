@@ -3,7 +3,7 @@ using System.Windows.Forms;
 
 namespace Sql
 {
-    public struct SqlItemComparer : IComparer<object>
+    public struct SqlItemComparer : IEqualityComparer<object>
     {
         private SortOrder _order;
 
@@ -12,17 +12,21 @@ namespace Sql
             _order = order;
         }
 
-        public int Compare(object x, object y)
+        public bool Equals(object x, object y)
         {
             switch (_order)
             {
                 case SortOrder.Ascending:
-                    return x.ToString().CompareTo(y);
+                    return x.Equals(y);
                 case SortOrder.Descending:
-                    return y.ToString().CompareTo(x);
+                    return y.Equals(x);
             }
+            return false;
+        }
 
-            return 0;
+        public int GetHashCode(object obj)
+        {
+            return obj.GetHashCode();
         }
     }
 }

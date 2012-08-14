@@ -35,7 +35,7 @@ namespace Sql
 
         private Dictionary<object, List<SqlItem>> _items = new Dictionary<object, List<SqlItem>>();
 
-        //private SortedDictionary<object, List<SqlItem>> _items = new SortedDictionary<object, List<SqlItem>>(new SqlItemComparer(Settings.Default.SortOrder));
+        private Dictionary<object, List<SqlItem>> _sortedDictionary;
 
         /// <summary>
         /// Initialize <see cref="Sql.SqlBuilder"/> with specific <see cref="Sql.SqlBuilderSettings"/>
@@ -237,6 +237,8 @@ namespace Sql
             if (Count <= 0)
                 return string.Empty;
 
+            _sortedDictionary = new Dictionary<object, List<SqlItem>>(_items, new SqlItemComparer(Settings.Default.SortOrder));
+
             StringBuilder content = new StringBuilder(256 * _items.Count);
 
             switch (BuilderSettings.QueryType)
@@ -256,7 +258,7 @@ namespace Sql
 
         private void BuildUpdateQuery(StringBuilder content)
         {
-            foreach (KeyValuePair<object, List<SqlItem>> kvp in _items)
+            foreach (KeyValuePair<object, List<SqlItem>> kvp in _sortedDictionary)
             {
                 object key = kvp.Key;
                 List<SqlItem> items = kvp.Value;
@@ -290,7 +292,7 @@ namespace Sql
 
         private void BuildReplaceInsertQuery(StringBuilder content)
         {
-            foreach (KeyValuePair<object, List<SqlItem>> kvp in _items)
+            foreach (KeyValuePair<object, List<SqlItem>> kvp in _sortedDictionary)
             {
                 object key = kvp.Key;
                 List<SqlItem> items = kvp.Value;
