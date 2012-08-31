@@ -33,13 +33,13 @@ namespace WoWHeadParser.Parser
 
         public void TryParse(string page, uint id)
         {
-            //try
+            try
             {
                 Parse(page, id);
             }
-            //catch (Exception e)
+            catch (Exception e)
             {
-                //Console.WriteLine("Error while parsing: Parser: {0}, Item Id: {1} - {2}", GetType().Name, id, e);
+                Console.WriteLine("Error while parsing: Parser: {0}, Item Id: {1} - {2}", GetType().Name, id, e);
             }
         }
 

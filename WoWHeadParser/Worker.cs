@@ -14,11 +14,12 @@ namespace WoWHeadParser
         private uint _start;
         private uint _end;
         private bool _isWorking;
+        private uint[] _entries;
         private Uri _address;
+        private ParsingType _type;
         private PageParser _parser;
         private DateTime _timeStart;
         private DateTime _timeEnd;
-        private List<uint> _entries;
         private ServicePoint _service;
         private SemaphoreSlim _semaphore;
         private ConcurrentQueue<uint> _badIds;
@@ -47,26 +48,21 @@ namespace WoWHeadParser
             _badIds = new ConcurrentQueue<uint>();
         }
 
-        public Worker(EventHandler OnPageDownloadingComplete)
+        public Worker(ParsingType type, PageParser parser, EventHandler onPageDownloadingComplete)
             : this()
         {
-            PageDownloadingComplete += OnPageDownloadingComplete;
-        }
-
-        public void Parser(PageParser parser)
-        {
-            if (parser == null)
-                throw new ArgumentNullException("parser");
-
+            _type = type;
             _parser = parser;
 
             _address = new Uri(string.Format("http://{0}wowhead.com/", _locales[parser.Locale]));
             ServicePointManager.DefaultConnectionLimit = SemaphoreCount * 10;
-            _service = ServicePointManager.FindServicePoint(_address);
             {
+                _service = ServicePointManager.FindServicePoint(_address);
                 _service.SetTcpKeepAlive(true, 100000, 100000);
             }
             _address = new Uri(_address, parser.Address);
+
+            PageDownloadingComplete += onPageDownloadingComplete;
         }
 
         public void SetValue(uint value)
@@ -80,12 +76,12 @@ namespace WoWHeadParser
             _start = start;
         }
 
-        public void SetValue(List<uint> entries)
+        public void SetValue(uint[] entries)
         {
             _entries = entries;
         }
 
-        public void Start(ParsingType type)
+        public void Start()
         {
             if (_isWorking)
                 throw new InvalidOperationException("_isWorking");
@@ -93,14 +89,14 @@ namespace WoWHeadParser
             _isWorking = true;
             _timeStart = DateTime.Now;
 
-            switch (type)
+            switch (_type)
             {
                 case ParsingType.TypeBySingleValue:
                     {
                         _semaphore.Wait();
 
                         Requests request = new Requests(_address, _start);
-                        request.Request.BeginGetResponse(RespCallback, request);
+                        request.BeginGetResponse(RespCallback, request);
                         break;
                     }
                 case ParsingType.TypeByMultipleValue:
@@ -113,13 +109,13 @@ namespace WoWHeadParser
                             _semaphore.Wait();
 
                             Requests request = new Requests(_address, entry);
-                            request.Request.BeginGetResponse(RespCallback, request);
+                            request.BeginGetResponse(RespCallback, request);
                         }
                         break;
                     }
                 case ParsingType.TypeByList:
                     {
-                        for (int i = 0; i < _entries.Count; ++i)
+                        for (int i = 0; i < _entries.Length; ++i)
                         {
                             if (!_isWorking)
                                 break;
@@ -127,7 +123,7 @@ namespace WoWHeadParser
                             _semaphore.Wait();
 
                             Requests request = new Requests(_address, _entries[i]);
-                            request.Request.BeginGetResponse(RespCallback, request);
+                            request.BeginGetResponse(RespCallback, request);
                         }
                         break;
                     }
@@ -141,7 +137,7 @@ namespace WoWHeadParser
                             _semaphore.Wait();
 
                             Requests request = new Requests(_address, (entry * 200), ((entry + 1) * 200));
-                            request.Request.BeginGetResponse(RespCallback, request);
+                            request.BeginGetResponse(RespCallback, request);
                         }
                         break;
                     }
@@ -152,7 +148,7 @@ namespace WoWHeadParser
                 Application.DoEvents();
             }
 
-            if (type == ParsingType.TypeByList)
+            if (_type == ParsingType.TypeByList)
             {
                 while (!_badIds.IsEmpty)
                 {
@@ -166,7 +162,7 @@ namespace WoWHeadParser
                     _semaphore.Wait();
 
                     Requests request = new Requests(_address, id);
-                    request.Request.BeginGetResponse(RespCallback, request);
+                    request.BeginGetResponse(RespCallback, request);
                 }
             }
 
@@ -226,14 +222,11 @@ namespace WoWHeadParser
 
             content.AppendFormat(@"-- Dump of {0} ({1}), Total object count: {2}", _timeEnd, _timeEnd - _timeStart, _parser.Builder.Count).AppendLine();
             content.AppendLine();
-            content.AppendLine(_parser.ToString());
+            content.Append(_parser.ToString());
 
             return content.ToString();
         }
 
-        /// <summary>
-        /// Occurs when a page is downloaded.
-        /// </summary>
         public event EventHandler PageDownloadingComplete;
     }
 }

@@ -25,7 +25,7 @@ namespace WoWHeadParser
 
         #region Language
 
-        private List<string> _language = new List<string>
+        private string[] _language = new string[]
         {
             "en-US",
             "ru-RU",
@@ -41,7 +41,6 @@ namespace WoWHeadParser
 
             _parsers = new List<Type>((int)ParserType.Max);
             _parserTypes = new List<ParserType>((int)ParserType.Max);
-            _worker = new Worker(WorkerPageDownloaded);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -133,11 +132,11 @@ namespace WoWHeadParser
             int flags = GetSubparsers();
             PageParser parser = (PageParser)cInfo.Invoke(new [] { localeBox.SelectedItem, flags });
             if (parser == null)
-                return;
-
-            _worker.Parser(parser);
+                throw new InvalidOperationException("parser");
 
             ParsingType type = (ParsingType)parsingControl.SelectedIndex;
+
+            _worker = new Worker(type, parser, WorkerPageDownloaded);
 
             switch (type)
             {
@@ -149,8 +148,8 @@ namespace WoWHeadParser
                     }
                 case ParsingType.TypeByList:
                     {
-                        List<uint> entries = GetEntriesList();
-                        numericUpDown.Maximum = progressBar.Maximum = entries.Count;
+                        uint[] entries = GetEntriesList();
+                        numericUpDown.Maximum = progressBar.Maximum = entries.Length;
                         _worker.SetValue(entries);
                         break;
                     }
@@ -191,15 +190,14 @@ namespace WoWHeadParser
             numericUpDown.Value = progressBar.Value = 0;
             SetLabelText(Resources.Label_Working);
 
-            backgroundWorker.RunWorkerAsync(type);
+            Requests.Compress = Settings.Default.DataCompression;
+
+            backgroundWorker.RunWorkerAsync();
         }
 
         private void BackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
         {
-            Requests.Compress = Settings.Default.DataCompression;
-
-            ParsingType type = (ParsingType)e.Argument;
-            _worker.Start(type);
+            _worker.Start();
         }
 
         private void WorkerPageDownloaded(object sender, EventArgs e)
@@ -274,7 +272,7 @@ namespace WoWHeadParser
 
         private void ReloadWelfFilesButtonClick(object sender, EventArgs e)
         {
-            this.ThreadSafeBegin(x => LoadWelfFiles());
+            LoadWelfFiles();
         }
 
         private void LanguageMenuItemClick(object sender, EventArgs e)
@@ -286,7 +284,7 @@ namespace WoWHeadParser
             string selectedCulture = item.Text;
             if (_currentCulture.Equals(selectedCulture))
                 return;
-
+            
             foreach (MenuItem menu in languageMenuItem.MenuItems)
             {
                 menu.Checked = false;
@@ -405,7 +403,7 @@ namespace WoWHeadParser
             return mask;
         }
 
-        private List<uint> GetEntriesList()
+        private uint[] GetEntriesList()
         {
             string path = string.Format("{0}\\{1}.welf", WelfFolder, welfBox.SelectedItem);
             if (!File.Exists(path))
@@ -420,11 +418,12 @@ namespace WoWHeadParser
                 using (BinaryReader reader = new BinaryReader(stream))
                 {
                     int count = reader.ReadInt32();
-                    List<uint> entries = new List<uint>(count);
+                    uint[] entries = new uint[count];
+
                     for (int i = 0; i < count; ++i)
                     {
                         uint entry = reader.ReadUInt32();
-                        entries.Add(entry);
+                        entries[i] = entry;
                     }
 
                     return entries;

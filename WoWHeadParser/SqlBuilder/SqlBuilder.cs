@@ -29,7 +29,7 @@ namespace Sql
 
         private bool _hasPreparedQueries = false;
 
-        private List<string> _tableFields;
+        private string[] _tableFields;
 
         private Dictionary<object, List<string>> _querys;
 
@@ -72,31 +72,10 @@ namespace Sql
         /// </summary>
         /// <param name="tableName">Table name (like creature_template, creature etc.)</param>
         /// <param name="key">Key name from table</param>
-        /// <param name="hasPreparedQueries">Value indicating whether to create a query storage/param>
-        /// <param name="fields">Fields name</param>
-        public void Setup(string tableName, string key, bool hasPreparedQueries, IEnumerable<string> fields)
-        {
-            if (string.IsNullOrEmpty(tableName))
-                throw new ArgumentNullException("tableName");
-
-            if (string.IsNullOrEmpty(key))
-                throw new ArgumentNullException("key");
-
-            if (fields == null)
-                throw new ArgumentNullException("fields");
-
-            Setup(tableName, key, hasPreparedQueries, fields, fields.Count());
-        }
-
-        /// <summary>
-        /// Setup <see cref="Sql.SqlBuilder"/>
-        /// </summary>
-        /// <param name="tableName">Table name (like creature_template, creature etc.)</param>
-        /// <param name="key">Key name from table</param>
         /// <param name="fields">Sequance</param>
         /// <param name="hasPreparedQueries">Value indicating whether to create a query storage/param>
         /// <param name="count">A specified mumber of contiguous elements from the start of a sequance</param>
-        public void Setup(string tableName, string key, bool hasPreparedQueries, IEnumerable<string> fields, int count)
+        public void Setup(string tableName, string key, bool hasPreparedQueries, string[] fields, int count)
         {
             if (string.IsNullOrEmpty(tableName))
                 throw new ArgumentNullException("tableName");
@@ -113,7 +92,7 @@ namespace Sql
             _keyName = key;
             _tableName = tableName;
 
-            _tableFields = fields.ToList();
+            _tableFields = fields;
 
             _itemCount = count;
             _sqlItem = new SqlItem(_itemCount);
@@ -171,7 +150,7 @@ namespace Sql
         /// Append values
         /// </summary>
         /// <param name="values">Values</param>
-        public void AppendValues(IEnumerable<object> values)
+        public void AppendListValues(IEnumerable<object> values)
         {
             AppendValues(values, values.Count());
         }
@@ -318,8 +297,8 @@ namespace Sql
                 {
                     content.AppendFormat(" (`{0}`, ", _keyName);
 
-                    for (int i = 0; i < _tableFields.Count; ++i)
-                        content.AppendFormat("`{0}`{1}", _tableFields[i], (i < _tableFields.Count - 1) ? ", " : ")");
+                    for (int i = 0; i < _itemCount; ++i)
+                        content.AppendFormat("`{0}`{1}", _tableFields[i], (i < _itemCount - 1) ? ", " : ")");
                 }
                 content.AppendLine(" VALUES");
 

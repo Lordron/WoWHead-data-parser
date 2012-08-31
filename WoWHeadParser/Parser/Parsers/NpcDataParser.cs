@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Sql;
+using System.Linq;
 
 namespace WoWHeadParser.Parser.Parsers
 {
@@ -192,13 +193,13 @@ CREATE TABLE `creature_faction` (
             {Locale.Spain, new Regex("Salud(.*?): ([^<]+)</div></li>")},
         };
 
-        private Dictionary<Locale, List<string>> difficultiesLocale = new Dictionary<Locale, List<string>>
+        private Dictionary<Locale, string[]> difficultiesLocale = new Dictionary<Locale, string[]>
         {
-            {Locale.Russia, new List<string> { "Обычный", "Героический", "10 нормал.", "25 нормал.", "10 героич.", "25 героич.", "Поиск Рейда на 25 человек" }},
-            {Locale.English, new List<string> { "Normal", "Heroic", "10-player Normal", "25-player Normal", "10-player Heroic", "25-player Heroic", "25-player Raid Finder" }},
-            {Locale.France, new List<string> { "Standard", "Héroïque", "10-joueurs Normal", "25-joueurs Normal", "10-joueurs Héroïque", "25-joueurs Héroïque", "Recherche de Raid à 25 joueurs" }},
-            {Locale.Germany, new List<string> { "Normal", "Heroisch", "10-Spieler Normal", "25-Spieler Normal", "10-Spieler Heroisch", "25-Spieler Heroisch", "25-Spieler Schlachtzugsfinder" }},
-            {Locale.Spain, new List<string> { "Normal", "Heroico", "10 jugadores Normal", "25 jugadores Normal", "10 jugadores Heroico", "25 jugadores Heroico", "Buscador de bandas de 25 jugadores" }},
+            {Locale.Russia, new [] { "Обычный", "Героический", "10 нормал.", "25 нормал.", "10 героич.", "25 героич.", "Поиск Рейда на 25 человек" }},
+            {Locale.English, new [] { "Normal", "Heroic", "10-player Normal", "25-player Normal", "10-player Heroic", "25-player Heroic", "25-player Raid Finder" }},
+            {Locale.France, new [] { "Standard", "Héroïque", "10-joueurs Normal", "25-joueurs Normal", "10-joueurs Héroïque", "25-joueurs Héroïque", "Recherche de Raid à 25 joueurs" }},
+            {Locale.Germany, new [] { "Normal", "Heroisch", "10-Spieler Normal", "25-Spieler Normal", "10-Spieler Heroisch", "25-Spieler Heroisch", "25-Spieler Schlachtzugsfinder" }},
+            {Locale.Spain, new [] { "Normal", "Heroico", "10 jugadores Normal", "25 jugadores Normal", "10 jugadores Heroico", "25 jugadores Heroico", "Buscador de bandas de 25 jugadores" }},
         };
 
         #endregion
@@ -540,8 +541,8 @@ CREATE TABLE `creature_faction` (
             if (string.IsNullOrEmpty(stringDifficulty))
                 return Difficulty.Normal;
 
-            List<string> difficulty = difficultiesLocale[Locale];
-            int difficultyIndex = difficulty.IndexOf(stringDifficulty);
+            string[] difficulty = difficultiesLocale[Locale];
+            int difficultyIndex = difficulty.ToList().IndexOf(stringDifficulty);
             if (difficultyIndex == -1)
                 throw new ArgumentOutOfRangeException("difficultyIndex");
 

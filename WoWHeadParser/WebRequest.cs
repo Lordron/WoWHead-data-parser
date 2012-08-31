@@ -9,21 +9,18 @@ namespace WoWHeadParser
 {
     public class Requests : IDisposable
     {
+        public uint Id { get; private set; }
         public static bool Compress { get; set; }
 
-        public uint Id { get; private set; }
-        public HttpWebRequest Request { get; private set; }
-
         private Uri _uri;
+        private HttpWebRequest _request;
         private HttpWebResponse _response;
 
         #region User Agents
 
-        private const int MaxUserAgent = 20;
-
         private Random _random = new Random();
 
-        private List<string> _userAgents = new List<string>(MaxUserAgent)
+        private string[] _userAgents = new string[]
         {
             @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_6_8) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.45 Safari/535.19",
             @"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_3) AppleWebKit/535.20 (KHTML, like Gecko) Chrome/19.0.1036.7 Safari/535.20",
@@ -54,11 +51,11 @@ namespace WoWHeadParser
             Id = id;
             _uri = new Uri(string.Format(address.OriginalString, id));
 
-            Request = (HttpWebRequest)WebRequest.Create(_uri);
-            Request.UserAgent = GetRandomUserAgent();
-            Request.KeepAlive = true;
+            _request = (HttpWebRequest)WebRequest.Create(_uri);
+            _request.UserAgent = GetRandomUserAgent();
+            _request.KeepAlive = true;
             if (Compress)
-                Request.Headers.Add("Accept-Encoding", "gzip,deflate");
+                _request.Headers.Add("Accept-Encoding", "gzip,deflate");
         }
 
         public Requests(Uri address, uint ids, uint ide)
@@ -66,42 +63,47 @@ namespace WoWHeadParser
             Id = ids;
             _uri = new Uri(string.Format(address.OriginalString, ids, ide));
 
-            Request = (HttpWebRequest)WebRequest.Create(_uri);
-            Request.UserAgent = GetRandomUserAgent();
-            Request.KeepAlive = true;
+            _request = (HttpWebRequest)WebRequest.Create(_uri);
+            _request.UserAgent = GetRandomUserAgent();
+            _request.KeepAlive = true;
             if (Compress)
-                Request.Headers.Add("Accept-Encoding", "gzip,deflate");
+                _request.Headers.Add("Accept-Encoding", "gzip,deflate");
+        }
+
+        public IAsyncResult BeginGetResponse(AsyncCallback callback, object state)
+        {
+            return _request.BeginGetResponse(callback, state);
         }
 
         public bool EndGetResponse(IAsyncResult asyncResult, out string page)
         {
             try
             {
-                _response = (HttpWebResponse)Request.EndGetResponse(asyncResult);
+                _response = (HttpWebResponse)_request.EndGetResponse(asyncResult);
                 page = ToString();
                 return true;
             }
             catch
             {
-                Console.WriteLine(Resources.Error_Cannot_get_response, _uri);
                 page = string.Empty;
+                Console.WriteLine(Resources.Error_Cannot_get_response, _uri);
                 return false;
             }
         }
 
         private string GetRandomUserAgent()
         {
-            return _userAgents[_random.Next(0, MaxUserAgent - 1)];
+            return _userAgents[_random.Next(0, _userAgents.Length - 1)];
         }
 
         public void Dispose()
         {
-            _userAgents.Clear();
-
-            if (Request != null)
-                Request.Abort();
+            if (_request != null)
+                _request.Abort();
             if (_response != null)
                 _response.Close();
+
+            _userAgents = null;
         }
 
         public override string ToString()
