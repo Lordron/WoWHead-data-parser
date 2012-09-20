@@ -460,7 +460,7 @@ namespace WoWHeadParser
 
         #region Windows Form language reloading
 
-        private void Reload(CultureInfo cultureInfo)
+        private void ReloadUILanguage(CultureInfo cultureInfo)
         {
             Resources.Culture = cultureInfo;
             Thread.CurrentThread.CurrentCulture = cultureInfo;

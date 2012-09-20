@@ -255,7 +255,7 @@ namespace Sql
                             if (!BuilderSettings.AllowNullValue && string.IsNullOrWhiteSpace(item[j]))
                                 continue;
 
-                            contentInternal.AppendFormat(NumberFormatInfo.InvariantInfo, "`{0}` = {2}{1}{2}, ", _tableFields[j], item[j], item.PutIntoQuote(j) ? @"'" : string.Empty);
+                            contentInternal.AppendFormat(NumberFormatInfo.InvariantInfo, "`{0}` = {1}, ", _tableFields[j], item[j]);
                             isEmpty = false;
                         }
                         contentInternal.Remove(contentInternal.Length - 2, 2);
@@ -309,7 +309,7 @@ namespace Sql
                     content.AppendFormat("({0}, ", key);
                     for (int j = 0; j < _itemCount; ++j)
                     {
-                        content.AppendFormat(NumberFormatInfo.InvariantInfo, "{2}{0}{2}{1}", item[j], (j < _itemCount - 1) ? ", " : string.Empty, item.PutIntoQuote(j) ? @"'" : string.Empty);
+                        content.AppendFormat(NumberFormatInfo.InvariantInfo, "{0}{1}", item[j], (j < _itemCount - 1) ? ", " : string.Empty);
                     }
 
                     content.AppendFormat("){0}", i < items.Count - 1 ? "," : ";").AppendLine();

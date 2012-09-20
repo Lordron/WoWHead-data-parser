@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Sql;
+using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using Sql;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace WoWHeadParser.Parser.Parsers
 {
@@ -184,7 +184,7 @@ CREATE TABLE `creature_faction` (
             {Locale.Spain, new Regex("Maná: (.*?)\\[/li\\]")},
         };
 
-        private Dictionary<Locale, Regex> healthNormaLocales = new Dictionary<Locale, Regex>
+        private Dictionary<Locale, Regex> healthNormalLocales = new Dictionary<Locale, Regex>
         {
             {Locale.Russia, new Regex("Здоровье(.*?): ([^<]+)</div></li>")},
             {Locale.English, new Regex("Health(.*?): ([^<]+)</div></li>")},
@@ -296,19 +296,16 @@ CREATE TABLE `creature_faction` (
                 }
             }
 
-            /*if (parsers.HasFlag(SubParsers.Health))
+            if (parsers.HasFlag(SubParsers.Health))
             {
-                int healthCount;
-                List<string> healths;
-                List<string> difficulties;
-                if ((healthCount = Health(page, out difficulties, out healths)) > 0)
+                object[] health;
+                if (Health(page, out health))
                 {
-                    builder = new SqlBuilder("creature_power");
-                    builder.SetFieldsNames(difficulties, healthCount);
-                    builder.AppendFieldsValue(id, healths, healthCount);
-                    content.Append(builder);
+                    _healthBuilder.SetKey(id);
+                    _healthBuilder.AppendValues(health);
+                    _healthBuilder.Flush();
                 }
-            }*/
+            }
 
             if (parsers.HasFlag(SubParsers.Mana))
             {
@@ -478,50 +475,42 @@ CREATE TABLE `creature_faction` (
             return true;
         }
 
-        private int Health(string page, out List<string> difficulties, out List<string> healths)
+        private bool Health(string page, out object[] healths)
         {
-            int count;
+            healths = new object[7] { 0, 0, 0, 0, 0, 0, 0 };
 
             MatchCollection matches = healthRegex.Matches(page);
-            if ((count = matches.Count) > 0)
+            if (matches.Count > 0)
             {
-                healths = new List<string>(count);
-                difficulties = new List<string>(count);
-
                 foreach (Match item in matches)
                 {
                     GroupCollection groups = item.Groups;
+
                     string stringDifficulty = groups[1].Value.HTMLEscapeSumbols().Trim();
                     string health = groups[2].Value.Replace(",", "");
-                    Difficulty difficulty = GetDifficulty(stringDifficulty);
 
-                    healths.Add(health);
-                    if (difficulties.Contains(difficulty.ToString()))
-                        difficulties.Add((difficulty + 1).ToString());
-                    else
-                        difficulties.Add(difficulty.ToString());
+                    int difficultyIndex = -1;
+                    if (string.IsNullOrEmpty(stringDifficulty))
+                        difficultyIndex = 0;
+
+                    difficultyIndex = difficultiesLocale[Locale].ToList().IndexOf(stringDifficulty);
+                    if (difficultyIndex == -1)
+                        throw new ArgumentOutOfRangeException("difficultyIndex");
+
+                    healths[difficultyIndex] = int.Parse(health);
                 }
-                return count;
+
+                return true;
             }
 
-            Match match = healthNormaLocales[Locale].Match(page);
-            if (!match.Success)
-            {
-                healths = difficulties = null;
-                return -1;
-            }
-
-            healths = new List<string>(1);
-            difficulties = new List<string>(1);
+            Match match = healthNormalLocales[Locale].Match(page);
+            if (match.Success)
             {
                 string health = match.Groups[2].Value.Replace(",", "");
-                string difficulty = "Normal";
-
-                healths.Add(health);
-                difficulties.Add(difficulty);
+                healths[0] = int.Parse(health);
             }
 
-            return 1;
+            return match.Success;
         }
 
         private bool Mana(string page, out int mana)
@@ -534,19 +523,6 @@ CREATE TABLE `creature_faction` (
 
             string manaString = item.Groups[1].Value.Replace(",", "");
             return int.TryParse(manaString, out mana);
-        }
-
-        private Difficulty GetDifficulty(string stringDifficulty)
-        {
-            if (string.IsNullOrEmpty(stringDifficulty))
-                return Difficulty.Normal;
-
-            string[] difficulty = difficultiesLocale[Locale];
-            int difficultyIndex = difficulty.ToList().IndexOf(stringDifficulty);
-            if (difficultyIndex == -1)
-                throw new ArgumentOutOfRangeException("difficultyIndex");
-
-            return (Difficulty)difficultyIndex;
         }
 
         private bool Faction(string page, out int factionA, out int factionH)

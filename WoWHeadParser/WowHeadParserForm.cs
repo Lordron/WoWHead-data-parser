@@ -22,6 +22,7 @@ namespace WoWHeadParser
         private CultureInfo _currentCulture;
 
         private const string WelfFolder = "EntryList";
+        private const string WelfExtension = "*.welf";
 
         #region Language
 
@@ -56,7 +57,8 @@ namespace WoWHeadParser
             }
 
             _currentCulture = new CultureInfo(stringCulture, true);
-            Reload();
+
+            ReloadUILanguage();
 
             #endregion
 
@@ -95,13 +97,13 @@ namespace WoWHeadParser
                 _parsers.Add(type);
             }
 
-            int index = Settings.Default.LastParser;
-            parserBox.SelectedIndex = index < parserBox.Items.Count  ? index : 0;
+            parserBox.SelectIndex(Settings.Default.LastParser);
 
             #endregion
 
             #region Locale loading
 
+            parserBox.SelectIndex(Settings.Default.LastParser);
             localeBox.SetEnumValues<Locale>(Settings.Default.LastLocale);
 
             #endregion
@@ -295,7 +297,7 @@ namespace WoWHeadParser
             Settings.Default.Culture = selectedCulture;
             _currentCulture = new CultureInfo(selectedCulture, true);
 
-            Reload();
+            ReloadUILanguage();
         }
 
         private void ExitMenuClick(object sender, EventArgs e)
@@ -327,9 +329,9 @@ namespace WoWHeadParser
             progressLabel.ThreadSafeBegin(x => x.Text = text);
         }
 
-        private void Reload()
+        private void ReloadUILanguage()
         {
-            Reload(_currentCulture);
+            ReloadUILanguage(_currentCulture);
 
             int index = parserBox.SelectedIndex;
 
@@ -365,8 +367,9 @@ namespace WoWHeadParser
                     return Resources.TrainerParser;
                 case ParserType.Vendor:
                     return Resources.VendorParser;
+                default:
+                    throw new InvalidOperationException(type.ToString());
             }
-            return string.Empty;
         }
 
         #endregion
@@ -375,15 +378,14 @@ namespace WoWHeadParser
         {
             welfBox.Items.Clear();
 
-            DirectoryInfo info = new DirectoryInfo(WelfFolder);
-            FileInfo[] files = info.GetFiles("*.welf");
-            foreach(FileInfo file in files)
+            string[] files = Directory.GetFiles(WelfFolder, WelfExtension, SearchOption.AllDirectories);
+            foreach (string file in files)
             {
-                welfBox.Items.Add(file.Name.Replace(file.Extension, string.Empty));
+                string fileName = Path.GetFileNameWithoutExtension(file);
+                welfBox.Items.Add(fileName);
             }
 
-            if (files.Length > 0)
-                welfBox.SelectedIndex = 0;
+            welfBox.SelectIndex(0);
         }
 
         private DialogResult ShowMessageBox(MessageType type, params object[] args)

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Data;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace WoWHeadParser
@@ -105,6 +103,14 @@ namespace WoWHeadParser
                 control.BeginInvoke(action, control);
             else
                 action(control);
+        }
+
+        public static void SelectIndex(this ComboBox comboBox, int index)
+        {
+            if (comboBox == null)
+                throw new ArgumentNullException("comboBox");
+
+            comboBox.SelectedIndex = index < comboBox.Items.Count ? index : 0;
         }
 
         public static void SetEnumValues<T>(this ComboBox comboBox, int index = 0)

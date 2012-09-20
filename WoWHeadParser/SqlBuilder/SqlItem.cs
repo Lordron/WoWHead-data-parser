@@ -29,12 +29,6 @@ namespace Sql
             }
         }
 
-        public bool PutIntoQuote(int x)
-        {
-            object obj = _values[x];
-            return (obj is char) || (obj is string) || (obj is float) || (obj is double);
-        }
-
         public string this[int x]
         {
             get
@@ -46,7 +40,11 @@ namespace Sql
                 if (obj == null)
                     throw new ArgumentNullException("obj");
 
-                return obj.ToString();
+                string str = obj.ToString();
+                if ((obj is char) || (obj is string) || (obj is float) || (obj is double))
+                    return string.Format("{0}{1}{0}", @"'", str);
+
+                return str;
             }
         }
     }
