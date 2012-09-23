@@ -11,19 +11,6 @@ namespace WoWHeadParser.Parser.Parsers
     {
         private SubParsers parsers;
 
-        #region Sql Builder
-
-        private SqlBuilder _moneyBuilder = new SqlBuilder(_builderSettings);
-        private SqlBuilder _currencyBuilder = new SqlBuilder(_builderSettings);
-        private SqlBuilder _quoteBuilder = new SqlBuilder(_builderSettings);
-        private SqlBuilder _healthBuilder = new SqlBuilder(_builderSettings);
-        private SqlBuilder _manaBuilder = new SqlBuilder(_builderSettings);
-        private SqlBuilder _factionBuilder = new SqlBuilder(_builderSettings);
-        private SqlBuilder _questStartBuilder = new SqlBuilder(_builderSettings);
-        private SqlBuilder _questEndBuilder = new SqlBuilder(_builderSettings);
-
-        #endregion
-
         public NpcDataParser(Locale locale, int flags)
             : base(locale, flags)
         {
@@ -31,44 +18,52 @@ namespace WoWHeadParser.Parser.Parsers
 
             parsers = (SubParsers)flags;
 
+            for (int i = 0; i < ((int)SubParsersType.Max - 1); ++i)
+            {
+                Builders.Add(new SqlBuilder(_builderSettings));
+            }
+
             if (parsers.HasFlag(SubParsers.Level))
-                Builder.Setup("creature_template", "entry", false, "minlevel", "maxlevel");
+                Builders[(int)SubParsersType.Level].Setup("creature_template", "entry", false, "minlevel", "maxlevel");
 
             if (parsers.HasFlag(SubParsers.Money))
-                _moneyBuilder.Setup("creature_template", "entry", false, "mingold", "maxgold");
+                Builders[(int)SubParsersType.Money].Setup("creature_template", "entry", false, "mingold", "maxgold");
 
             if (parsers.HasFlag(SubParsers.Currency))
-                _currencyBuilder.Setup("creature_currency", "entry", false, "currencyId", "currencyAmount");
+                Builders[(int)SubParsersType.Currency].Setup("creature_currency", "entry", false, "currencyId", "currencyAmount");
 
             if (parsers.HasFlag(SubParsers.Quotes))
-                _quoteBuilder.Setup("creature_quotes", "entry", false, "id", "type", textFields[Locale]);
+                Builders[(int)SubParsersType.Quotes].Setup("creature_quotes", "entry", false, "id", "type", textFields[Locale]);
 
             if (parsers.HasFlag(SubParsers.Health))
-                _healthBuilder.Setup("creature_power", "entry", false, "Normal", "Heroic", "Normal10", "Normal25", "Heroic10", "Heroic25", "RaidFinder25");
+                Builders[(int)SubParsersType.Health].Setup("creature_power", "entry", false, "Normal", "Heroic", "Normal10", "Normal25", "Heroic10", "Heroic25", "RaidFinder25");
 
             if (parsers.HasFlag(SubParsers.Mana))
-                _manaBuilder.Setup("creature_power", "entry", false, "Mana");
+                Builders[(int)SubParsersType.Mana].Setup("creature_power", "entry", false, "Mana");
 
             if (parsers.HasFlag(SubParsers.Faction))
-                _factionBuilder.Setup("creature_faction", "entry", false, "faction_a", "faction_h");
+                Builders[(int)SubParsersType.Faction].Setup("creature_faction", "entry", false, "faction_a", "faction_h");
 
             if (parsers.HasFlag(SubParsers.QuestStart))
-                _questStartBuilder.Setup("creature_questrelation", "id", false, "quest");
+                Builders[(int)SubParsersType.QuestStart].Setup("creature_questrelation", "id", false, "quest");
 
             if (parsers.HasFlag(SubParsers.QuestEnd))
-                _questEndBuilder.Setup("creature_involvedrelation", "id", false, "quest");
+                Builders[(int)SubParsersType.QuestEnd].Setup("creature_involvedrelation", "id", false, "quest");
 
             #region Creature_currency
 
-            Content.AppendLine(
- @"DROP TABLE IF EXISTS `creature_currency`;
+            if (parsers.HasFlag(SubParsers.Currency))
+            {
+                Content.AppendLine(
+     @"DROP TABLE IF EXISTS `creature_currency`;
 CREATE TABLE `creature_currency` (
   `entry` int(10) NOT NULL,
   `currencyId` int(10) NOT NULL default '0',
   `currencyAmount` int(10) NOT NULL default '0',
   PRIMARY KEY (`entry`)
   ) ENGINE=MyISAM DEFAULT CHARSET=utf8;"
- );
+     );
+            }
 
             #endregion
 
@@ -76,8 +71,10 @@ CREATE TABLE `creature_currency` (
 
             #region Creature_quotes
 
-            Content.AppendLine(
-@"DROP TABLE IF EXISTS `creature_quotes`;
+            if (parsers.HasFlag(SubParsers.Quotes))
+            {
+                Content.AppendLine(
+    @"DROP TABLE IF EXISTS `creature_quotes`;
 CREATE TABLE `creature_quotes` (
   `entry` mediumint(8) unsigned NOT NULL DEFAULT '0',
   `id` tinyint(3) unsigned NOT NULL DEFAULT '0',
@@ -89,7 +86,8 @@ CREATE TABLE `creature_quotes` (
   `text_loc4` longtext,
   PRIMARY KEY (`entry`,`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"
-);
+    );
+            }
 
             #endregion
 
@@ -97,8 +95,10 @@ CREATE TABLE `creature_quotes` (
 
             #region Creature_power
 
-            Content.AppendLine(
- @"DROP TABLE IF EXISTS `creature_power`;
+            if (parsers.HasFlag(SubParsers.Health | SubParsers.Mana))
+            {
+                Content.AppendLine(
+     @"DROP TABLE IF EXISTS `creature_power`;
 CREATE TABLE `creature_power` (
   `entry` int(10) NOT NULL,
   `Mana` int(10) NOT NULL default '0',
@@ -111,7 +111,8 @@ CREATE TABLE `creature_power` (
   `RaidFinder25` int(10) NOT NULL default '0',
   PRIMARY KEY (`entry`)
   ) ENGINE=MyISAM DEFAULT CHARSET=utf8;"
- );
+     );
+            }
 
             #endregion
 
@@ -119,15 +120,18 @@ CREATE TABLE `creature_power` (
 
             #region Creature_faction
 
-            Content.AppendLine(
- @"DROP TABLE IF EXISTS `creature_faction`;
+            if (parsers.HasFlag(SubParsers.Faction))
+            {
+                Content.AppendLine(
+     @"DROP TABLE IF EXISTS `creature_faction`;
 CREATE TABLE `creature_faction` (
   `entry` int(10) NOT NULL,
   `faction_a` int(10) NOT NULL default '0',
   `faction_h` int(10) NOT NULL default '0',
   PRIMARY KEY (`entry`)
   ) ENGINE=MyISAM DEFAULT CHARSET=utf8;"
- );
+     );
+            }
 
             #endregion
 
@@ -236,6 +240,8 @@ CREATE TABLE `creature_faction` (
         private const string healthPattern = @"<tr><td>([^<]+)</td><td style=&quot;text-align:right&quot;>([^<]+)</td>";
         private const string factionPattern = "color=(.*?)](.*?)\\[/color\\]";
         private const string questPattern = "\"id\":(.*?),";
+        private const string questStartPattern = "template: 'quest', id: 'starts', name";
+        private const string questEndPattern = "template: 'quest', id: 'ends', name";
 
         private Regex moneyRegex = new Regex(moneyPattern);
         private Regex currencyRegex = new Regex(currencyPattern);
@@ -253,9 +259,9 @@ CREATE TABLE `creature_faction` (
                 Tuple<int, int> levels;
                 if (Levels(page, out levels))
                 {
-                    Builder.SetKey(id);
-                    Builder.AppendValues(levels.Item1, levels.Item2);
-                    Builder.Flush();
+                    Builders[(int)SubParsersType.Level].SetKey(id);
+                    Builders[(int)SubParsersType.Level].AppendValues(levels.Item1, levels.Item2);
+                    Builders[(int)SubParsersType.Level].Flush();
                 }
             }
 
@@ -264,9 +270,9 @@ CREATE TABLE `creature_faction` (
                 int money;
                 if (Money(page, out money))
                 {
-                    _moneyBuilder.SetKey(id);
-                    _moneyBuilder.AppendValues(money, money);
-                    _moneyBuilder.Flush();
+                    Builders[(int)SubParsersType.Money].SetKey(id);
+                    Builders[(int)SubParsersType.Money].AppendValues(money, money);
+                    Builders[(int)SubParsersType.Money].Flush();
                 }
             }
 
@@ -275,23 +281,23 @@ CREATE TABLE `creature_faction` (
                 Tuple<int, int> currency;
                 if (Currency(page, out currency))
                 {
-                    _currencyBuilder.SetKey(id);
-                    _currencyBuilder.AppendValues(currency.Item1, currency.Item2);
-                    _currencyBuilder.Flush();
+                    Builders[(int)SubParsersType.Currency].SetKey(id);
+                    Builders[(int)SubParsersType.Currency].AppendValues(currency.Item1, currency.Item2);
+                    Builders[(int)SubParsersType.Currency].Flush();
                 }
             }
 
             if (parsers.HasFlag(SubParsers.Quotes))
             {
-                List<Tuple<int, string>> quotes;
+                Tuple<int, string>[] quotes;
                 if (Quotes(page, out quotes))
                 {
-                    _quoteBuilder.SetKey(id);
-                    for (int i = 0; i < quotes.Count; ++i)
+                    Builders[(int)SubParsersType.Quotes].SetKey(id);
+                    for (int i = 0; i < quotes.Length; ++i)
                     {
                         Tuple<int, string> quote = quotes[i];
-                        _quoteBuilder.AppendValues(i, quote.Item1, quote.Item2);
-                        _quoteBuilder.Flush();
+                        Builders[(int)SubParsersType.Quotes].AppendValues(i, quote.Item1, quote.Item2);
+                        Builders[(int)SubParsersType.Quotes].Flush();
                     }
                 }
             }
@@ -301,9 +307,9 @@ CREATE TABLE `creature_faction` (
                 object[] health;
                 if (Health(page, out health))
                 {
-                    _healthBuilder.SetKey(id);
-                    _healthBuilder.AppendValues(health);
-                    _healthBuilder.Flush();
+                    Builders[(int)SubParsersType.Health].SetKey(id);
+                    Builders[(int)SubParsersType.Health].AppendValues(health);
+                    Builders[(int)SubParsersType.Health].Flush();
                 }
             }
 
@@ -312,9 +318,9 @@ CREATE TABLE `creature_faction` (
                 int mana;
                 if (Mana(page, out mana))
                 {
-                    _manaBuilder.SetKey(id);
-                    _manaBuilder.AppendValue(mana);
-                    _manaBuilder.Flush();
+                    Builders[(int)SubParsersType.Mana].SetKey(id);
+                    Builders[(int)SubParsersType.Mana].AppendValue(mana);
+                    Builders[(int)SubParsersType.Mana].Flush();
                 }
             }
 
@@ -323,69 +329,39 @@ CREATE TABLE `creature_faction` (
                 int factionA, factionH;
                 if (Faction(page, out factionA, out factionH))
                 {
-                    _factionBuilder.SetKey(id);
-                    _factionBuilder.AppendValues(factionA, factionH);
-                    _factionBuilder.Flush();
+                    Builders[(int)SubParsersType.Faction].SetKey(id);
+                    Builders[(int)SubParsersType.Faction].AppendValues(factionA, factionH);
+                    Builders[(int)SubParsersType.Faction].Flush();
                 }
             }
 
             if (parsers.HasFlag(SubParsers.QuestStart))
             {
-                List<string> questIds;
+                int[] questIds;
                 if (QuestStart(page, out questIds))
                 {
-                    _questStartBuilder.SetKey(id);
-                    foreach (string questId in questIds)
+                    Builders[(int)SubParsersType.QuestStart].SetKey(id);
+                    foreach (int questId in questIds)
                     {
-                        _questStartBuilder.AppendValue(questId);
-                        _questStartBuilder.Flush();
+                        Builders[(int)SubParsersType.QuestStart].AppendValue(questId);
+                        Builders[(int)SubParsersType.QuestStart].Flush();
                     }
                 }
             }
 
             if (parsers.HasFlag(SubParsers.QuestEnd))
             {
-                List<string> questIds;
+                int[] questIds;
                 if (QuestEnd(page, out questIds))
                 {
-                    _questEndBuilder.SetKey(id);
-                    foreach (string questId in questIds)
+                    Builders[(int)SubParsersType.QuestEnd].SetKey(id);
+                    foreach (int questId in questIds)
                     {
-                        _questEndBuilder.AppendValue(questId);
-                        _questEndBuilder.Flush();
+                        Builders[(int)SubParsersType.QuestEnd].AppendValue(questId);
+                        Builders[(int)SubParsersType.QuestEnd].Flush();
                     }
                 }
             }
-        }
-
-        public override void PutStringData()
-        {
-            if (parsers.HasFlag(SubParsers.Level))
-                Content.Append(Builder);
-
-            if (parsers.HasFlag(SubParsers.Money))
-                Content.Append(_moneyBuilder);
-
-            if (parsers.HasFlag(SubParsers.Currency))
-                Content.Append(_currencyBuilder);
-
-            if (parsers.HasFlag(SubParsers.Quotes))
-                Content.Append(_quoteBuilder);
-
-            if (parsers.HasFlag(SubParsers.Health))
-                Content.Append(_healthBuilder);
-
-            if (parsers.HasFlag(SubParsers.Mana))
-                Content.Append(_manaBuilder);
-
-            if (parsers.HasFlag(SubParsers.Faction))
-                Content.Append(_factionBuilder);
-
-            if (parsers.HasFlag(SubParsers.QuestStart))
-                Content.Append(_questStartBuilder);
-
-            if (parsers.HasFlag(SubParsers.QuestEnd))
-                Content.Append(_questEndBuilder);
         }
 
         private bool Levels(string page, out Tuple<int, int> tuple)
@@ -400,22 +376,23 @@ CREATE TABLE `creature_faction` (
             if (levelString.FastIndexOf(BossLevelString) > -1)
                 return true;
 
-            List<int> levels = new List<int>(MaxLevelCount);
+            int count = 0;
+            int[] levels = new int[MaxLevelCount];
 
             string[] values = levelString.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (string value in values)
+            for (int i = 0; i < values.Length; ++i)
             {
                 int level;
-                if (!int.TryParse(value.Trim(), out level))
+                if (!int.TryParse(values[i].Trim(), out level))
                     continue;
 
-                levels.Add(level);
+                levels[count++] = level;
             }
 
-            if (levels.Count <= 0)
+            if (count == 0)
                 return false;
 
-            tuple = new Tuple<int, int>(levels[0], levels.Count == MinLevelCount ? levels[0] : levels[1]);
+            tuple = new Tuple<int, int>(levels[0], count == MinLevelCount ? levels[0] : levels[1]);
             return true;
         }
 
@@ -458,18 +435,19 @@ CREATE TABLE `creature_faction` (
             return true;
         }
 
-        private bool Quotes(string page, out List<Tuple<int, string>> tuple)
+        private bool Quotes(string page, out Tuple<int, string>[] tuple)
         {
             MatchCollection matches = quotesRegex.Matches(page);
 
-            tuple = new List<Tuple<int, string>>(matches.Count);
-            foreach (Match item in matches)
+            tuple = new Tuple<int, string>[matches.Count];
+
+            for (int i = 0; i < matches.Count; ++i)
             {
-                GroupCollection groups = item.Groups;
+                GroupCollection groups = matches[i].Groups;
                 string type = groups[1].Value;
                 string text = groups[2].Value;
 
-                tuple.Add(new Tuple<int, string>(textType[type.ToUpper()], text.HTMLEscapeSumbols()));
+                tuple[i] = new Tuple<int, string>(textType[type.ToUpper()], text.HTMLEscapeSumbols());
             }
 
             return true;
@@ -646,12 +624,11 @@ CREATE TABLE `creature_faction` (
             return factionA > -1 && factionH > -1;
         }
 
-        private bool QuestStart(string page, out List<string> val)
+        private bool QuestStart(string page, out int[] val)
         {
-            val = new List<string>(16);
+            val = null;
 
-            const string pattern = "template: 'quest', id: 'starts', name";
-            int startIndex = page.FastIndexOf(pattern);
+            int startIndex = page.FastIndexOf(questStartPattern);
             if (startIndex == -1)
                 return false;
 
@@ -659,20 +636,21 @@ CREATE TABLE `creature_faction` (
             string template = page.Substring(startIndex, endIndex - startIndex);
 
             MatchCollection matches = questRegex.Matches(template);
-            foreach (Match item in matches)
+
+            val = new int[matches.Count];
+            for (int i = 0; i < val.Length; ++i)
             {
-                string questId = item.Groups[1].Value;
-                val.Add(questId);
+                string questId = matches[i].Groups[1].Value;
+                val[i] = int.Parse(questId);
             }
             return true;
         }
 
-        private bool QuestEnd(string page, out List<string> val)
+        private bool QuestEnd(string page, out int[] val)
         {
-            val = new List<string>(16);
+            val = null;
 
-            const string pattern = "template: 'quest', id: 'ends', name";
-            int startIndex = page.FastIndexOf(pattern);
+            int startIndex = page.FastIndexOf(questEndPattern);
             if (startIndex == -1)
                 return false;
 
@@ -680,10 +658,12 @@ CREATE TABLE `creature_faction` (
             string template = page.Substring(startIndex, endIndex - startIndex);
 
             MatchCollection matches = questRegex.Matches(template);
-            foreach (Match item in matches)
+
+            val = new int[matches.Count];
+            for (int i = 0; i < val.Length; ++i)
             {
-                string questId = item.Groups[1].Value;
-                val.Add(questId);
+                string questId = matches[i].Groups[1].Value;
+                val[i] = int.Parse(questId);
             }
             return true;
         }
@@ -707,18 +687,31 @@ CREATE TABLE `creature_faction` (
             Green,
         }
 
-        [Flags]
+        public enum SubParsersType : int
+        {
+            Mana = 0,
+            Health = 1,
+            Money = 2,
+            Currency = 3,
+            Level = 4,
+            Quotes = 5,
+            Faction = 6,
+            QuestStart = 7,
+            QuestEnd = 8,
+            Max,
+        }
+
         public enum SubParsers : uint
         {
-            Mana = 0x0001,
-            Health = 0x0002,
-            Money = 0x0004,
-            Currency = 0x0008,
-            Level = 0x0010,
-            Quotes = 0x0020,
-            Faction = 0x0040,
-            QuestStart = 0x0080,
-            QuestEnd = 0x0100,
+            Mana = 1 << SubParsersType.Mana,
+            Health = 1 << SubParsersType.Health,
+            Money = 1 << SubParsersType.Money,
+            Currency = 1 << SubParsersType.Currency,
+            Level = 1 << SubParsersType.Level,
+            Quotes = 1 << SubParsersType.Quotes,
+            Faction = 1 << SubParsersType.Faction,
+            QuestStart = 1 << SubParsersType.QuestStart,
+            QuestEnd = 1 << SubParsersType.QuestEnd,
         }
     }
 }

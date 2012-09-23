@@ -26,11 +26,6 @@ namespace WoWHeadParser.Parser
         {
         }
 
-        public virtual void PutStringData()
-        {
-            Content.Append(Builder.ToString());
-        }
-
         public void TryParse(string page, uint id)
         {
             try
@@ -45,7 +40,10 @@ namespace WoWHeadParser.Parser
 
         public override string ToString()
         {
-            PutStringData();
+            foreach (SqlBuilder builder in Builders)
+            {
+                Content.Append(builder.ToString());
+            }
             return Content.ToString();
         }
 
@@ -53,7 +51,12 @@ namespace WoWHeadParser.Parser
 
         protected static SqlBuilderSettings _builderSettings = new SqlBuilderSettings(Settings.Default.QueryType, Settings.Default.WithoutHeader, Settings.Default.AllowEmptyValues, Settings.Default.AppendDeleteQuery);
 
-        public SqlBuilder Builder = new SqlBuilder(_builderSettings);
+        public List<SqlBuilder> Builders = new List<SqlBuilder>
+            {
+                new SqlBuilder(_builderSettings)
+            };
+
+        public SqlBuilder Builder { get { return Builders[0]; } }
 
         #endregion
 
