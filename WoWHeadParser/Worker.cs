@@ -25,6 +25,7 @@ namespace WoWHeadParser
         private ConcurrentQueue<uint> _badIds;
 
         private const int SemaphoreCount = 100;
+        private const int KeepAliveTime = 100000;
 
         private object _locker = new object();
 
@@ -42,14 +43,7 @@ namespace WoWHeadParser
 
         #endregion
 
-        public Worker()
-        {
-            _semaphore = new SemaphoreSlim(SemaphoreCount, SemaphoreCount);
-            _badIds = new ConcurrentQueue<uint>();
-        }
-
         public Worker(ParsingType type, PageParser parser, EventHandler onPageDownloadingComplete)
-            : this()
         {
             _type = type;
             _parser = parser;
@@ -58,11 +52,15 @@ namespace WoWHeadParser
             ServicePointManager.DefaultConnectionLimit = SemaphoreCount * 10;
             {
                 _service = ServicePointManager.FindServicePoint(_address);
-                _service.SetTcpKeepAlive(true, 100000, 100000);
+                _service.SetTcpKeepAlive(true, KeepAliveTime, KeepAliveTime);
             }
             _address = new Uri(_address, parser.Address);
 
+
             PageDownloadingComplete += onPageDownloadingComplete;
+
+            _semaphore = new SemaphoreSlim(SemaphoreCount, SemaphoreCount);
+            _badIds = new ConcurrentQueue<uint>();
         }
 
         public void SetValue(uint value)
@@ -136,7 +134,7 @@ namespace WoWHeadParser
 
                             _semaphore.Wait();
 
-                            Requests request = new Requests(_address, (entry * 200), ((entry + 1) * 200));
+                            Requests request = new Requests(_address, entry, true);
                             request.BeginGetResponse(RespCallback, request);
                         }
                         break;
@@ -148,7 +146,7 @@ namespace WoWHeadParser
                 Application.DoEvents();
             }
 
-            if (_type == ParsingType.TypeByList)
+            if (_type == ParsingType.TypeByList || _type == ParsingType.TypeByWoWHeadFilter)
             {
                 while (!_badIds.IsEmpty)
                 {

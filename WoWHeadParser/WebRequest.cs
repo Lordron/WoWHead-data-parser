@@ -46,22 +46,13 @@ namespace WoWHeadParser
 
         #endregion
 
-        public Requests(Uri address, uint id)
+        public Requests(Uri address, uint id, bool isFilter = false)
         {
             Id = id;
-            _uri = new Uri(string.Format(address.OriginalString, id));
-
-            _request = (HttpWebRequest)WebRequest.Create(_uri);
-            _request.UserAgent = GetRandomUserAgent();
-            _request.KeepAlive = true;
-            if (Compress)
-                _request.Headers.Add("Accept-Encoding", "gzip,deflate");
-        }
-
-        public Requests(Uri address, uint ids, uint ide)
-        {
-            Id = ids;
-            _uri = new Uri(string.Format(address.OriginalString, ids, ide));
+            if (isFilter)
+                _uri = new Uri(string.Format(address.OriginalString, (id * 200), ((id + 1) * 200)));
+            else
+                _uri = new Uri(string.Format(address.OriginalString, id));
 
             _request = (HttpWebRequest)WebRequest.Create(_uri);
             _request.UserAgent = GetRandomUserAgent();
