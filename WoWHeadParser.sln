@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WoWHeadParser", "WoWHeadPar
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WelfEditor", "WelfEditor\WelfEditor.csproj", "{2AA6699F-FD75-4E12-9017-81D939BA8E64}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WelfCreator", "WelfCreator\WelfCreator.csproj", "{C64028CB-1715-45F5-B0B6-883B71BF5C47}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,16 @@ Global
 		{2AA6699F-FD75-4E12-9017-81D939BA8E64}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{2AA6699F-FD75-4E12-9017-81D939BA8E64}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2AA6699F-FD75-4E12-9017-81D939BA8E64}.Release|x86.ActiveCfg = Release|Any CPU
+		{C64028CB-1715-45F5-B0B6-883B71BF5C47}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C64028CB-1715-45F5-B0B6-883B71BF5C47}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C64028CB-1715-45F5-B0B6-883B71BF5C47}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C64028CB-1715-45F5-B0B6-883B71BF5C47}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C64028CB-1715-45F5-B0B6-883B71BF5C47}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C64028CB-1715-45F5-B0B6-883B71BF5C47}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C64028CB-1715-45F5-B0B6-883B71BF5C47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C64028CB-1715-45F5-B0B6-883B71BF5C47}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C64028CB-1715-45F5-B0B6-883B71BF5C47}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C64028CB-1715-45F5-B0B6-883B71BF5C47}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

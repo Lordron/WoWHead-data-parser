@@ -69,9 +69,8 @@ namespace WoWHeadParser
             this.fileMenuItem = new System.Windows.Forms.MenuItem();
             this.exitMenuItem = new System.Windows.Forms.MenuItem();
             this.editMenuItem = new System.Windows.Forms.MenuItem();
-            this.launchMenuItem = new System.Windows.Forms.MenuItem();
-            this.separatorMenuItem = new System.Windows.Forms.MenuItem();
             this.optionsMenuItem = new System.Windows.Forms.MenuItem();
+            this.separatorMenuItem = new System.Windows.Forms.MenuItem();
             this.languageMenuItem = new System.Windows.Forms.MenuItem();
             this.aboutMenuItem = new System.Windows.Forms.MenuItem();
             this.subparsersListBox = new System.Windows.Forms.CheckedListBox();
@@ -374,27 +373,20 @@ namespace WoWHeadParser
             // 
             this.editMenuItem.Index = 1;
             this.editMenuItem.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.launchMenuItem,
-            this.separatorMenuItem,
-            this.optionsMenuItem});
+            this.optionsMenuItem,
+            this.separatorMenuItem});
             resources.ApplyResources(this.editMenuItem, "editMenuItem");
             // 
-            // launchMenuItem
+            // optionsMenuItem
             // 
-            this.launchMenuItem.Index = 0;
-            resources.ApplyResources(this.launchMenuItem, "launchMenuItem");
-            this.launchMenuItem.Click += new System.EventHandler(this.WELFCreatorMenuClick);
+            this.optionsMenuItem.Index = 0;
+            resources.ApplyResources(this.optionsMenuItem, "optionsMenuItem");
+            this.optionsMenuItem.Click += new System.EventHandler(this.OptionsMenuItemClick);
             // 
             // separatorMenuItem
             // 
             this.separatorMenuItem.Index = 1;
             resources.ApplyResources(this.separatorMenuItem, "separatorMenuItem");
-            // 
-            // optionsMenuItem
-            // 
-            this.optionsMenuItem.Index = 2;
-            resources.ApplyResources(this.optionsMenuItem, "optionsMenuItem");
-            this.optionsMenuItem.Click += new System.EventHandler(this.OptionsMenuItemClick);
             // 
             // languageMenuItem
             // 
@@ -501,7 +493,6 @@ namespace WoWHeadParser
             resources.ApplyResources(this.fileMenuItem, "fileMenuItem");
             resources.ApplyResources(this.exitMenuItem, "exitMenuItem");
             resources.ApplyResources(this.editMenuItem, "editMenuItem");
-            resources.ApplyResources(this.launchMenuItem, "launchMenuItem");
             resources.ApplyResources(this.separatorMenuItem, "separatorMenuItem");
             resources.ApplyResources(this.optionsMenuItem, "optionsMenuItem");
             resources.ApplyResources(this.languageMenuItem, "languageMenuItem");
@@ -540,7 +531,6 @@ namespace WoWHeadParser
         private MenuItem fileMenuItem;
         private MenuItem exitMenuItem;
         private MenuItem editMenuItem;
-        private MenuItem launchMenuItem;
         private GroupBox consoleGroupBox;
         private RichTextBox consoleBox;
         private TabPage wowheadFilterTab;

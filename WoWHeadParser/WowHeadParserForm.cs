@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using WoWHeadParser.DBFileStorage;
 using WoWHeadParser.Messages;
 using WoWHeadParser.Parser;
+using WoWHeadParser.Plugin;
 using WoWHeadParser.Properties;
 
 namespace WoWHeadParser
@@ -16,13 +17,14 @@ namespace WoWHeadParser
     public partial class WoWHeadParserForm : Form
     {
         private Worker _worker;
-        private List<Type> _parsers;
-        private List<ParserType> _parserTypes;
+        private List<Type> _parsers = new List<Type>((int)ParserType.Max);
+        private List<ParserType> _parserTypes = new List<ParserType>((int)ParserType.Max);
 
         private CultureInfo _currentCulture;
 
         private const string WelfFolder = "EntryList";
         private const string WelfExtension = "*.welf";
+        private const string DllExtension = "*.Plugin.dll";
 
         #region Language
 
@@ -39,9 +41,6 @@ namespace WoWHeadParser
             InitializeComponent();
 
             RichTextBoxWriter.Instance.OutputBox = consoleBox;
-
-            _parsers = new List<Type>((int)ParserType.Max);
-            _parserTypes = new List<ParserType>((int)ParserType.Max);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -49,7 +48,6 @@ namespace WoWHeadParser
             #region Language loading
 
             string stringCulture = Settings.Default.Culture;
-
             foreach (string language in _language)
             {
                 MenuItem item = new MenuItem(language, LanguageMenuItemClick) { Checked = stringCulture.Equals(language) };
@@ -62,14 +60,9 @@ namespace WoWHeadParser
 
             #endregion
 
-            #region DB File loading
+            #region Files loading
 
             DBFileLoader.Initial();
-
-            #endregion
-
-            #region Welf files loading
-
             LoadWelfFiles();
 
             #endregion
@@ -84,15 +77,12 @@ namespace WoWHeadParser
                     continue;
 
                 ParserAttribute[] attributes = type.GetCustomAttributes(typeof(ParserAttribute), true) as ParserAttribute[];
-                if (attributes == null)
+                if (attributes == null || attributes.Length < 1)
                     throw new InvalidOperationException(); // Each parsers should be marked with this attribute
 
-                foreach (ParserAttribute attribute in attributes)
-                {
-                    ParserType parserType = attribute.Type;
-                    parserBox.Items.Add(GetNameByParserType(parserType));
-                    _parserTypes.Add(parserType);
-                }
+                ParserType parserType = attributes[0].Type;
+                parserBox.Items.Add(GetNameByParserType(parserType));
+                _parserTypes.Add(parserType);
 
                 _parsers.Add(type);
             }
@@ -107,6 +97,35 @@ namespace WoWHeadParser
             localeBox.SetEnumValues<Locale>(Settings.Default.LastLocale);
 
             #endregion
+
+            #region Plugins loading
+
+            string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), DllExtension, SearchOption.TopDirectoryOnly);
+            foreach (string file in files)
+            {
+                Assembly assembly = Assembly.LoadFile(file);
+                foreach (Type type in assembly.GetTypes())
+                {
+                    if (type.GetInterface(typeof(IPlugin).Name, true) == null)
+                        continue;
+
+                    IPlugin plugin = Activator.CreateInstance(type) as IPlugin;
+                    if (plugin == null)
+                        continue;
+
+                    MenuItem item = new MenuItem(plugin.Name, PluginMenuItemClick) { Tag = plugin };
+                    editMenuItem.MenuItems.Add(item);
+                }
+            }
+
+            #endregion
+        }
+
+        private void PluginMenuItemClick(object sender, EventArgs e)
+        {
+            MenuItem item = ((MenuItem)sender);
+            IPlugin plugin = (IPlugin)item.Tag;
+            plugin.Run(_currentCulture);
         }
 
         private void ParserBoxSelectedIndexChanged(object sender, EventArgs e)
@@ -255,11 +274,6 @@ namespace WoWHeadParser
                 int count = reader.ReadInt32();
                 entryCountLabel.Text = string.Format(Resources.EntryCountLabel, count);
             }
-        }
-
-        private void WELFCreatorMenuClick(object sender, EventArgs e)
-        {
-            new WelfCreator(_currentCulture).ShowDialog();
         }
 
         private void OptionsMenuItemClick(object sender, EventArgs e)

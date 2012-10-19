@@ -114,6 +114,7 @@
     <Compile Include="Parser\Parsers\VendorParser.cs" />
     <Compile Include="Parser\ParserType.cs" />
     <Compile Include="ParsingType.cs" />
+    <Compile Include="Plugin\IPlugin.cs" />
     <Compile Include="RichTextBoxWriter.cs" />
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
@@ -127,12 +128,6 @@
     <Compile Include="SqlBuilder\SqlItemComparer.cs" />
     <Compile Include="SqlBuilder\SqlQueryType.cs" />
     <Compile Include="WebRequest.cs" />
-    <Compile Include="WelfCreator.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="WelfCreator.Designer.cs">
-      <DependentUpon>WelfCreator.cs</DependentUpon>
-    </Compile>
     <Compile Include="Worker.cs" />
     <Compile Include="WowHeadParserForm.cs">
       <SubType>Form</SubType>
@@ -154,9 +149,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SettingsForm.ru.resx">
       <DependentUpon>SettingsForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="WelfCreator.resx">
-      <DependentUpon>WelfCreator.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="WowHeadParserForm.resx">
       <DependentUpon>WowHeadParserForm.cs</DependentUpon>

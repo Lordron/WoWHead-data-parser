@@ -858,14 +858,11 @@
   <data name="fileMenuItem.Text" xml:space="preserve">
     <value>File</value>
   </data>
-  <data name="launchMenuItem.Text" xml:space="preserve">
-    <value>Launch .welf creator</value>
+  <data name="optionsMenuItem.Text" xml:space="preserve">
+    <value>Options</value>
   </data>
   <data name="separatorMenuItem.Text" xml:space="preserve">
     <value>-</value>
-  </data>
-  <data name="optionsMenuItem.Text" xml:space="preserve">
-    <value>Options</value>
   </data>
   <data name="editMenuItem.Text" xml:space="preserve">
     <value>Edit</value>
@@ -987,22 +984,16 @@
   <data name="&gt;&gt;editMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.MenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="&gt;&gt;launchMenuItem.Name" xml:space="preserve">
-    <value>launchMenuItem</value>
+  <data name="&gt;&gt;optionsMenuItem.Name" xml:space="preserve">
+    <value>optionsMenuItem</value>
   </data>
-  <data name="&gt;&gt;launchMenuItem.Type" xml:space="preserve">
+  <data name="&gt;&gt;optionsMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.MenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;separatorMenuItem.Name" xml:space="preserve">
     <value>separatorMenuItem</value>
   </data>
   <data name="&gt;&gt;separatorMenuItem.Type" xml:space="preserve">
-    <value>System.Windows.Forms.MenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
-  </data>
-  <data name="&gt;&gt;optionsMenuItem.Name" xml:space="preserve">
-    <value>optionsMenuItem</value>
-  </data>
-  <data name="&gt;&gt;optionsMenuItem.Type" xml:space="preserve">
     <value>System.Windows.Forms.MenuItem, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="&gt;&gt;languageMenuItem.Name" xml:space="preserve">
