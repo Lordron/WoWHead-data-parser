@@ -271,36 +271,62 @@ namespace Sql
 
         private void BuildReplaceInsertQuery(StringBuilder content)
         {
+            int objectCount = 0;
+
+            if (_hasPreparedQueries)
+            {
+                foreach (object key in _sortedDictionary.Keys)
+                {
+                    if (!_querys.ContainsKey(key))
+                        continue;
+
+                    foreach (string query in _querys[key])
+                    {
+                        if (!string.IsNullOrEmpty(query))
+                            content.AppendLine(query);
+                    }
+                }
+                content.AppendLine();
+            }
+
+            if (BuilderSettings.AppendDeleteQuery)
+            {
+                content.AppendFormat("DELETE FROM `{0}` WHERE `{1}` IN (", _tableName, _keyName);
+                foreach (object key in _sortedDictionary.Keys)
+                {
+                    content.AppendFormat("{0}{1}", key, (objectCount++ < _sortedDictionary.Count - 1) ? ", " : ");");
+                }
+                content.AppendLine().AppendLine();
+            }
+
+            switch (BuilderSettings.QueryType)
+            {
+                case SqlQueryType.Insert:
+                    content.AppendFormat("INSERT INTO `{0}`", _tableName);
+                    break;
+                case SqlQueryType.InsertIgnore:
+                    content.AppendFormat("INSERT IGNORE INTO `{0}`", _tableName);
+                    break;
+                case SqlQueryType.Replace:
+                    content.AppendFormat("REPLACE INTO `{0}`", _tableName);
+                    break;
+            }
+
+            if (!BuilderSettings.WriteWithoutHeader)
+            {
+                content.AppendFormat(" (`{0}`, ", _keyName);
+
+                for (int i = 0; i < _itemCount; ++i)
+                    content.AppendFormat("`{0}`{1}", _tableFields[i], (i < _itemCount - 1) ? ", " : ")");
+            }
+            content.AppendLine(" VALUES");
+
+            objectCount = 0;
+
             foreach (KeyValuePair<object, List<SqlItem>> kvp in _sortedDictionary)
             {
                 object key = kvp.Key;
                 List<SqlItem> items = kvp.Value;
-
-                AppendQuery(key, content);
-                if (BuilderSettings.AppendDeleteQuery)
-                    content.AppendFormat("DELETE FROM `{0}` WHERE `{1}` = {2};", _tableName, _keyName, key).AppendLine();
-
-                switch (BuilderSettings.QueryType)
-                {
-                    case SqlQueryType.Insert:
-                        content.AppendFormat("INSERT INTO `{0}`", _tableName);
-                        break;
-                    case SqlQueryType.InsertIgnore:
-                        content.AppendFormat("INSERT IGNORE INTO `{0}`", _tableName);
-                        break;
-                    case SqlQueryType.Replace:
-                        content.AppendFormat("REPLACE INTO `{0}`", _tableName);
-                        break;
-                }
-
-                if (!BuilderSettings.WriteWithoutHeader)
-                {
-                    content.AppendFormat(" (`{0}`, ", _keyName);
-
-                    for (int i = 0; i < _itemCount; ++i)
-                        content.AppendFormat("`{0}`{1}", _tableFields[i], (i < _itemCount - 1) ? ", " : ")");
-                }
-                content.AppendLine(" VALUES");
 
                 for (int i = 0; i < items.Count; ++i)
                 {
@@ -312,9 +338,8 @@ namespace Sql
                         content.AppendFormat(NumberFormatInfo.InvariantInfo, "{0}{1}", item[j], (j < _itemCount - 1) ? ", " : string.Empty);
                     }
 
-                    content.AppendFormat("){0}", i < items.Count - 1 ? "," : ";").AppendLine();
+                    content.AppendFormat("){0}", objectCount++ < _sortedDictionary.Count - 1 ? "," : ";").AppendLine();
                 }
-                content.AppendLine();
             }
         }
 

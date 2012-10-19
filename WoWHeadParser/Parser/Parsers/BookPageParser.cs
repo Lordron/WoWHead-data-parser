@@ -22,6 +22,8 @@ namespace WoWHeadParser.Parser.Parsers
 
         public override void Parse(string page, uint id)
         {
+            string baseKey = string.Format("@ENTRY_{0} + 0", id);
+
             MatchCollection matches = bookRegex.Matches(page);
             for (int i = 0; i < matches.Count; ++i)
             {
@@ -30,12 +32,14 @@ namespace WoWHeadParser.Parser.Parsers
                 string typeStr = groups["page"].Value;
                 string[] pages = typeStr.Split(new[] { @"','" }, StringSplitOptions.RemoveEmptyEntries);
 
+                Builder.SetKey(baseKey);
+                Builder.AppendSqlQuery(baseKey, @"SET @ENTRY_{0}:= (SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0});", id);
+
                 for (int j = 0; j < pages.Length; ++j)
                 {
                     string key = string.Format("@ENTRY_{0} + {1}", id, j);
 
                     Builder.SetKey(key);
-                    Builder.AppendSqlQuery(key, @"SET @ENTRY_{0}:= (SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0});", id);
 
                     if (HasLocales)
                         Builder.AppendValue(pages[j].HTMLEscapeSumbols());
