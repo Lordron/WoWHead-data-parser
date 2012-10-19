@@ -18,7 +18,7 @@ namespace WoWHeadParser
     {
         private Worker _worker;
         private List<Type> _parsers = new List<Type>((int)ParserType.Max);
-        private List<ParserType> _parserTypes = new List<ParserType>((int)ParserType.Max);
+        private List<ParserAttribute> _parserAttributes = new List<ParserAttribute>((int)ParserType.Max);
 
         private CultureInfo _currentCulture;
 
@@ -80,9 +80,8 @@ namespace WoWHeadParser
                 if (attributes == null || attributes.Length < 1)
                     throw new InvalidOperationException(); // Each parsers should be marked with this attribute
 
-                ParserType parserType = attributes[0].Type;
-                parserBox.Items.Add(GetNameByParserType(parserType));
-                _parserTypes.Add(parserType);
+                parserBox.Items.Add(GetNameByParserType(attributes[0]));
+                _parserAttributes.Add(attributes[0]);
 
                 _parsers.Add(type);
             }
@@ -130,11 +129,11 @@ namespace WoWHeadParser
 
         private void ParserBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            int index = parserBox.SelectedIndex;
-            welfBox.SelectedItem = _parserTypes[index].ToString().ToLower();
+            int selectedIndex = parserBox.SelectedIndex;
+            welfBox.SelectedItem = _parserAttributes[selectedIndex].ToString().ToLower();
 
             subparsersListBox.Items.Clear();
-            Type subParsers = _parsers[index].GetNestedType("SubParsers");
+            Type subParsers = _parsers[selectedIndex].GetNestedType("SubParsers");
             if (subParsers != null)
             {
                 foreach (Enum val in Enum.GetValues(subParsers))
@@ -347,23 +346,23 @@ namespace WoWHeadParser
         {
             ReloadUILanguage(_currentCulture);
 
-            int index = parserBox.SelectedIndex;
+            int selectedIndex = parserBox.SelectedIndex;
 
             parserBox.Items.Clear();
 
-            foreach (ParserType type in _parserTypes)
+            foreach (ParserAttribute attribute in _parserAttributes)
             {
-                parserBox.Items.Add(GetNameByParserType(type));
+                parserBox.Items.Add(GetNameByParserType(attribute));
             }
 
-            parserBox.SelectedIndex = index;
+            parserBox.SelectedIndex = selectedIndex;
         }
 
         #region Parsers names
 
-        private string GetNameByParserType(ParserType type)
+        private string GetNameByParserType(ParserAttribute attribute)
         {
-            switch (type)
+            switch (attribute.Type)
             {
                 case ParserType.Page:
                     return Resources.PageParser;
@@ -382,7 +381,7 @@ namespace WoWHeadParser
                 case ParserType.Vendor:
                     return Resources.VendorParser;
                 default:
-                    throw new InvalidOperationException(type.ToString());
+                    throw new InvalidOperationException(attribute.ToString());
             }
         }
 
