@@ -17,8 +17,7 @@ namespace WoWHeadParser
     public partial class WoWHeadParserForm : Form
     {
         private Worker _worker;
-        private List<Type> _parsers = new List<Type>((int)ParserType.Max);
-        private List<ParserAttribute> _parserAttributes = new List<ParserAttribute>((int)ParserType.Max);
+        private Dictionary<int, KeyValuePair<ParserType, Type>> _parsers = new Dictionary<int, KeyValuePair<ParserType, Type>>((int)ParserType.Max);
 
         private CultureInfo _currentCulture;
 
@@ -69,6 +68,7 @@ namespace WoWHeadParser
 
             #region Parsers loading
 
+            int loadedParsers = 0;
             Type[] types = Assembly.GetExecutingAssembly().GetTypes();
             for (int i = 0; i < types.Length; ++i)
             {
@@ -80,10 +80,9 @@ namespace WoWHeadParser
                 if (attributes == null || attributes.Length < 1)
                     throw new InvalidOperationException(); // Each parsers should be marked with this attribute
 
-                parserBox.Items.Add(GetNameByParserType(attributes[0]));
-                _parserAttributes.Add(attributes[0]);
+                parserBox.Items.Add(GetNameByParserType(attributes[0].Type));
 
-                _parsers.Add(type);
+                _parsers.Add(loadedParsers++, new KeyValuePair<ParserType, Type>(attributes[0].Type, type));
             }
 
             parserBox.SelectIndex(Settings.Default.LastParser);
@@ -130,10 +129,10 @@ namespace WoWHeadParser
         private void ParserBoxSelectedIndexChanged(object sender, EventArgs e)
         {
             int selectedIndex = parserBox.SelectedIndex;
-            welfBox.SelectedItem = _parserAttributes[selectedIndex].ToString().ToLower();
-
+            welfBox.SelectedItem = _parsers[selectedIndex].Key.ToString().ToLower();
+       
             subparsersListBox.Items.Clear();
-            Type subParsers = _parsers[selectedIndex].GetNestedType("SubParsers");
+            Type subParsers = _parsers[selectedIndex].Value.GetNestedType("SubParsers");
             if (subParsers != null)
             {
                 foreach (Enum val in Enum.GetValues(subParsers))
@@ -145,7 +144,7 @@ namespace WoWHeadParser
 
         public void StartButtonClick(object sender, EventArgs e)
         {
-            ConstructorInfo cInfo = _parsers[parserBox.SelectedIndex].GetConstructor(new[] { typeof(Locale), typeof(int) });
+            ConstructorInfo cInfo = _parsers[parserBox.SelectedIndex].Value.GetConstructor(new[] { typeof(Locale), typeof(int) });
             if (cInfo == null)
                 return;
 
@@ -350,9 +349,9 @@ namespace WoWHeadParser
 
             parserBox.Items.Clear();
 
-            foreach (ParserAttribute attribute in _parserAttributes)
+            foreach (KeyValuePair<int, KeyValuePair<ParserType, Type>> kvp in _parsers)
             {
-                parserBox.Items.Add(GetNameByParserType(attribute));
+                parserBox.Items.Add(GetNameByParserType(kvp.Value.Key));
             }
 
             parserBox.SelectedIndex = selectedIndex;
@@ -360,9 +359,9 @@ namespace WoWHeadParser
 
         #region Parsers names
 
-        private string GetNameByParserType(ParserAttribute attribute)
+        private string GetNameByParserType(ParserType Type)
         {
-            switch (attribute.Type)
+            switch (Type)
             {
                 case ParserType.Page:
                     return Resources.PageParser;
@@ -381,7 +380,7 @@ namespace WoWHeadParser
                 case ParserType.Vendor:
                     return Resources.VendorParser;
                 default:
-                    throw new InvalidOperationException(attribute.ToString());
+                    throw new InvalidOperationException(Type.ToString());
             }
         }
 
