@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Threading;
@@ -29,26 +28,12 @@ namespace WoWHeadParser
 
         private object _locker = new object();
 
-        #region Locales
-
-        private Dictionary<Locale, string> _locales = new Dictionary<Locale, string>
-        {
-            {Locale.Old, "old."},
-            {Locale.English, "www."},
-            {Locale.Russia, "ru."},
-            {Locale.Germany, "de."},
-            {Locale.France, "fr."},
-            {Locale.Spain, "es."},
-        };
-
-        #endregion
-
-        public Worker(ParsingType type, PageParser parser, EventHandler onPageDownloadingComplete)
+        public Worker(ParsingType type, PageParser parser, EventHandler onPageDownloadingComplete = null)
         {
             _type = type;
             _parser = parser;
 
-            _address = new Uri(string.Format("http://{0}wowhead.com/", _locales[parser.Locale]));
+            _address = LocaleMgr.GetAddress(parser.Locale);
             ServicePointManager.DefaultConnectionLimit = SemaphoreCount * 10;
             {
                 _service = ServicePointManager.FindServicePoint(_address);
@@ -56,11 +41,10 @@ namespace WoWHeadParser
             }
             _address = new Uri(_address, parser.Address);
 
-
-            PageDownloadingComplete += onPageDownloadingComplete;
-
             _semaphore = new SemaphoreSlim(SemaphoreCount, SemaphoreCount);
             _badIds = new ConcurrentQueue<uint>();
+
+            PageDownloadingComplete += onPageDownloadingComplete;
         }
 
         public void SetValue(uint value)
@@ -91,23 +75,15 @@ namespace WoWHeadParser
             {
                 case ParsingType.TypeBySingleValue:
                     {
-                        _semaphore.Wait();
-
-                        Requests request = new Requests(_address, _start);
-                        request.BeginGetResponse(RespCallback, request);
+                        Process(_start);
                         break;
                     }
                 case ParsingType.TypeByMultipleValue:
                     {
                         for (uint entry = _start; entry <= _end; ++entry)
                         {
-                            if (!_isWorking)
+                            if (!Process(entry))
                                 break;
-
-                            _semaphore.Wait();
-
-                            Requests request = new Requests(_address, entry);
-                            request.BeginGetResponse(RespCallback, request);
                         }
                         break;
                     }
@@ -115,13 +91,8 @@ namespace WoWHeadParser
                     {
                         for (int i = 0; i < _entries.Length; ++i)
                         {
-                            if (!_isWorking)
+                            if (!Process(_entries[i]))
                                 break;
-
-                            _semaphore.Wait();
-
-                            Requests request = new Requests(_address, _entries[i]);
-                            request.BeginGetResponse(RespCallback, request);
                         }
                         break;
                     }
@@ -129,13 +100,8 @@ namespace WoWHeadParser
                     {
                         for (uint entry = 0; entry <= _start; ++entry)
                         {
-                            if (!_isWorking)
+                            if (!Process(entry))
                                 break;
-
-                            _semaphore.Wait();
-
-                            Requests request = new Requests(_address, entry, true);
-                            request.BeginGetResponse(RespCallback, request);
                         }
                         break;
                     }
@@ -157,10 +123,8 @@ namespace WoWHeadParser
                     if (!_badIds.TryDequeue(out id))
                         continue;
 
-                    _semaphore.Wait();
-
-                    Requests request = new Requests(_address, id);
-                    request.BeginGetResponse(RespCallback, request);
+                    if (!Process(id))
+                        break;
                 }
             }
 
@@ -170,6 +134,18 @@ namespace WoWHeadParser
             }
 
             _timeEnd = DateTime.Now;
+        }
+
+        private bool Process(uint id)
+        {
+            if (!_isWorking)
+                return false;
+
+            _semaphore.Wait();
+
+            Requests request = new Requests(_address, id, _type == ParsingType.TypeByWoWHeadFilter);
+            request.BeginGetResponse(RespCallback, request);
+            return true;
         }
 
         private void RespCallback(IAsyncResult iar)
