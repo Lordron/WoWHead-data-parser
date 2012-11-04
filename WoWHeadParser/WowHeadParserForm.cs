@@ -295,19 +295,17 @@ namespace WoWHeadParser
             if (item == null)
                 return;
 
-            string selectedCulture = item.Text;
+            CultureInfo selectedCulture = new CultureInfo(item.Text, true);
             if (_currentCulture.Equals(selectedCulture))
                 return;
             
             foreach (MenuItem menu in languageMenuItem.MenuItems)
             {
-                menu.Checked = false;
+                menu.Checked = menu == item;
             }
 
-            item.Checked = true;
-
-            Settings.Default.Culture = selectedCulture;
-            _currentCulture = new CultureInfo(selectedCulture, true);
+            Settings.Default.Culture = item.Text;
+            _currentCulture = selectedCulture;
 
             ReloadUILanguage();
         }
