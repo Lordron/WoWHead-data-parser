@@ -31,6 +31,9 @@ namespace WoWHeadParser.Parser.Parsers
                 return;
 
             int endIndex = page.FastIndexOf("<br />", startIndex);
+            if (endIndex == -1)
+                return;
+
             string subsString = page.Substring(startIndex, endIndex - startIndex);
             {
                 string[] values = subsString.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
