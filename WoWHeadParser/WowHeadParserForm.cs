@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Windows.Forms;
 using WoWHeadParser.DBFileStorage;
@@ -11,13 +12,14 @@ using WoWHeadParser.Messages;
 using WoWHeadParser.Parser;
 using WoWHeadParser.Plugin;
 using WoWHeadParser.Properties;
+using WoWHeadParser.Serialization;
 
 namespace WoWHeadParser
 {
     public partial class WoWHeadParserForm : Form
     {
         private const string WelfFolder = "EntryList";
-        private const string WelfExtension = "*.welf";
+        private const string WelfExtension = "*.json";
         private const string DllExtension = "*.Plugin.dll";
         private const uint MaxIdCountPerRequest = 200;
 
@@ -166,7 +168,7 @@ namespace WoWHeadParser
                     }
                 case ParsingType.TypeByList:
                     {
-                        value.Array = GetEntriesList();
+                        value.Array = GetEntriesList().Data;
                         numericUpDown.Maximum = progressBar.Maximum = value.Array.Length;
                         break;
                     }
@@ -257,19 +259,7 @@ namespace WoWHeadParser
 
         private void WelfBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            string path = string.Format("{0}\\{1}.welf", WelfFolder, welfBox.SelectedItem);
-            if (!File.Exists(path))
-            {
-                ShowMessageBox(MessageType.WelfFileNotFound, path);
-                return;
-            }
-
-            using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
-            using (BinaryReader reader = new BinaryReader(stream))
-            {
-                int count = reader.ReadInt32();
-                entryCountLabel.Text = string.Format(Resources.EntryCountLabel, count);
-            }
+            entryCountLabel.Text = string.Format(Resources.EntryCountLabel, GetEntriesList().Count);
         }
 
         private void OptionsMenuItemClick(object sender, EventArgs e)
@@ -393,6 +383,7 @@ namespace WoWHeadParser
                 welfBox.Items.Add(fileName);
             }
 
+            if (welfBox.Items.Count > 0)
             welfBox.SelectIndex(0);
         }
 
@@ -413,9 +404,9 @@ namespace WoWHeadParser
             return mask;
         }
 
-        private unsafe uint[] GetEntriesList()
+        private Entries GetEntriesList()
         {
-            string path = string.Format("{0}\\{1}.welf", WelfFolder, welfBox.SelectedItem);
+            string path = string.Format("{0}\\{1}.json", WelfFolder, welfBox.SelectedItem);
             if (!File.Exists(path))
             {
                 ShowMessageBox(MessageType.WelfFileNotFound, path);
@@ -424,23 +415,15 @@ namespace WoWHeadParser
 
             try
             {
-                using (FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read))
-                using (BinaryReader reader = new BinaryReader(stream))
+                using (StreamReader stream = new StreamReader(path))
                 {
-                    int count = reader.ReadInt32();
-                    uint[] entries = new uint[count];
-
-                    byte[] bytes = reader.ReadBytes(count * sizeof(uint));
-
-                    fixed (byte* bptr = bytes)
-                    fixed (uint* uptr = entries)
+                    DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Entries));
+                    Entries entries = (Entries)serializer.ReadObject(stream.BaseStream);
+                    if (entries.Version != Header.CurrentVersion)
                     {
-                        for (int i = 0; i < count; ++i)
-                        {
-                            *((uint*)(uptr + i)) = bytes[i*sizeof(uint)];
-                        }
+                        Console.WriteLine(Resources.Error_while_loading_welf_file, path, "Welf version mismatch");
+                        return null;
                     }
-
                     return entries;
                 }
             }
