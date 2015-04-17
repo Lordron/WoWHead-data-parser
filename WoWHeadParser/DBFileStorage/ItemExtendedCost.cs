@@ -7,21 +7,34 @@ namespace WoWHeadParser.DBFileStorage
     public class ItemExtendedCostEntry
     {
         public uint Id;
-        public uint ReqHonorPoints;
-        public uint ReqArenaPoints;
+
         public uint ReqArenaSlot;
+
         [StoragePresence(StoragePresenceOption.Include, ArraySize = 5)]
         public uint[] ReqItems;
+
         [StoragePresence(StoragePresenceOption.Include, ArraySize = 5)]
         public uint[] ReqItemCounts;
+
         public uint ReqPersonalRating;
+
         public uint ItemPurchaseGroup;
+
         [StoragePresence(StoragePresenceOption.Include, ArraySize = 5)]
         public uint[] ReqCurrences;
+
         [StoragePresence(StoragePresenceOption.Include, ArraySize = 5)]
         public uint[] ReqCurrencyCounts;
-        [StoragePresence(StoragePresenceOption.Include, ArraySize = 5)]
-        public uint[] Unks;
+
+        public uint RequiredFactionId;
+
+        public uint RequiredFactionStanding;
+
+        public uint RequirementFlags;
+
+        public uint RequiredAchievement;
+
+        public uint RequiredMoney;
     };
 
     public class ItemExtendedCost : IDBFileLoader
