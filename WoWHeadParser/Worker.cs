@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -41,7 +42,8 @@ namespace WoWHeadParser
         private DateTime m_timeEnd;
         private ServicePoint m_service;
         private SemaphoreSlim m_semaphore;
-        private ConcurrentQueue<uint> m_badIds;
+        private Queue<uint> m_badIds;
+        private bool m_storeUnprocessedIds;
 
         private const int SemaphoreCount = 100;
         private const int KeepAliveTime = 100000;
@@ -59,10 +61,13 @@ namespace WoWHeadParser
                 m_service = ServicePointManager.FindServicePoint(m_address);
                 m_service.SetTcpKeepAlive(true, KeepAliveTime, KeepAliveTime);
             }
+
             m_address = new Uri(m_address, parser.Address);
 
             m_semaphore = new SemaphoreSlim(SemaphoreCount, SemaphoreCount);
-            m_badIds = new ConcurrentQueue<uint>();
+            m_storeUnprocessedIds = m_type == ParsingType.TypeByList || m_type == ParsingType.TypeByWoWHeadFilter;
+            if (m_storeUnprocessedIds)
+                m_badIds = new Queue<uint>();
 
             PageDownloadingComplete += onPageDownloadingComplete;
         }
@@ -122,15 +127,15 @@ namespace WoWHeadParser
                 Application.DoEvents();
             }
 
-            if (m_type == ParsingType.TypeByList || m_type == ParsingType.TypeByWoWHeadFilter)
+            if (m_storeUnprocessedIds)
             {
-                while (!m_badIds.IsEmpty)
+                while (m_badIds.Count > 0)
                 {
                     if (!m_isWorking)
                         break;
 
-                    uint id;
-                    if (!m_badIds.TryDequeue(out id))
+                    uint id = m_badIds.Dequeue();
+                    if (id == 0)
                         continue;
 
                     if (!Process(id))
@@ -163,18 +168,18 @@ namespace WoWHeadParser
             Requests request = (Requests)iar.AsyncState;
 
             string page;
-            bool endGetResponse = request.EndGetResponse(iar, out page);
+            bool success = request.EndGetResponse(iar, out page);
             lock (m_locker)
             {
-                if (endGetResponse)
+                if (success)
                     m_parser.TryParse(page, request.Id);
-                else
+                else if (m_storeUnprocessedIds)
                     m_badIds.Enqueue(request.Id);
             }
             request.Dispose();
             m_semaphore.Release();
 
-            if (endGetResponse && PageDownloadingComplete != null)
+            if (success && PageDownloadingComplete != null)
                 PageDownloadingComplete(null, EventArgs.Empty);
         }
 
