@@ -16,7 +16,6 @@ namespace WoWHeadParser.Parser.Parsers
 
         private Dictionary<Locale, string> _durabiliy = new Dictionary<Locale, string>
         {
-            {Locale.Old, @"Durability"},
             {Locale.English, @"Durability"},
             {Locale.Russia, @"Прочность"},
             {Locale.Germany, @"Haltbarkeit"},

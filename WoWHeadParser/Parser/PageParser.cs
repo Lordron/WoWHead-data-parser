@@ -12,6 +12,8 @@ namespace WoWHeadParser.Parser
 
         public string Address;
 
+        public Locale Locale;
+
         public StringBuilder Content = new StringBuilder(1024);
 
         public PageParser(Locale locale, int flags)
@@ -60,14 +62,6 @@ namespace WoWHeadParser.Parser
 
         #region Locales
 
-        public Locale Locale
-        {
-            get { return _locale > Locale.Old ? _locale : Locale.English; }
-            set { _locale = value; }
-        }
-
-        private Locale _locale;
-
         private Dictionary<Locale, string> _locales = new Dictionary<Locale, string>
         {
             {Locale.Russia, "loc8"},
@@ -76,7 +70,7 @@ namespace WoWHeadParser.Parser
             {Locale.Spain, "loc6"},
         };
 
-        public bool HasLocales { get { return _locale > Locale.English; } }
+        public bool HasLocales { get { return Locale > Locale.English; } }
 
         public string LocalePosfix { get { return _locales[Locale]; } }
 
