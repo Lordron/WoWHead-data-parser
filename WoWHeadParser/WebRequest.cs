@@ -35,13 +35,14 @@ namespace WoWHeadParser
 
         #endregion
 
-        public Requests(Uri address, uint id, bool isFilter = false)
+        public Requests(Uri address, string relative, uint id, bool isFilter = false)
         {
             Id = id;
+
             if (isFilter)
-                m_uri = new Uri(string.Format(address.OriginalString, (id * 200), ((id + 1) * 200)));
+                m_uri = new Uri(address, string.Format(relative, (id * 200), ((id + 1) * 200)));
             else
-                m_uri = new Uri(string.Format(address.OriginalString, id));
+                m_uri = new Uri(address, string.Format(relative, id));
 
             m_request = (HttpWebRequest)WebRequest.Create(m_uri);
             m_request.UserAgent = GetRandomUserAgent();

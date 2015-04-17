@@ -9,16 +9,15 @@ namespace WoWHeadParser.Parser
         public uint CountLimit;
         public Type Type;
 
-        public ParserAttribute(ParserType type)
-        {
-            ParserType = type;
-            CountLimit = 0;
-        }
-
         public ParserAttribute(ParserType type, uint limit)
         {
             ParserType = type;
             CountLimit = limit;
+        }
+
+        public ParserAttribute(ParserType type)
+            : this(type, 0)
+        {
         }
 
         public override string ToString()

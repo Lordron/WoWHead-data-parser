@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net;
 using System.Runtime.InteropServices;
@@ -61,8 +60,6 @@ namespace WoWHeadParser
                 m_service = ServicePointManager.FindServicePoint(m_address);
                 m_service.SetTcpKeepAlive(true, KeepAliveTime, KeepAliveTime);
             }
-
-            m_address = new Uri(m_address, parser.Address);
 
             m_semaphore = new SemaphoreSlim(SemaphoreCount, SemaphoreCount);
             m_storeUnprocessedIds = m_type == ParsingType.TypeByList || m_type == ParsingType.TypeByWoWHeadFilter;
@@ -158,7 +155,7 @@ namespace WoWHeadParser
 
             m_semaphore.Wait();
 
-            Requests request = new Requests(m_address, id, m_type == ParsingType.TypeByWoWHeadFilter);
+            Requests request = new Requests(m_address, m_parser.Address, id, m_type == ParsingType.TypeByWoWHeadFilter);
             request.BeginGetResponse(RespCallback, request);
             return true;
         }
