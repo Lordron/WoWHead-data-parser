@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -16,24 +17,21 @@ namespace WoWHeadParser
 {
     public partial class WoWHeadParserForm : Form
     {
-        private Worker _worker;
-        private Dictionary<int, KeyValuePair<ParserType, Type>> _parsers = new Dictionary<int, KeyValuePair<ParserType, Type>>((int)ParserType.Max);
-
-        private CultureInfo _currentCulture;
-
         private const string WelfFolder = "EntryList";
         private const string WelfExtension = "*.welf";
         private const string DllExtension = "*.Plugin.dll";
+        private const int MaxIdCountPerRequest = 200;
 
-        #region Language
-
-        private string[] _language = new string[]
+        private static string[] s_languages = new string[]
         {
             "en-US",
             "ru-RU",
         };
 
-        #endregion
+        private Worker m_worker;
+        private CultureInfo m_currentCulture;
+
+        private Dictionary<int, KeyValuePair<ParserAttribute, Type>> m_parsers = new Dictionary<int, KeyValuePair<ParserAttribute, Type>>((int)ParserType.Max);
 
         public WoWHeadParserForm()
         {
@@ -46,14 +44,14 @@ namespace WoWHeadParser
         {
             #region Language loading
 
-            string stringCulture = Settings.Default.Culture;
-            foreach (string language in _language)
+            string currentLanguage = Settings.Default.Culture;
+            foreach (string language in s_languages)
             {
-                MenuItem item = new MenuItem(language, LanguageMenuItemClick) { Checked = stringCulture.Equals(language) };
+                MenuItem item = new MenuItem(language, LanguageMenuItemClick) { Checked = currentLanguage.Equals(language) };
                 languageMenuItem.MenuItems.Add(item);
             }
 
-            _currentCulture = new CultureInfo(stringCulture, true);
+            m_currentCulture = new CultureInfo(currentLanguage, true);
 
             ReloadUILanguage();
 
@@ -82,7 +80,7 @@ namespace WoWHeadParser
 
                 parserBox.Items.Add(GetNameByParserType(attributes[0].Type));
 
-                _parsers.Add(loadedParsers++, new KeyValuePair<ParserType, Type>(attributes[0].Type, type));
+                m_parsers.Add(loadedParsers++, new KeyValuePair<ParserAttribute, Type>(attributes[0], type));
             }
 
             parserBox.SelectIndex(Settings.Default.LastParser);
@@ -123,16 +121,16 @@ namespace WoWHeadParser
         {
             MenuItem item = ((MenuItem)sender);
             IPlugin plugin = (IPlugin)item.Tag;
-            plugin.Run(_currentCulture);
+            plugin.Run(m_currentCulture);
         }
 
         private void ParserBoxSelectedIndexChanged(object sender, EventArgs e)
         {
             int selectedIndex = parserBox.SelectedIndex;
-            welfBox.SelectedItem = _parsers[selectedIndex].Key.ToString().ToLower();
+            welfBox.SelectedItem = m_parsers[selectedIndex].Key.ToString().ToLower();
        
             subparsersListBox.Items.Clear();
-            Type subParsers = _parsers[selectedIndex].Value.GetNestedType("SubParsers");
+            Type subParsers = m_parsers[selectedIndex].Value.GetNestedType("SubParsers");
             if (subParsers != null)
             {
                 foreach (Enum val in Enum.GetValues(subParsers))
@@ -144,7 +142,8 @@ namespace WoWHeadParser
 
         public void StartButtonClick(object sender, EventArgs e)
         {
-            ConstructorInfo cInfo = _parsers[parserBox.SelectedIndex].Value.GetConstructor(new[] { typeof(Locale), typeof(int) });
+            ParserAttribute att = m_parsers[parserBox.SelectedIndex].Key;
+            ConstructorInfo cInfo = m_parsers[parserBox.SelectedIndex].Value.GetConstructor(new[] { typeof(Locale), typeof(int) });
             if (cInfo == null)
                 return;
 
@@ -155,21 +154,21 @@ namespace WoWHeadParser
 
             ParsingType type = (ParsingType)parsingControl.SelectedIndex;
 
-            _worker = new Worker(type, parser, WorkerPageDownloaded);
+            m_worker = new Worker(type, parser, WorkerPageDownloaded);
 
             switch (type)
             {
                 case ParsingType.TypeBySingleValue:
                     {
                         uint value = (uint)valueBox.Value;
-                        _worker.SetValue(value);
+                        m_worker.SetValue(value);
                         break;
                     }
                 case ParsingType.TypeByList:
                     {
                         uint[] entries = GetEntriesList();
                         numericUpDown.Maximum = progressBar.Maximum = entries.Length;
-                        _worker.SetValue(entries);
+                        m_worker.SetValue(entries);
                         break;
                     }
                 case ParsingType.TypeByMultipleValue:
@@ -190,14 +189,14 @@ namespace WoWHeadParser
                         }
 
                         numericUpDown.Maximum = progressBar.Maximum = (int)(endValue - startValue) + 1;
-                        _worker.SetValue(startValue, endValue);
+                        m_worker.SetValue(startValue, endValue);
                         break;
                     }
                 case ParsingType.TypeByWoWHeadFilter:
                     {
-                        int maxValue = (parser.MaxCount / 200);
+                        int maxValue = (att.CountLimit / MaxIdCountPerRequest);
                         numericUpDown.Maximum = progressBar.Maximum = maxValue + 1;
-                        _worker.SetValue((uint)maxValue);
+                        m_worker.SetValue((uint)maxValue);
                         break;
                     }
                 default:
@@ -216,7 +215,7 @@ namespace WoWHeadParser
 
         private void BackgroundWorkerDoWork(object sender, DoWorkEventArgs e)
         {
-            _worker.Start();
+            m_worker.Start();
         }
 
         private void WorkerPageDownloaded(object sender, EventArgs e)
@@ -234,7 +233,7 @@ namespace WoWHeadParser
             {
                 using (StreamWriter stream = new StreamWriter(saveDialog.FileName, Settings.Default.Append, Encoding.UTF8))
                 {
-                    stream.Write(_worker);
+                    stream.Write(m_worker);
                 }
             }
 
@@ -242,7 +241,7 @@ namespace WoWHeadParser
             subparsersListBox.Enabled = settingsBox.Enabled = startButton.Enabled = true;
             numericUpDown.Value = progressBar.Value = 0;
 
-            _worker.Reset();
+            m_worker.Reset();
 
             SetLabelText(Resources.Label_Complete);
         }
@@ -252,7 +251,7 @@ namespace WoWHeadParser
             if (ShowMessageBox(MessageType.AbortQuestion) != DialogResult.Yes)
                 return;
 
-            _worker.Stop();
+            m_worker.Stop();
             abortButton.Enabled = false;
             SetLabelText(Resources.Label_Abort);
         }
@@ -276,12 +275,12 @@ namespace WoWHeadParser
 
         private void OptionsMenuItemClick(object sender, EventArgs e)
         {
-            new SettingsForm(_currentCulture).ShowDialog();
+            new SettingsForm(m_currentCulture).ShowDialog();
         }
 
         private void AboutMenuItemClick(object sender, EventArgs e)
         {
-            new AboutForm(_currentCulture).ShowDialog();
+            new AboutForm(m_currentCulture).ShowDialog();
         }
 
         private void ReloadWelfFilesButtonClick(object sender, EventArgs e)
@@ -296,7 +295,7 @@ namespace WoWHeadParser
                 return;
 
             CultureInfo selectedCulture = new CultureInfo(item.Text, true);
-            if (_currentCulture.Equals(selectedCulture))
+            if (m_currentCulture.Equals(selectedCulture))
                 return;
             
             foreach (MenuItem menu in languageMenuItem.MenuItems)
@@ -305,7 +304,7 @@ namespace WoWHeadParser
             }
 
             Settings.Default.Culture = item.Text;
-            _currentCulture = selectedCulture;
+            m_currentCulture = selectedCulture;
 
             ReloadUILanguage();
         }
@@ -341,15 +340,15 @@ namespace WoWHeadParser
 
         private void ReloadUILanguage()
         {
-            ReloadUILanguage(_currentCulture);
+            ReloadUILanguage(m_currentCulture);
 
             int selectedIndex = parserBox.SelectedIndex;
 
             parserBox.Items.Clear();
 
-            foreach (KeyValuePair<int, KeyValuePair<ParserType, Type>> kvp in _parsers)
+            foreach (KeyValuePair<int, KeyValuePair<ParserAttribute, Type>> kvp in m_parsers)
             {
-                parserBox.Items.Add(GetNameByParserType(kvp.Value.Key));
+                parserBox.Items.Add(GetNameByParserType(kvp.Value.Key.Type));
             }
 
             parserBox.SelectedIndex = selectedIndex;
@@ -415,7 +414,7 @@ namespace WoWHeadParser
             return mask;
         }
 
-        private uint[] GetEntriesList()
+        private unsafe uint[] GetEntriesList()
         {
             string path = string.Format("{0}\\{1}.welf", WelfFolder, welfBox.SelectedItem);
             if (!File.Exists(path))
@@ -432,10 +431,15 @@ namespace WoWHeadParser
                     int count = reader.ReadInt32();
                     uint[] entries = new uint[count];
 
-                    for (int i = 0; i < count; ++i)
+                    byte[] bytes = reader.ReadBytes(count * sizeof(uint));
+
+                    fixed (byte* bptr = bytes)
+                    fixed (uint* uptr = entries)
                     {
-                        uint entry = reader.ReadUInt32();
-                        entries[i] = entry;
+                        for (int i = 0; i < count; ++i)
+                        {
+                            *((uint*)(uptr + i)) = bytes[i*sizeof(uint)];
+                        }
                     }
 
                     return entries;

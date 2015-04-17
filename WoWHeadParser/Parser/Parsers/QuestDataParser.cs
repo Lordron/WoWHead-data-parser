@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace WoWHeadParser.Parser.Parsers
 {
-    [Parser(ParserType.Quest)]
+    [Parser(ParserType.Quest, 32000)]
     internal class QuestDataParser : PageParser
     {
         private SubParsers parsers;
@@ -12,7 +12,6 @@ namespace WoWHeadParser.Parser.Parsers
             : base(locale, flags)
         {
             this.Address = "quests?filter=cr=30:30;crs=1:4;crv={0}:{1}";
-            this.MaxCount = 32000;
 
             parsers = (SubParsers)flags;
         }

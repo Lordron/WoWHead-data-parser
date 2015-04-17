@@ -3,14 +3,13 @@ using Newtonsoft.Json;
 
 namespace WoWHeadParser.Parser.Parsers
 {
-    [Parser(ParserType.NpcLocale)]
+    [Parser(ParserType.NpcLocale, 59000)]
     internal class NpcLocaleParser : PageParser
     {
         public NpcLocaleParser(Locale locale, int flags)
             : base(locale, flags)
         {
             this.Address = "npcs?filter=cr=37:37;crs=1:4;crv={0}:{1}";
-            this.MaxCount = 59000;
 
             if (HasLocales)
                 Builder.Setup("locales_creature", "entry", false, string.Format("name_{0}", LocalePosfix), string.Format("subname_{0}", LocalePosfix));

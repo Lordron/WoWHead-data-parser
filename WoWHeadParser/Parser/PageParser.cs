@@ -10,8 +10,6 @@ namespace WoWHeadParser.Parser
     {
         public int Flags;
 
-        public int MaxCount;
-
         public string Address;
 
         public StringBuilder Content = new StringBuilder(1024);
