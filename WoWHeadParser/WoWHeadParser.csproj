@@ -121,6 +121,7 @@
     <Compile Include="Plugin\IPlugin.cs" />
     <Compile Include="RichTextBoxWriter.cs" />
     <Compile Include="Serialization\Header.cs" />
+    <Compile Include="Serialization\Parsers.cs" />
     <Compile Include="Serialization\SerializationHelper.cs" />
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
@@ -188,6 +189,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="EntryList\vendor.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Parsers.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Properties\Settings.settings">

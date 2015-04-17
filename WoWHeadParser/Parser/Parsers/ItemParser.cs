@@ -9,8 +9,6 @@ namespace WoWHeadParser.Parser.Parsers
         public ItemParser(Locale locale, int flags)
             : base(locale, flags)
         {
-            this.Address = "item={0}?power";
-
             Builder.Setup("item_template", "entry", false, "Durability");
         }
 

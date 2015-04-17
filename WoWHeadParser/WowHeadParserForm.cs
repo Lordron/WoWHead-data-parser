@@ -12,6 +12,7 @@ using WoWHeadParser.Parser;
 using WoWHeadParser.Plugin;
 using WoWHeadParser.Properties;
 using WoWHeadParser.Serialization;
+using System.Linq;
 
 namespace WoWHeadParser
 {
@@ -20,6 +21,8 @@ namespace WoWHeadParser
         private const string WelfFolder = "EntryList";
         private const string WelfExtension = "*.json";
         private const string DllExtension = "*.Plugin.dll";
+        private const string ParserFile = "Parsers.json";
+
         private const uint MaxIdCountPerRequest = 200;
 
         private static string[] s_languages = new string[]
@@ -30,8 +33,7 @@ namespace WoWHeadParser
 
         private Worker m_worker;
         private CultureInfo m_currentCulture;
-
-        private Dictionary<int, ParserAttribute> m_parsers = new Dictionary<int, ParserAttribute>((int)ParserType.Max);
+        private ParserData m_data;
 
         public WoWHeadParserForm()
         {
@@ -51,6 +53,7 @@ namespace WoWHeadParser
                 languageMenuItem.MenuItems.Add(item);
             }
 
+            m_data = SerializationHelper.Serialize<ParserData>(ParserFile);
             m_currentCulture = new CultureInfo(currentLanguage, true);
 
             ReloadUILanguage();
@@ -66,25 +69,22 @@ namespace WoWHeadParser
 
             #region Parsers loading
 
-            int loadedParsers = 0;
             Type[] types = Assembly.GetExecutingAssembly().GetTypes();
-            for (int i = 0; i < types.Length; ++i)
+            foreach (Type type in types)
             {
-                Type type = types[i];
                 if (!type.IsSubclassOf(typeof(PageParser)))
                     continue;
 
-                ParserAttribute[] attributes = type.GetCustomAttributes(typeof(ParserAttribute), true) as ParserAttribute[];
-                if (attributes == null || attributes.Length < 1)
-                    throw new InvalidOperationException(); // Each parsers should be marked with this attribute
+                ParserAttribute attribute = type.GetCustomAttribute<ParserAttribute>(true);
+                foreach (ParserData.Parser parser in m_data.Data)
+                {
+                    if (parser.ParserType != attribute.ParserType)
+                        continue;
 
-                parserBox.Items.Add(GetNameByParserType(attributes[0].ParserType));
-                attributes[0].Type = type;
-
-                m_parsers.Add(loadedParsers++, attributes[0]);
+                    parser.Type = type;
+                    break;
+                }
             }
-
-            parserBox.SelectIndex(Settings.Default.LastParser);
 
             #endregion
 
@@ -127,11 +127,11 @@ namespace WoWHeadParser
 
         private void ParserBoxSelectedIndexChanged(object sender, EventArgs e)
         {
-            int selectedIndex = parserBox.SelectedIndex;
-            welfBox.SelectedItem = m_parsers[selectedIndex].ToString().ToLower();
+            ParserData.Parser data = m_data.Data[parserBox.SelectedIndex];
+            welfBox.SelectedItem = data.ParserType.ToString().ToLower();
        
             subparsersListBox.Items.Clear();
-            Type subParsers = m_parsers[selectedIndex].Type.GetNestedType("SubParsers");
+            Type subParsers = data.Type.GetNestedType("SubParsers");
             if (subParsers != null)
             {
                 foreach (Enum val in Enum.GetValues(subParsers))
@@ -143,8 +143,8 @@ namespace WoWHeadParser
 
         public void StartButtonClick(object sender, EventArgs e)
         {
-            ParserAttribute att = m_parsers[parserBox.SelectedIndex];
-            ConstructorInfo cInfo = att.Type.GetConstructor(new[] { typeof(Locale), typeof(int) });
+            ParserData.Parser data = m_data.Data[parserBox.SelectedIndex];
+            ConstructorInfo cInfo = data.Type.GetConstructor(new[] { typeof(Locale), typeof(int) });
             if (cInfo == null)
                 return;
 
@@ -152,6 +152,8 @@ namespace WoWHeadParser
             PageParser parser = (PageParser)cInfo.Invoke(new [] { localeBox.SelectedItem, flags });
             if (parser == null)
                 throw new InvalidOperationException("parser");
+
+            parser.Parser = data;
 
             ParsingType type = (ParsingType)parsingControl.SelectedIndex;
 
@@ -193,7 +195,7 @@ namespace WoWHeadParser
                     }
                 case ParsingType.TypeByWoWHeadFilter:
                     {
-                        value.Maximum = (att.CountLimit / MaxIdCountPerRequest);
+                        value.Maximum = (data.CountLimit / MaxIdCountPerRequest);
                         numericUpDown.Maximum = progressBar.Maximum = (int)value.Maximum + 1;
                         break;
                     }
@@ -229,6 +231,10 @@ namespace WoWHeadParser
 
         private void BackgroundWorkerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            if (e.Error != null)
+            {
+                Console.WriteLine("Error! {0}", e.Error);
+            }
             if (saveDialog.ShowDialog(this) == DialogResult.OK)
             {
                 using (StreamWriter stream = new StreamWriter(saveDialog.FileName, Settings.Default.Append, Encoding.UTF8))
@@ -236,6 +242,7 @@ namespace WoWHeadParser
                     stream.Write(m_worker);
                 }
             }
+
 
             abortButton.Enabled = false;
             subparsersListBox.Enabled = settingsBox.Enabled = startButton.Enabled = true;
@@ -334,9 +341,9 @@ namespace WoWHeadParser
 
             parserBox.Items.Clear();
 
-            foreach (KeyValuePair<int, ParserAttribute> kvp in m_parsers)
+            foreach (ParserData.Parser data in m_data.Data)
             {
-                parserBox.Items.Add(GetNameByParserType(kvp.Value.ParserType));
+                parserBox.Items.Add(GetNameByParserType(data.ParserType));
             }
 
             parserBox.SelectedIndex = selectedIndex;

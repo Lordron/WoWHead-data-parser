@@ -5,7 +5,7 @@ namespace WoWHeadParser.Serialization
     [DataContract]
     public class Header
     {
-        [DataMember]
+        [DataMember(IsRequired=true)]
         public int Version;
 
         [IgnoreDataMember]

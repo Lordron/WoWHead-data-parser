@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Sql;
 using WoWHeadParser.Properties;
+using WoWHeadParser.Serialization;
 
 namespace WoWHeadParser.Parser
 {
@@ -10,7 +11,7 @@ namespace WoWHeadParser.Parser
     {
         public int Flags;
 
-        public string Address;
+        public ParserData.Parser Parser;
 
         public Locale Locale;
 

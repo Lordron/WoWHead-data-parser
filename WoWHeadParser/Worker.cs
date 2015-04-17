@@ -11,7 +11,6 @@ namespace WoWHeadParser
 {
     public class Worker : IDisposable
     {
-
         [StructLayout(LayoutKind.Explicit)]
         public struct ParserValue
         {
@@ -155,7 +154,7 @@ namespace WoWHeadParser
 
             m_semaphore.Wait();
 
-            Requests request = new Requests(m_address, m_parser.Address, id, m_type == ParsingType.TypeByWoWHeadFilter);
+            Requests request = new Requests(m_address, m_parser.Parser.Address, id, m_type == ParsingType.TypeByWoWHeadFilter);
             request.BeginGetResponse(RespCallback, request);
             return true;
         }

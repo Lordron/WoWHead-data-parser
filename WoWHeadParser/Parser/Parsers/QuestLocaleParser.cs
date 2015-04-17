@@ -3,14 +3,12 @@ using System.Text.RegularExpressions;
 
 namespace WoWHeadParser.Parser.Parsers
 {
-    [Parser(ParserType.QuestLocale, 32000)]
+    [Parser(ParserType.QuestLocale)]
     internal class QuestLocaleParser : PageParser
     {
         public QuestLocaleParser(Locale locale, int flags)
             : base(locale, flags)
         {
-            this.Address = "quests?filter=cr=30:30;crs=1:4;crv={0}:{1}";
-
             if (HasLocales)
                 Builder.Setup("locales_quest", "entry", false, string.Format("title_{0}", LocalePosfix));
             else

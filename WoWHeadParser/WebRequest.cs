@@ -86,8 +86,6 @@ namespace WoWHeadParser
                 m_request.Abort();
             if (m_response != null)
                 m_response.Close();
-
-            s_userAgents = null;
         }
 
         public override string ToString()

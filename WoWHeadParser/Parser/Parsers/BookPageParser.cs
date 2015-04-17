@@ -10,8 +10,6 @@ namespace WoWHeadParser.Parser.Parsers
         public BookPageParser(Locale locale, int flags)
             : base(locale, flags)
         {
-            this.Address = "object={0}";
-
             if (HasLocales)
                 Builder.Setup("locales_page_text", "entry", true, string.Format("Text_{0}", LocalePosfix));
             else

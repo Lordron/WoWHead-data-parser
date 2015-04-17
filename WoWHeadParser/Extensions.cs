@@ -110,7 +110,7 @@ namespace WoWHeadParser
             if (comboBox == null)
                 throw new ArgumentNullException("comboBox");
 
-            comboBox.SelectedIndex = index < comboBox.Items.Count ? index : 0;
+            comboBox.SelectedIndex = index != -1 && index < comboBox.Items.Count ? index : 0;
         }
 
         public static void SetEnumValues<T>(this ComboBox comboBox, int index = 0)
@@ -123,7 +123,7 @@ namespace WoWHeadParser
                 comboBox.Items.Add(value);
             }
 
-            comboBox.SelectedIndex = index < comboBox.Items.Count ? index : 0;
+            comboBox.SelectedIndex = index != -1 && index < comboBox.Items.Count ? index : 0;
         }
 
         public static void SetEnumValues<T>(this ComboBox comboBox, object item = null)
@@ -138,6 +138,24 @@ namespace WoWHeadParser
 
             if (item != null)
                 comboBox.SelectedItem = item;
+        }
+
+        public static T[] GetCustomAttributes<T>(this Type type, bool inherit) where T : Attribute
+        {
+            T[] attributes = type.GetCustomAttributes(typeof(T), inherit) as T[];
+            if (attributes == null)
+                throw new InvalidOperationException(); // Each parsers should be marked with this attribute
+
+            return attributes;
+        }
+
+        public static T GetCustomAttribute<T>(this Type type, bool inherit) where T : Attribute
+        {
+            T[] attributes = type.GetCustomAttributes(typeof(T), inherit) as T[];
+            if (attributes == null || attributes.Length < 1)
+                throw new InvalidOperationException(); // Each parsers should be marked with this attribute
+
+            return attributes[0];
         }
     }
 }

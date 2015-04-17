@@ -9,8 +9,6 @@ namespace WoWHeadParser.Parser.Parsers
         public TrainerParser(Locale locale, int flags)
             : base(locale, flags)
         {
-            this.Address = "npc={0}";
-
             Builder.Setup("npc_trainer", "entry", true, "spell", "spellcost", "reqlevel", "reqSkill", "reqSkillValue");
         }
 

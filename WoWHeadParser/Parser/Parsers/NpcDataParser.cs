@@ -14,8 +14,6 @@ namespace WoWHeadParser.Parser.Parsers
         public NpcDataParser(Locale locale, int flags)
             : base(locale, flags)
         {
-            this.Address = "npc={0}";
-
             parsers = (SubParsers)flags;
 
             for (int i = 0; i < ((int)SubParsersType.Max - 1); ++i)
