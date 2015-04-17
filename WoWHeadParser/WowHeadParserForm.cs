@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
-using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Windows.Forms;
 using WoWHeadParser.DBFileStorage;
@@ -415,17 +414,7 @@ namespace WoWHeadParser
 
             try
             {
-                using (StreamReader stream = new StreamReader(path))
-                {
-                    DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(Entries));
-                    Entries entries = (Entries)serializer.ReadObject(stream.BaseStream);
-                    if (entries.Version != Header.CurrentVersion)
-                    {
-                        Console.WriteLine(Resources.Error_while_loading_welf_file, path, "Welf version mismatch");
-                        return null;
-                    }
-                    return entries;
-                }
+                return SerializationHelper.Serialize<Entries>(path);
             }
             catch (Exception exception)
             {

@@ -121,6 +121,7 @@
     <Compile Include="Plugin\IPlugin.cs" />
     <Compile Include="RichTextBoxWriter.cs" />
     <Compile Include="Serialization\Header.cs" />
+    <Compile Include="Serialization\SerializationHelper.cs" />
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
