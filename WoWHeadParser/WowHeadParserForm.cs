@@ -20,7 +20,7 @@ namespace WoWHeadParser
         private const string WelfFolder = "EntryList";
         private const string WelfExtension = "*.welf";
         private const string DllExtension = "*.Plugin.dll";
-        private const int MaxIdCountPerRequest = 200;
+        private const uint MaxIdCountPerRequest = 200;
 
         private static string[] s_languages = new string[]
         {
@@ -31,7 +31,7 @@ namespace WoWHeadParser
         private Worker m_worker;
         private CultureInfo m_currentCulture;
 
-        private Dictionary<int, KeyValuePair<ParserAttribute, Type>> m_parsers = new Dictionary<int, KeyValuePair<ParserAttribute, Type>>((int)ParserType.Max);
+        private Dictionary<int, ParserAttribute> m_parsers = new Dictionary<int, ParserAttribute>((int)ParserType.Max);
 
         public WoWHeadParserForm()
         {
@@ -78,9 +78,10 @@ namespace WoWHeadParser
                 if (attributes == null || attributes.Length < 1)
                     throw new InvalidOperationException(); // Each parsers should be marked with this attribute
 
-                parserBox.Items.Add(GetNameByParserType(attributes[0].Type));
+                parserBox.Items.Add(GetNameByParserType(attributes[0].ParserType));
+                attributes[0].Type = type;
 
-                m_parsers.Add(loadedParsers++, new KeyValuePair<ParserAttribute, Type>(attributes[0], type));
+                m_parsers.Add(loadedParsers++, attributes[0]);
             }
 
             parserBox.SelectIndex(Settings.Default.LastParser);
@@ -127,10 +128,10 @@ namespace WoWHeadParser
         private void ParserBoxSelectedIndexChanged(object sender, EventArgs e)
         {
             int selectedIndex = parserBox.SelectedIndex;
-            welfBox.SelectedItem = m_parsers[selectedIndex].Key.ToString().ToLower();
+            welfBox.SelectedItem = m_parsers[selectedIndex].ToString().ToLower();
        
             subparsersListBox.Items.Clear();
-            Type subParsers = m_parsers[selectedIndex].Value.GetNestedType("SubParsers");
+            Type subParsers = m_parsers[selectedIndex].Type.GetNestedType("SubParsers");
             if (subParsers != null)
             {
                 foreach (Enum val in Enum.GetValues(subParsers))
@@ -142,8 +143,8 @@ namespace WoWHeadParser
 
         public void StartButtonClick(object sender, EventArgs e)
         {
-            ParserAttribute att = m_parsers[parserBox.SelectedIndex].Key;
-            ConstructorInfo cInfo = m_parsers[parserBox.SelectedIndex].Value.GetConstructor(new[] { typeof(Locale), typeof(int) });
+            ParserAttribute att = m_parsers[parserBox.SelectedIndex];
+            ConstructorInfo cInfo = att.Type.GetConstructor(new[] { typeof(Locale), typeof(int) });
             if (cInfo == null)
                 return;
 
@@ -156,52 +157,51 @@ namespace WoWHeadParser
 
             m_worker = new Worker(type, parser, WorkerPageDownloaded);
 
+            Worker.ParserValue value = default(Worker.ParserValue);
             switch (type)
             {
                 case ParsingType.TypeBySingleValue:
                     {
-                        uint value = (uint)valueBox.Value;
-                        m_worker.SetValue(value);
+                        value.Id = (uint)valueBox.Value;
                         break;
                     }
                 case ParsingType.TypeByList:
                     {
-                        uint[] entries = GetEntriesList();
-                        numericUpDown.Maximum = progressBar.Maximum = entries.Length;
-                        m_worker.SetValue(entries);
+                        value.Array = GetEntriesList();
+                        numericUpDown.Maximum = progressBar.Maximum = value.Array.Length;
                         break;
                     }
                 case ParsingType.TypeByMultipleValue:
                     {
-                        uint startValue = (uint)rangeStart.Value;
-                        uint endValue = (uint)rangeEnd.Value;
+                        value.Start = (uint)rangeStart.Value;
+                        value.End = (uint)rangeEnd.Value;
 
-                        if (startValue > endValue)
+                        if (value.Start > value.End)
                         {
                             ShowMessageBox(MessageType.MultipleTypeBigger);
                             return;
                         }
 
-                        if (startValue == endValue)
+                        if (value.Start == value.End)
                         {
                             ShowMessageBox(MessageType.MultipleTypeEqual);
                             return;
                         }
 
-                        numericUpDown.Maximum = progressBar.Maximum = (int)(endValue - startValue) + 1;
-                        m_worker.SetValue(startValue, endValue);
+                        numericUpDown.Maximum = progressBar.Maximum = (int)(value.End - value.Start) + 1;
                         break;
                     }
                 case ParsingType.TypeByWoWHeadFilter:
                     {
-                        int maxValue = (att.CountLimit / MaxIdCountPerRequest);
-                        numericUpDown.Maximum = progressBar.Maximum = maxValue + 1;
-                        m_worker.SetValue((uint)maxValue);
+                        value.Maximum = (att.CountLimit / MaxIdCountPerRequest);
+                        numericUpDown.Maximum = progressBar.Maximum = (int)value.Maximum + 1;
                         break;
                     }
                 default:
                     return;
             }
+
+            m_worker.SetValue(value);
 
             abortButton.Enabled = true;
             subparsersListBox.Enabled = settingsBox.Enabled = startButton.Enabled = false;
@@ -346,9 +346,9 @@ namespace WoWHeadParser
 
             parserBox.Items.Clear();
 
-            foreach (KeyValuePair<int, KeyValuePair<ParserAttribute, Type>> kvp in m_parsers)
+            foreach (KeyValuePair<int, ParserAttribute> kvp in m_parsers)
             {
-                parserBox.Items.Add(GetNameByParserType(kvp.Value.Key.Type));
+                parserBox.Items.Add(GetNameByParserType(kvp.Value.ParserType));
             }
 
             parserBox.SelectedIndex = selectedIndex;

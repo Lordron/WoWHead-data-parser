@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Net;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
@@ -10,77 +11,86 @@ namespace WoWHeadParser
 {
     public class Worker : IDisposable
     {
-        private uint _start;
-        private uint _end;
-        private bool _isWorking;
-        private uint[] _entries;
-        private Uri _address;
-        private ParsingType _type;
-        private PageParser _parser;
-        private DateTime _timeStart;
-        private DateTime _timeEnd;
-        private ServicePoint _service;
-        private SemaphoreSlim _semaphore;
-        private ConcurrentQueue<uint> _badIds;
+
+        [StructLayout(LayoutKind.Explicit)]
+        public struct ParserValue
+        {
+            [FieldOffset(0)]
+            public uint Start;
+
+            [FieldOffset(4)]
+            public uint End;
+
+            [FieldOffset(0)]
+            public uint Id;
+
+            [FieldOffset(0)]
+            public uint Maximum;
+
+            [FieldOffset(8)]
+            public uint[] Array;
+        }
+
+        private ParserValue m_value;
+
+        private bool m_isWorking;
+        private Uri m_address;
+        private ParsingType m_type;
+        private PageParser m_parser;
+        private DateTime m_timeStart;
+        private DateTime m_timeEnd;
+        private ServicePoint m_service;
+        private SemaphoreSlim m_semaphore;
+        private ConcurrentQueue<uint> m_badIds;
 
         private const int SemaphoreCount = 100;
         private const int KeepAliveTime = 100000;
 
-        private object _locker = new object();
+        private object m_locker = new object();
 
         public Worker(ParsingType type, PageParser parser, EventHandler onPageDownloadingComplete = null)
         {
-            _type = type;
-            _parser = parser;
+            m_type = type;
+            m_parser = parser;
 
-            _address = LocaleMgr.GetAddress(parser.Locale);
+            m_address = LocaleMgr.GetAddress(parser.Locale);
             ServicePointManager.DefaultConnectionLimit = SemaphoreCount * 10;
             {
-                _service = ServicePointManager.FindServicePoint(_address);
-                _service.SetTcpKeepAlive(true, KeepAliveTime, KeepAliveTime);
+                m_service = ServicePointManager.FindServicePoint(m_address);
+                m_service.SetTcpKeepAlive(true, KeepAliveTime, KeepAliveTime);
             }
-            _address = new Uri(_address, parser.Address);
+            m_address = new Uri(m_address, parser.Address);
 
-            _semaphore = new SemaphoreSlim(SemaphoreCount, SemaphoreCount);
-            _badIds = new ConcurrentQueue<uint>();
+            m_semaphore = new SemaphoreSlim(SemaphoreCount, SemaphoreCount);
+            m_badIds = new ConcurrentQueue<uint>();
 
             PageDownloadingComplete += onPageDownloadingComplete;
         }
 
-        public void SetValue(uint value)
+        public void SetValue(ParserValue value)
         {
-            _start = value;
+            m_value = value;
         }
 
-        public void SetValue(uint start, uint end)
+        public unsafe void Start()
         {
-            _end = end;
-            _start = start;
-        }
-
-        public void SetValue(uint[] entries)
-        {
-            _entries = entries;
-        }
-
-        public void Start()
-        {
-            if (_isWorking)
+            if (m_isWorking)
                 throw new InvalidOperationException("_isWorking");
 
-            _isWorking = true;
-            _timeStart = DateTime.Now;
+            m_isWorking = true;
+            m_timeStart = DateTime.Now;
 
-            switch (_type)
+            switch (m_type)
             {
                 case ParsingType.TypeBySingleValue:
                     {
-                        Process(_start);
+                        Process(m_value.Id);
                         break;
                     }
                 case ParsingType.TypeByMultipleValue:
                     {
-                        for (uint entry = _start; entry <= _end; ++entry)
+   
+                        for (uint entry = m_value.Start; entry <= m_value.End; ++entry)
                         {
                             if (!Process(entry))
                                 break;
@@ -89,16 +99,16 @@ namespace WoWHeadParser
                     }
                 case ParsingType.TypeByList:
                     {
-                        for (int i = 0; i < _entries.Length; ++i)
+                        for (int i = 0; i < m_value.Array.Length; ++i)
                         {
-                            if (!Process(_entries[i]))
+                            if (!Process(m_value.Array[i]))
                                 break;
                         }
                         break;
                     }
                 case ParsingType.TypeByWoWHeadFilter:
                     {
-                        for (uint entry = 0; entry <= _start; ++entry)
+                        for (uint entry = 0; entry <= m_value.Maximum; ++entry)
                         {
                             if (!Process(entry))
                                 break;
@@ -107,20 +117,20 @@ namespace WoWHeadParser
                     }
             }
 
-            while (_semaphore.CurrentCount != SemaphoreCount)
+            while (m_semaphore.CurrentCount != SemaphoreCount)
             {
                 Application.DoEvents();
             }
 
-            if (_type == ParsingType.TypeByList || _type == ParsingType.TypeByWoWHeadFilter)
+            if (m_type == ParsingType.TypeByList || m_type == ParsingType.TypeByWoWHeadFilter)
             {
-                while (!_badIds.IsEmpty)
+                while (!m_badIds.IsEmpty)
                 {
-                    if (!_isWorking)
+                    if (!m_isWorking)
                         break;
 
                     uint id;
-                    if (!_badIds.TryDequeue(out id))
+                    if (!m_badIds.TryDequeue(out id))
                         continue;
 
                     if (!Process(id))
@@ -128,22 +138,22 @@ namespace WoWHeadParser
                 }
             }
 
-            while (_semaphore.CurrentCount != SemaphoreCount)
+            while (m_semaphore.CurrentCount != SemaphoreCount)
             {
                 Application.DoEvents();
             }
 
-            _timeEnd = DateTime.Now;
+            m_timeEnd = DateTime.Now;
         }
 
         private bool Process(uint id)
         {
-            if (!_isWorking)
+            if (!m_isWorking)
                 return false;
 
-            _semaphore.Wait();
+            m_semaphore.Wait();
 
-            Requests request = new Requests(_address, id, _type == ParsingType.TypeByWoWHeadFilter);
+            Requests request = new Requests(m_address, id, m_type == ParsingType.TypeByWoWHeadFilter);
             request.BeginGetResponse(RespCallback, request);
             return true;
         }
@@ -154,15 +164,15 @@ namespace WoWHeadParser
 
             string page;
             bool endGetResponse = request.EndGetResponse(iar, out page);
-            lock (_locker)
+            lock (m_locker)
             {
                 if (endGetResponse)
-                    _parser.TryParse(page, request.Id);
+                    m_parser.TryParse(page, request.Id);
                 else
-                    _badIds.Enqueue(request.Id);
+                    m_badIds.Enqueue(request.Id);
             }
             request.Dispose();
-            _semaphore.Release();
+            m_semaphore.Release();
 
             if (endGetResponse && PageDownloadingComplete != null)
                 PageDownloadingComplete(null, EventArgs.Empty);
@@ -170,33 +180,33 @@ namespace WoWHeadParser
 
         public void Stop()
         {
-            _isWorking = false;
-            _service.ConnectionLeaseTimeout = 0;
+            m_isWorking = false;
+            m_service.ConnectionLeaseTimeout = 0;
         }
 
         public void Reset()
         {
-            _parser = null;
-            _isWorking = false;
-            _service.ConnectionLeaseTimeout = 0;
+            m_parser = null;
+            m_isWorking = false;
+            m_service.ConnectionLeaseTimeout = 0;
 
             GC.Collect();
         }
 
         public void Dispose()
         {
-            _parser = null;
-            _semaphore.Dispose();
-            _service.ConnectionLeaseTimeout = 0;
+            m_parser = null;
+            m_semaphore.Dispose();
+            m_service.ConnectionLeaseTimeout = 0;
         }
 
         public override string ToString()
         {
-            StringBuilder content = new StringBuilder(_parser.Builder.Count * 256);
+            StringBuilder content = new StringBuilder(m_parser.Builder.Count * 256);
 
-            content.AppendFormat(@"-- Dump of {0} ({1}), Total object count: {2}", _timeEnd, _timeEnd - _timeStart, _parser.Builder.Count).AppendLine();
+            content.AppendFormat(@"-- Dump of {0} ({1}), Total object count: {2}", m_timeEnd, m_timeEnd - m_timeStart, m_parser.Builder.Count).AppendLine();
             content.AppendLine();
-            content.Append(_parser.ToString());
+            content.Append(m_parser.ToString());
 
             return content.ToString();
         }

@@ -5,24 +5,25 @@ namespace WoWHeadParser.Parser
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
     public class ParserAttribute : Attribute
     {
-        public ParserType Type;
-        public int CountLimit;
+        public ParserType ParserType;
+        public uint CountLimit;
+        public Type Type;
 
         public ParserAttribute(ParserType type)
         {
-            Type = type;
+            ParserType = type;
             CountLimit = 0;
         }
 
-        public ParserAttribute(ParserType type, int limit)
+        public ParserAttribute(ParserType type, uint limit)
         {
-            Type = type;
+            ParserType = type;
             CountLimit = limit;
         }
 
         public override string ToString()
         {
-            return Type.ToString();
+            return ParserType.ToString();
         }
     }
 }
