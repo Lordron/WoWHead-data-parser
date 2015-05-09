@@ -48,7 +48,7 @@ namespace WoWHeadParser
             m_request.UserAgent = GetRandomUserAgent();
             m_request.KeepAlive = true;
             if (Compress)
-                m_request.Headers.Add("Accept-Encoding", "gzip,deflate");
+                m_request.AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
         }
 
         public IAsyncResult BeginGetResponse(AsyncCallback callback, object state)
@@ -93,18 +93,7 @@ namespace WoWHeadParser
             if (m_response == null)
                 return string.Empty;
 
-            Stream stream = m_response.GetResponseStream();
-            switch (m_response.ContentEncoding)
-            {
-                case "gzip":
-                    stream = new GZipStream(stream, CompressionMode.Decompress);
-                    break;
-                case "deflate":
-                    stream = new DeflateStream(stream, CompressionMode.Decompress);
-                    break;
-            }
-
-            using (BufferedStream buffer = new BufferedStream(stream))
+            using (BufferedStream buffer = new BufferedStream(m_response.GetResponseStream()))
             using (StreamReader reader = new StreamReader(buffer))
             {
                 return reader.ReadToEnd();
