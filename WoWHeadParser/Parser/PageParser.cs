@@ -50,11 +50,9 @@ namespace WoWHeadParser.Parser
 
         #region Sql Builder
 
-        protected static SqlBuilderSettings _builderSettings = new SqlBuilderSettings(Settings.Default.QueryType, Settings.Default.WithoutHeader, Settings.Default.AllowEmptyValues, Settings.Default.AppendDeleteQuery);
-
         public List<SqlBuilder> Builders = new List<SqlBuilder>
             {
-                new SqlBuilder(_builderSettings)
+                new SqlBuilder()
             };
 
         public SqlBuilder Builder { get { return Builders[0]; } }

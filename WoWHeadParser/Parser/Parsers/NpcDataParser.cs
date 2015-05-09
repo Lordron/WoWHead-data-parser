@@ -18,7 +18,7 @@ namespace WoWHeadParser.Parser.Parsers
 
             for (int i = 0; i < ((int)SubParsersType.Max - 1); ++i)
             {
-                Builders.Add(new SqlBuilder(_builderSettings));
+                Builders.Add(new SqlBuilder());
             }
 
             if (parsers.HasFlag(SubParsers.Level))

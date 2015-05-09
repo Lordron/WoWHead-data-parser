@@ -41,9 +41,9 @@ namespace Sql
         /// Initialize <see cref="Sql.SqlBuilder"/> with specific <see cref="Sql.SqlBuilderSettings"/>
         /// </summary>
         /// <param name="settings"><see cref="Sql.SqlBuilderSettings"/> of the current <see cref="Sql.SqlBuilder"/></param>
-        public SqlBuilder(SqlBuilderSettings settings)
+        public SqlBuilder()
         {
-            BuilderSettings = settings;
+            BuilderSettings = new SqlBuilderSettings(Settings.Default.QueryType, Settings.Default.WithoutHeader, Settings.Default.AllowEmptyValues, Settings.Default.AppendDeleteQuery);;
         }
 
         /// <summary>
