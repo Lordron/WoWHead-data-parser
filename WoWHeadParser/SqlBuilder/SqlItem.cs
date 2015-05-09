@@ -34,7 +34,7 @@ namespace Sql
             get
             {
                 if (x < 0 || x >= _pos)
-                    throw new IndexOutOfRangeException("x");
+                    throw new IndexOutOfRangeException("x is out of range. Should be in rage of 0 and " + _pos + ", but its " + x);
 
                 object obj = _values[x];
                 if (obj == null)

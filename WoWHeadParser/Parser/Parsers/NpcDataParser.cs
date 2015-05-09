@@ -12,7 +12,7 @@ namespace WoWHeadParser.Parser.Parsers
         private SubParsers parsers;
 
         public NpcDataParser(Locale locale, int flags)
-            : base(locale, flags, (int)SubParsersType.Max)
+            : base(locale, flags, (int)SubParsersType.Max, typeof(SubParsers))
         {
             parsers = (SubParsers)flags;
 

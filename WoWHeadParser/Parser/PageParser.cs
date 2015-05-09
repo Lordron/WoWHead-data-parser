@@ -11,20 +11,22 @@ namespace WoWHeadParser.Parser
     {
         public int Flags;
 
+        public Type FlagsType;
+
         public ParserData.Parser Parser;
 
         public Locale Locale;
 
         public StringBuilder Content = new StringBuilder(1024);
 
-        public PageParser(Locale locale, int flags, int size = 1)
-            : this(size)
+        public PageParser(Locale locale, int flags, int size = 1, Type type = null)
+            : this(size, type)
         {
             Flags = flags;
             Locale = locale;
         }
 
-        protected PageParser(int size)
+        protected PageParser(int size, Type type)
         {
             if (size <= 0)
                 throw new ArgumentOutOfRangeException("size");
@@ -34,6 +36,14 @@ namespace WoWHeadParser.Parser
             {
                 Builders[i] = new SqlBuilder();
             }
+
+            if (type != null)
+            {
+                if (!type.IsEnum)
+                    throw new InvalidOperationException("Type passed into PageParser is not enum type!");
+            }
+
+            FlagsType = type;
         }
 
         public virtual void Parse(string page, uint id)

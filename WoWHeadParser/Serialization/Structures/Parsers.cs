@@ -18,9 +18,6 @@ namespace WoWHeadParser.Serialization.Structures
 
             [DataMember]
             public uint CountLimit;
-
-            [IgnoreDataMember]
-            public Type Type;
         }
 
         [DataMember]

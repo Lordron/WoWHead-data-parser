@@ -45,14 +45,21 @@ namespace WoWHeadParser
                 if (attribute == null)
                     continue;
 
-                foreach (ParserData.Parser parser in m_data.Data)
-                {
-                    if (parser.ParserType != attribute.ParserType)
-                        continue;
+                ConstructorInfo cInfo = type.GetConstructor(new[] { typeof(Locale), typeof(int) });
+                if (cInfo == null)
+                    continue;
 
-                    parser.Type = type;
-                    break;
+                PageParser parser = (PageParser)cInfo.Invoke(new object [] { Locale.English, 0 });
+                if (parser == null)
+                    throw new InvalidOperationException("parser");
+
+                if (m_parsers.ContainsKey(attribute.ParserType))
+                {
+                    Console.WriteLine("There is another parser for ParserType.{0}", attribute.ParserType);
+                    continue;
                 }
+
+                m_parsers[attribute.ParserType] = parser;
             }
         }
 

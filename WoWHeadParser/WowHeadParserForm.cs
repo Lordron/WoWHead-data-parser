@@ -35,6 +35,8 @@ namespace WoWHeadParser
         private CultureInfo m_currentCulture;
         private ParserData m_data;
 
+        private Dictionary<ParserType, PageParser> m_parsers = new Dictionary<ParserType, PageParser>();
+
         public WoWHeadParserForm()
         {
             InitializeComponent();
@@ -93,14 +95,15 @@ namespace WoWHeadParser
 
         private void ParserBoxSelectedIndexChanged(object sender, EventArgs e)
         {
+            subparsersListBox.Items.Clear();
+
             ParserData.Parser data = m_data.Data[parserBox.SelectedIndex];
             welfBox.SelectedItem = data.ParserType.ToString().ToLower();
-       
-            subparsersListBox.Items.Clear();
-            Type subParsers = data.Type.GetNestedType("SubParsers");
-            if (subParsers != null)
+
+            PageParser parser = m_parsers[data.ParserType];
+            if (parser.FlagsType != null)
             {
-                foreach (Enum val in Enum.GetValues(subParsers))
+                foreach (Enum val in Enum.GetValues(parser.FlagsType))
                 {
                     subparsersListBox.Items.Add(val, true);
                 }
@@ -110,16 +113,11 @@ namespace WoWHeadParser
         public void StartButtonClick(object sender, EventArgs e)
         {
             ParserData.Parser data = m_data.Data[parserBox.SelectedIndex];
-            ConstructorInfo cInfo = data.Type.GetConstructor(new[] { typeof(Locale), typeof(int) });
-            if (cInfo == null)
-                return;
 
-            int flags = GetSubparsers();
-            PageParser parser = (PageParser)cInfo.Invoke(new [] { localeBox.SelectedItem, flags });
-            if (parser == null)
-                throw new InvalidOperationException("parser");
-
+            PageParser parser = m_parsers[data.ParserType];
             parser.Parser = data;
+            parser.Locale = (Locale)localeBox.SelectedItem;
+            parser.Flags = GetSubparsers();
 
             ParsingType type = (ParsingType)parsingControl.SelectedIndex;
 
