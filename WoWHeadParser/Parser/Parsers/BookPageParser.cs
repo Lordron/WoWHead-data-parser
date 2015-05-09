@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Text.RegularExpressions;
 using WoWHeadParser.Properties;
 
@@ -16,7 +17,7 @@ namespace WoWHeadParser.Parser.Parsers
                 Builder.Setup("page_text", "entry", true, "text", "next_page");
         }
 
-        private const string bookPattern = @"new Book\({ parent: '.+', pages: \['(?<page>.+)'\]}\)";
+        private const string bookPattern = @"new Book\({ parent: '.+', pages: (?<page>.+)}\)";
         private Regex bookRegex = new Regex(bookPattern);
 
         public override void Parse(string page, uint id)
@@ -27,9 +28,10 @@ namespace WoWHeadParser.Parser.Parsers
             for (int i = 0; i < matches.Count; ++i)
             {
                 Match item = matches[i];
-                GroupCollection groups = item.Groups;
-                string typeStr = groups["page"].Value;
-                string[] pages = typeStr.Split(new[] { @"','" }, StringSplitOptions.RemoveEmptyEntries);
+                GroupCollection groups = matches[i].Groups;
+
+                string json = groups["page"].Value;
+                string[] pages = JsonConvert.DeserializeObject<string[]>(json);
 
                 Builder.SetKey(baseKey);
                 Builder.AppendSqlQuery(baseKey, @"SET @ENTRY_{0}:= (SELECT `data0` FROM `gameobject_template` WHERE `entry` = {0});", id);

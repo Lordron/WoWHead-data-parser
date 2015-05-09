@@ -1,5 +1,7 @@
-﻿using System.Text.RegularExpressions;
+﻿
 using Newtonsoft.Json;
+using System.Text.RegularExpressions;
+using WoWHeadParser.Serialization.Structures;
 
 namespace WoWHeadParser.Parser.Parsers
 {
@@ -15,21 +17,22 @@ namespace WoWHeadParser.Parser.Parsers
                 Builder.Setup("creature_template", "entry", false, "name", "subname");
         }
 
-        private const string pattern = @"new Listview\({template: 'npc', id: 'npcs', data: (?<npc>.+)}\)";
-        private Regex localeRegex = new Regex(pattern);
+        private const string s_Pattern = @"new Listview\({template: 'npc', id: 'npcs', data: (?<npc>.+)}\)";
+        private Regex m_regex = new Regex(s_Pattern);
 
         public override void Parse(string page, uint id)
         {
-            Match item = localeRegex.Match(page);
-            if (!item.Success)
+            Match match = m_regex.Match(page);
+            if (!match.Success)
                 return;
 
-            string text = item.Groups["npc"].Value;
-            NpcLocaleItem[] localeItems = JsonConvert.DeserializeObject<NpcLocaleItem[]>(text);
-            foreach (NpcLocaleItem localeItem in localeItems)
+            string json = match.Groups["npc"].Value;
+
+            LocaleItem[] items = JsonConvert.DeserializeObject<LocaleItem[]>(json);
+            foreach (LocaleItem item in items)
             {
-                Builder.SetKey(localeItem.Id);
-                Builder.AppendValues(localeItem.Name.HTMLEscapeSumbols(), string.IsNullOrEmpty(localeItem.Tag) ? string.Empty : localeItem.Tag.HTMLEscapeSumbols());
+                Builder.SetKey(item.Id);
+                Builder.AppendValues(item.Name.HTMLEscapeSumbols(), string.IsNullOrEmpty(item.Tag) ? string.Empty : item.Tag.HTMLEscapeSumbols());
                 Builder.Flush();
             }
         }

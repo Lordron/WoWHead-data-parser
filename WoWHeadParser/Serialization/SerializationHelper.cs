@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
 
@@ -9,7 +6,7 @@ namespace WoWHeadParser.Serialization
 {
     public static class SerializationHelper
     {
-        public static T Serialize<T>(string path) where T : Header
+        public static T SerializeFile<T>(string path)
         {
             using (StreamReader stream = new StreamReader(path))
             {
@@ -17,15 +14,18 @@ namespace WoWHeadParser.Serialization
             }
         }
 
-        public static T Serialize<T>(Stream stream) where T : Header
+        public static T SerializeString<T>(string str, Encoding encoding)
+        {
+            using (MemoryStream stream = new MemoryStream(encoding.GetBytes(str)))
+            {
+                return Serialize<T>(stream);
+            }
+        }
+
+        public static T Serialize<T>(Stream stream)
         {
             DataContractJsonSerializer serializer = new DataContractJsonSerializer(typeof(T));
             T result = (T)serializer.ReadObject(stream);
-            if (result.Version != Header.CurrentVersion)
-            {
-                // print error message
-                return null;
-            }
             return result;
         }
     }

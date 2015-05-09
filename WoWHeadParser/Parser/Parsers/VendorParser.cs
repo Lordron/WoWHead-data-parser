@@ -1,8 +1,9 @@
-﻿using System;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System;
+using System.Text.RegularExpressions;
 using WoWHeadParser.DBFileStorage;
+using WoWHeadParser.Serialization.Structures;
 
 namespace WoWHeadParser.Parser.Parsers
 {
@@ -12,59 +13,59 @@ namespace WoWHeadParser.Parser.Parsers
         public VendorParser(Locale locale, int flags)
             : base(locale, flags)
         {
-            _itemExtendedCost = DBFileLoader.GetLoader<ItemExtendedCost>();
-            if (_itemExtendedCost == null)
+            m_extendedCostStorage = DBFileLoader.GetLoader<ItemExtendedCost>();
+            if (m_extendedCostStorage == null)
                 throw new ArgumentNullException("_itemExtendedCost");
 
             Builder.Setup("npc_vendor", "entry", false, "item", "maxcount", "incrtime", "ExtendedCost");
         }
 
-        private const string pattern = @"new Listview\({template: 'item', id: 'sells', name: .+, data: (?<vendor>.+)}\)";
-        private Regex templateRegex = new Regex(pattern);
+        private const string s_Pattern = @"new Listview\({template: 'item', id: 'sells', name: .+, data: (?<vendor>.+)}\)";
+        private Regex m_regex = new Regex(s_Pattern);
 
-        private ItemExtendedCost _itemExtendedCost = null;
+        private ItemExtendedCost m_extendedCostStorage = null;
 
         public override void Parse(string page, uint id)
         {
-            Match item = templateRegex.Match(page);
-            if (!item.Success)
+            Match match = m_regex.Match(page);
+            if (!match.Success)
                 return;
 
-            string text = item.Groups["vendor"].Value;
-            VendorItem[] vendorItems = JsonConvert.DeserializeObject<VendorItem[]>(text);
-            foreach (VendorItem vendorItem in vendorItems)
+            string json = match.Groups["vendor"].Value;
+
+            VendorItem[] items = JsonConvert.DeserializeObject<VendorItem[]>(json);
+            foreach (VendorItem item in items)
             {
-                int maxCount = vendorItem.Avail == -1 ? 0 : vendorItem.Avail;
+                int maxCount = item.Available == -1 ? 0 : item.Available;
                 int incrTime = maxCount == 0 ? 0 : 3600;
 
                 uint price = 0, count = 0;
 
-                dynamic[] costArray = vendorItem.Cost;
-                foreach (dynamic cost in costArray)
+                foreach (dynamic array in item.Cost)
                 {
-                    if (cost is JArray)
+                    if (array is JArray)
                     {
-                        foreach (dynamic token in cost)
+                        foreach (dynamic token in array)
                         {
-                            JArray extendedCosts = token as JArray;
+                            JArray data = token as JArray;
                             {
-                                price = uint.Parse(extendedCosts[0].ToString());
-                                count = uint.Parse(extendedCosts[1].ToString());
+                                price = data[0].Value<uint>();
+                                count = data[1].Value<uint>();
                             }
                         }
                     }
                     else
-                        price = (uint)cost;
+                        price = (uint)array;
                 }
 
                 uint extendedCost = 0;
                 if (price > 0 && count > 0)
-                    extendedCost = _itemExtendedCost.GetExtendedCost(price, count);
+                    extendedCost = m_extendedCostStorage.GetExtendedCost(price, count);
                 else if (price == 0)
                     extendedCost = 9999999;
 
                 Builder.SetKey(id);
-                Builder.AppendValues(vendorItem.Id, maxCount, incrTime, extendedCost);
+                Builder.AppendValues(item.Id, maxCount, incrTime, extendedCost);
                 Builder.Flush();
             }
         }

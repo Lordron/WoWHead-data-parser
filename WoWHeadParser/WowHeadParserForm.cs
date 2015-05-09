@@ -13,6 +13,7 @@ using WoWHeadParser.Plugin;
 using WoWHeadParser.Properties;
 using WoWHeadParser.Serialization;
 using System.Linq;
+using WoWHeadParser.Serialization.Structures;
 
 namespace WoWHeadParser
 {
@@ -53,7 +54,7 @@ namespace WoWHeadParser
                 languageMenuItem.MenuItems.Add(item);
             }
 
-            m_data = SerializationHelper.Serialize<ParserData>(ParserFile);
+            m_data = SerializationHelper.SerializeFile<ParserData>(ParserFile);
             m_currentCulture = new CultureInfo(currentLanguage, true);
 
             ReloadUILanguage();
@@ -243,7 +244,6 @@ namespace WoWHeadParser
                 }
             }
 
-
             abortButton.Enabled = false;
             subparsersListBox.Enabled = settingsBox.Enabled = startButton.Enabled = true;
             numericUpDown.Value = progressBar.Value = 0;
@@ -421,7 +421,7 @@ namespace WoWHeadParser
 
             try
             {
-                return SerializationHelper.Serialize<Entries>(path);
+                return SerializationHelper.SerializeFile<Entries>(path);
             }
             catch (Exception exception)
             {

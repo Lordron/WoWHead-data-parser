@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Sql;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using Sql;
 using WoWHeadParser.Properties;
-using WoWHeadParser.Serialization;
+using WoWHeadParser.Serialization.Structures;
 
 namespace WoWHeadParser.Parser
 {

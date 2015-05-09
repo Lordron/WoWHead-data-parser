@@ -2,7 +2,7 @@
 using System.Runtime.Serialization;
 using WoWHeadParser.Parser;
 
-namespace WoWHeadParser.Serialization
+namespace WoWHeadParser.Serialization.Structures
 {
     [DataContract]
     public class ParserData : Header

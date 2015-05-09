@@ -75,7 +75,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\DBFilesClient.NET.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=4.0.8.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+    <Reference Include="MySql.Data, Version=6.6.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\MySQL\MySQL Connector Net 6.6.5\Assemblies\v4.0\MySql.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="MySql.Data.Entity, Version=6.6.5.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\Program Files (x86)\MySQL\MySQL Connector Net 6.6.5\Assemblies\v4.0\MySql.Data.Entity.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>Lib\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -97,32 +105,31 @@
     </Compile>
     <Compile Include="DBFileStorage\DBFileLoader.cs" />
     <Compile Include="DBFileStorage\IDBFileLoader.cs" />
-    <Compile Include="Serialization\Entries.cs" />
+    <Compile Include="Serialization\Structures\Entries.cs" />
     <Compile Include="Messages\MessageManager.cs" />
     <Compile Include="DBFileStorage\ItemExtendedCost.cs" />
     <Compile Include="Locale.cs" />
     <Compile Include="Messages\Message.cs" />
     <Compile Include="Parser\ParserAttribute.cs" />
-    <Compile Include="Parser\Parsers\Helpers\NpcLocaleItem.cs" />
     <Compile Include="Parser\Parsers\ItemParser.cs" />
     <Compile Include="Parser\Parsers\NpcDataParser.cs" />
     <Compile Include="Parser\Parsers\NpcLocaleParser.cs" />
     <Compile Include="Parser\Parsers\QuestDataParser.cs" />
-    <Compile Include="Parser\Parsers\Helpers\QuestLocaleItem.cs" />
     <Compile Include="Parser\Parsers\QuestLocaleParser.cs" />
     <Compile Include="Parser\Parsers\TrainerParser.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Parser\Parsers\BookPageParser.cs" />
     <Compile Include="Parser\PageParser.cs" />
-    <Compile Include="Parser\Parsers\Helpers\VendorItem.cs" />
     <Compile Include="Parser\Parsers\VendorParser.cs" />
     <Compile Include="Parser\ParserType.cs" />
     <Compile Include="ParsingType.cs" />
     <Compile Include="Plugin\IPlugin.cs" />
     <Compile Include="RichTextBoxWriter.cs" />
-    <Compile Include="Serialization\Header.cs" />
-    <Compile Include="Serialization\Parsers.cs" />
+    <Compile Include="Serialization\Structures\Header.cs" />
+    <Compile Include="Serialization\Structures\LocaleItem.cs" />
+    <Compile Include="Serialization\Structures\Parsers.cs" />
     <Compile Include="Serialization\SerializationHelper.cs" />
+    <Compile Include="Serialization\Structures\VendorItem.cs" />
     <Compile Include="SettingsForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -236,7 +243,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Lib\DBFilesClient.NET.dll" />
-    <Content Include="Lib\Newtonsoft.Json.dll" />
+    <Content Include="Lib\Newtonsoft.Json.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

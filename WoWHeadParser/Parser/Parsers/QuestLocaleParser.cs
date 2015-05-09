@@ -1,5 +1,7 @@
-﻿using Newtonsoft.Json;
+﻿
+using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+using WoWHeadParser.Serialization.Structures;
 
 namespace WoWHeadParser.Parser.Parsers
 {
@@ -15,22 +17,22 @@ namespace WoWHeadParser.Parser.Parsers
                 Builder.Setup("quest_template", "id", false, "title");
         }
 
-        private const string pattern = @"new Listview\({template: 'quest', id: 'quests', data: (?<quest>.+)}\)";
-        private Regex localeRegex = new Regex(pattern);
+        private const string s_Pattern = @"new Listview\({template: 'quest', id: 'quests', data: (?<quest>.+)}\)";
+        private Regex m_regex = new Regex(s_Pattern);
 
         public override void Parse(string page, uint id)
         {
-            Match item = localeRegex.Match(page);
-            if (!item.Success)
+            Match match = m_regex.Match(page);
+            if (!match.Success)
                 return;
 
-            string text = item.Groups["quest"].Value;
-            QuestLocaleItem[] questLocaleItems = JsonConvert.DeserializeObject<QuestLocaleItem[]>(text);
+            string json = match.Groups["quest"].Value;
 
-            foreach (QuestLocaleItem localeItem in questLocaleItems)
+            LocaleItem[] items = JsonConvert.DeserializeObject<LocaleItem[]>(json);
+            foreach (LocaleItem item in items)
             {
-                Builder.SetKey(localeItem.Id);
-                Builder.AppendValue(localeItem.Name.HTMLEscapeSumbols());
+                Builder.SetKey(item.Id);
+                Builder.AppendValue(item.Name.HTMLEscapeSumbols());
                 Builder.Flush();
             }
         }

@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace WoWHeadParser.Serialization
+namespace WoWHeadParser.Serialization.Structures
 {
     [DataContract]
     public class Entries : Header

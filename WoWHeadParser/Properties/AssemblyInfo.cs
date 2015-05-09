@@ -8,10 +8,10 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("WoWHeadParser")]
 [assembly: AssemblyDescription("WoWHeadParser C#")]
-[assembly: AssemblyConfiguration(".NET 4.0 x32")]
+[assembly: AssemblyConfiguration(".NET 4.51 x86")]
 [assembly: AssemblyCompany("Heisenberg and brain!")]
 [assembly: AssemblyProduct("WoWHeadParser")]
-[assembly: AssemblyCopyright("Copyright © Heisenberg 2011")]
+[assembly: AssemblyCopyright("Copyright © Heisenberg 2011-2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -36,6 +36,6 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 
-[assembly: AssemblyVersion("2.3.1.0")]
-[assembly: AssemblyFileVersion("2.3.1.0")]
+[assembly: AssemblyVersion("2.4.0.0")]
+[assembly: AssemblyFileVersion("2.4.0.0")]
 [assembly: NeutralResourcesLanguage("en")]
