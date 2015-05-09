@@ -12,7 +12,8 @@ namespace WoWHeadParser.DBFileStorage
     {
         private static List<IDBFileLoader> _loaders = new List<IDBFileLoader>(4);
 
-        public static void Initial()
+        [AutoInitial(Order = 1)]
+        private static void Initial()
         {
             _loaders.Clear();
 

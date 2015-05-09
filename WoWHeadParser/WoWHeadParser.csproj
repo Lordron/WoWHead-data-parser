@@ -8,8 +8,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WoWHeadParser</RootNamespace>
     <AssemblyName>WoWHeadParser</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile>
+    </TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
@@ -103,8 +104,12 @@
     <Compile Include="AboutForm.Designer.cs">
       <DependentUpon>AboutForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="AutoInitialAttribute.cs" />
     <Compile Include="DBFileStorage\DBFileLoader.cs" />
     <Compile Include="DBFileStorage\IDBFileLoader.cs" />
+    <Compile Include="Initial.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Serialization\Structures\Entries.cs" />
     <Compile Include="Messages\MessageManager.cs" />
     <Compile Include="DBFileStorage\ItemExtendedCost.cs" />

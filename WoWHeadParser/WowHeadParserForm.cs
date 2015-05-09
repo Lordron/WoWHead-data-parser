@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
@@ -12,7 +13,6 @@ using WoWHeadParser.Parser;
 using WoWHeadParser.Plugin;
 using WoWHeadParser.Properties;
 using WoWHeadParser.Serialization;
-using System.Linq;
 using WoWHeadParser.Serialization.Structures;
 
 namespace WoWHeadParser
@@ -45,78 +45,44 @@ namespace WoWHeadParser
 
         protected override void OnLoad(EventArgs e)
         {
-            #region Language loading
+            Initial();
+        }
 
-            string currentLanguage = Settings.Default.Culture;
-            foreach (string language in s_languages)
-            {
-                MenuItem item = new MenuItem(language, LanguageMenuItemClick) { Checked = currentLanguage.Equals(language) };
-                languageMenuItem.MenuItems.Add(item);
-            }
-
-            m_data = SerializationHelper.SerializeFile<ParserData>(ParserFile);
-            m_currentCulture = new CultureInfo(currentLanguage, true);
-
-            ReloadUILanguage();
-
-            #endregion
-
-            #region Files loading
-
-            DBFileLoader.Initial();
-            LoadWelfFiles();
-
-            #endregion
-
-            #region Parsers loading
+        private void Initial()
+        {
+            Dictionary<int, MethodInfo> info = new Dictionary<int, MethodInfo>();
 
             Type[] types = Assembly.GetExecutingAssembly().GetTypes();
             foreach (Type type in types)
             {
-                if (!type.IsSubclassOf(typeof(PageParser)))
-                    continue;
-
-                ParserAttribute attribute = type.GetCustomAttribute<ParserAttribute>(true);
-                foreach (ParserData.Parser parser in m_data.Data)
+                MethodInfo[] methods = type.GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.InvokeMethod | BindingFlags.Instance);
+                foreach (MethodInfo method in methods)
                 {
-                    if (parser.ParserType != attribute.ParserType)
+                    AutoInitialAttribute attr = method.GetCustomAttribute<AutoInitialAttribute>();
+                    if (attr == null)
                         continue;
 
-                    parser.Type = type;
-                    break;
+                    if (method.GetParameters().Length > 0)
+                        continue;
+
+                    if (info.ContainsKey(attr.Order))
+                    {
+                        Console.WriteLine("Initial There is another method {0} with same order, my method {1}", info[attr.Order], method);
+                        continue;
+                    }
+
+                    info[attr.Order] = method;
                 }
             }
 
-            #endregion
+            List<int> list = info.Keys.ToList();
+            list.Sort();
 
-            #region Locale loading
-
-            parserBox.SelectIndex(Settings.Default.LastParser);
-            localeBox.SetEnumValues<Locale>(Settings.Default.LastLocale);
-
-            #endregion
-
-            #region Plugins loading
-
-            string[] files = Directory.GetFiles(Directory.GetCurrentDirectory(), DllExtension, SearchOption.TopDirectoryOnly);
-            foreach (string file in files)
+            foreach (int key in list)
             {
-                Assembly assembly = Assembly.LoadFile(file);
-                foreach (Type type in assembly.GetTypes())
-                {
-                    if (type.GetInterface(typeof(IPlugin).Name, true) == null)
-                        continue;
-
-                    IPlugin plugin = Activator.CreateInstance(type) as IPlugin;
-                    if (plugin == null)
-                        continue;
-
-                    MenuItem item = new MenuItem(plugin.Name, PluginMenuItemClick) { Tag = plugin };
-                    editMenuItem.MenuItems.Add(item);
-                }
+                MethodInfo method = info[key];
+                method.Invoke(method.IsStatic ? null : this, new object[] { });
             }
-
-            #endregion
         }
 
         private void PluginMenuItemClick(object sender, EventArgs e)
@@ -378,6 +344,7 @@ namespace WoWHeadParser
 
         #endregion
 
+        [AutoInitial(Order = 2)]
         private void LoadWelfFiles()
         {
             welfBox.Items.Clear();
