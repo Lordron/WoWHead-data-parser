@@ -12,14 +12,9 @@ namespace WoWHeadParser.Parser.Parsers
         private SubParsers parsers;
 
         public NpcDataParser(Locale locale, int flags)
-            : base(locale, flags)
+            : base(locale, flags, (int)SubParsersType.Max)
         {
             parsers = (SubParsers)flags;
-
-            for (int i = 0; i < ((int)SubParsersType.Max - 1); ++i)
-            {
-                Builders.Add(new SqlBuilder());
-            }
 
             if (parsers.HasFlag(SubParsers.Level))
                 Builders[(int)SubParsersType.Level].Setup("creature_template", "entry", false, "minlevel", "maxlevel");

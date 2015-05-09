@@ -17,10 +17,23 @@ namespace WoWHeadParser.Parser
 
         public StringBuilder Content = new StringBuilder(1024);
 
-        public PageParser(Locale locale, int flags)
+        public PageParser(Locale locale, int flags, int size = 1)
+            : this(size)
         {
             Flags = flags;
             Locale = locale;
+        }
+
+        protected PageParser(int size)
+        {
+            if (size <= 0)
+                throw new ArgumentOutOfRangeException("size");
+
+            Builders = new SqlBuilder[size];
+            for (int i = 0; i < size; ++i)
+            {
+                Builders[i] = new SqlBuilder();
+            }
         }
 
         public virtual void Parse(string page, uint id)
@@ -50,10 +63,7 @@ namespace WoWHeadParser.Parser
 
         #region Sql Builder
 
-        public List<SqlBuilder> Builders = new List<SqlBuilder>
-            {
-                new SqlBuilder()
-            };
+        public SqlBuilder[] Builders;
 
         public SqlBuilder Builder { get { return Builders[0]; } }
 
