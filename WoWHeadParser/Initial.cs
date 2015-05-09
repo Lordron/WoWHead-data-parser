@@ -42,6 +42,9 @@ namespace WoWHeadParser
                     continue;
 
                 ParserAttribute attribute = type.GetCustomAttribute<ParserAttribute>(true);
+                if (attribute == null)
+                    continue;
+
                 foreach (ParserData.Parser parser in m_data.Data)
                 {
                     if (parser.ParserType != attribute.ParserType)

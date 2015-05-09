@@ -53,7 +53,7 @@ namespace WoWHeadParser
             m_type = type;
             m_parser = parser;
 
-            m_address = LocaleMgr.GetAddress(parser.Locale);
+            m_address = new Uri(string.Format("http://{0}.wowhead.com/", parser.Locale.GetLocalePrefix()));
             ServicePointManager.DefaultConnectionLimit = SemaphoreCount * 10;
             {
                 m_service = ServicePointManager.FindServicePoint(m_address);

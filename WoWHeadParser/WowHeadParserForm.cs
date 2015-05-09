@@ -7,7 +7,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
-using WoWHeadParser.DBFileStorage;
 using WoWHeadParser.Messages;
 using WoWHeadParser.Parser;
 using WoWHeadParser.Plugin;
