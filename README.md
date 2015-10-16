@@ -1,5 +1,5 @@
 # WoWHead-data-parser
-WoWHead data parser written in C# 4.5 http://www.microsoft.com/download/en/details.aspx?displaylang=en&amp;id=27541
+WoWHead data parser written in C# 4.5.1
 
 
 ToDo list:
